@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const puppeteer = require('puppeteer');
+const { getBrowser } = require('../utils/browser');
 
 async function scrapePickabooProducts(searchQuery) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+  const browser = await getBrowser();
 
   try {
     const page = await browser.newPage();

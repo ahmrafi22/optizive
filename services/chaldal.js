@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const puppeteer = require('puppeteer');
+const { getBrowser } = require('../utils/browser');
 
 function getSearchUrl(query) {
   if (!query) return 'https://chaldal.com/search/grocery';
@@ -8,10 +8,7 @@ function getSearchUrl(query) {
 }
 
 async function scrapeChaldalProducts(searchQuery) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+  const browser = await getBrowser();
   
   try {
     const page = await browser.newPage();
