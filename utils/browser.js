@@ -9,12 +9,26 @@ async function getBrowser() {
   const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 
   if (isProduction) {
-    // Vercel/serverless configuration
+    // Optimize for serverless - reduce binary size
+    chromium.setGraphicsMode = false;
+    
+    // Vercel/serverless configuration with additional args
     return await puppeteerCore.launch({
-      args: chromium.args,
+      args: [
+        ...chromium.args,
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-first-run',
+        '--no-sandbox',
+        '--no-zygote',
+        '--single-process',
+        '--disable-extensions',
+      ],
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
   } else {
     // Local development configuration
