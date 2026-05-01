@@ -1,0 +1,243 @@
+@import url('https://fonts.cdnfonts.com/css/naston');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ── Color Palette ──────────────────────────────────────────
+   Primary:    #fff44f  electric yellow
+   Base:       #2e2e2e  charcoal
+   Accent 1:   #ff6b35  amber-orange
+   Accent 2:   #4ecdc4  teal
+   Surface:    #1a1a1a  near-black
+────────────────────────────────────────────────────────── */
+
+@theme inline {
+  --font-sans:   'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:   var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-naston: 'Naston', sans-serif;
+  --font-serif:  'Instrument Serif', serif;
+}
+
+:root {
+  /* Core palette */
+  --clr-yellow:  #fff44f;
+  --clr-yellow-dim: #e6db3a;
+  --clr-charcoal: #2e2e2e;
+  --clr-surface: #1a1a1a;
+  --clr-surface2: #222222;
+  --clr-orange:  #ff6b35;
+  --clr-teal:    #4ecdc4;
+  --clr-teal-dim: #3ab5ad;
+
+  /* Text */
+  --clr-fg:      #f0f0f0;
+  --clr-fg-muted:#8a8a8a;
+  --clr-fg-dim:  #555555;
+
+  /* Borders */
+  --clr-border:  rgba(255,255,255,0.07);
+  --clr-border-hover: rgba(255,244,79,0.35);
+
+  /* Custom easings (Emil) */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--clr-surface);
+  color: var(--clr-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(255, 244, 79, 0.25);
+  color: var(--clr-fg);
+}
+
+/* ── Typography helpers ── */
+.font-naston  { font-family: var(--font-naston); }
+.font-serif   { font-family: var(--font-serif); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--clr-surface); }
+::-webkit-scrollbar-thumb { background: var(--clr-charcoal); border-radius: 3px; }
+
+/* ── Noise texture overlay ── */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* ── Bento card base ── */
+.bento-card {
+  position: relative;
+  background: var(--clr-charcoal);
+  border: 1px solid var(--clr-border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition:
+    border-color 240ms var(--ease-out-strong),
+    transform 240ms var(--ease-out-strong),
+    box-shadow 240ms var(--ease-out-strong);
+  will-change: transform;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border-color: rgba(255, 244, 79, 0.25);
+  }
+
+  .bento-card:hover .bento-icon {
+    transform: scale(1.1) rotate(-4deg);
+  }
+
+  .bento-card:hover .bento-bg-icon {
+    opacity: 0.06;
+    transform: scale(1.05) rotate(-5deg);
+  }
+}
+
+.bento-icon {
+  transition: transform 240ms var(--ease-out-strong);
+}
+
+.bento-bg-icon {
+  position: absolute;
+  right: -8%;
+  bottom: -8%;
+  opacity: 0.03;
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-out-strong), transform 400ms var(--ease-out-strong);
+}
+
+/* ── Button press feedback ── */
+.btn-press {
+  transition: transform 160ms var(--ease-out-strong), background 200ms ease;
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* ── Tag / badge ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Stagger fade-up entry animation ── */
+@keyframes fadeUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUpIn 560ms var(--ease-out-strong) both;
+}
+
+/* ── Pulse dot ── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* ── Bar chart hover animation ── */
+.bar-chart-bar {
+  border-radius: 4px 4px 0 0;
+  transition: height 400ms var(--ease-out-strong), background-color 200ms ease;
+}
+
+/* ── Shimmer ── */
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
+}
+.shimmer {
+  animation: shimmer 2.4s ease infinite;
+}
+
+/* ── Noise radial glow ── */
+.glow-yellow {
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,244,79,0.12) 0%, transparent 70%);
+}
+.glow-orange {
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,107,53,0.1) 0%, transparent 70%);
+}
+.glow-teal {
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(78,205,196,0.1) 0%, transparent 70%);
+}
+
+/* ── Nav link hover ── */
+.nav-link {
+  position: relative;
+  color: var(--clr-fg-muted);
+  transition: color 160ms ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--clr-yellow);
+  transition: width 240ms var(--ease-out-strong);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover {
+    color: var(--clr-fg);
+  }
+  .nav-link:hover::after {
+    width: 100%;
+  }
+}
+
+/* ── Progress bars ── */
+.progress-bar {
+  height: 3px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 600ms var(--ease-out-strong);
+}
