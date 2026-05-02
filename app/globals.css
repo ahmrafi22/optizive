@@ -16,6 +16,8 @@
   --font-instrument: var(--font-instrument-serif);
   --font-naston: "Naston", sans-serif;
   --font-serif: var(--font-instrument-serif);
+
+  --color-primary: #fff44f;
 }
 
 :root {
@@ -120,9 +122,9 @@ body {
     border-color: rgba(255, 244, 79, 0.25);
   }
 
-  .bento-card:hover .bento-icon {
+  /* .bento-card:hover .bento-icon {
     transform: scale(1.1) rotate(-4deg);
-  }
+  } */
 
   .bento-card:hover .bento-bg-icon {
     opacity: 0.06;
