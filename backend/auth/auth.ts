@@ -45,6 +45,7 @@ const authConfig = {
           email: user.email ?? undefined,
           role: user.role,
           username: user.username,
+          onboarded: user.onboarded,
         };
       },
     }),
@@ -72,7 +73,8 @@ const authConfig = {
                 name: user.name || "Google User",
                 email: user.email,
                 username: username,
-                role: "STORE_OWNER", // Default role
+                role: "NONE",
+                onboarded: false,
               },
             });
           }
@@ -87,6 +89,7 @@ const authConfig = {
       if (user) {
         token.role = (user as { role?: string }).role;
         token.username = (user as { username?: string }).username;
+        token.onboarded = (user as { onboarded?: boolean }).onboarded;
       } else if (token.email) {
         // Fetch user data for Google users
         const dbUser = await prisma.user.findFirst({
@@ -95,6 +98,7 @@ const authConfig = {
         if (dbUser) {
           token.role = dbUser.role;
           token.username = dbUser.username;
+          token.onboarded = dbUser.onboarded;
         }
       }
       return token;
@@ -104,6 +108,7 @@ const authConfig = {
         session.user.id = token.sub ?? "";
         session.user.role = token.role as string | undefined;
         session.user.username = token.username as string | undefined;
+        session.user.onboarded = token.onboarded as boolean | undefined;
       }
       return session;
     },

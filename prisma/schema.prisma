@@ -7,19 +7,210 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
+// =========================
+// ENUMS
+// =========================
+
+enum UserRole {
+  NONE
   STORE_OWNER
   SUPPLIER
   BOTH
 }
 
+enum BusinessType {
+  RETAILER
+  WHOLESALER
+  DISTRIBUTOR
+  MANUFACTURER
+  IMPORTER
+  EXPORTER
+  TRADER
+  PROCESSOR
+  AGRO_PROCESSOR
+  APPAREL_FACTORY
+  SERVICE_PROVIDER
+}
+
+enum BusinessSize {
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
+}
+
+enum Category {
+  GROCERIES
+  FMCG
+  FRESH_PRODUCE
+  AGRO_PRODUCTS
+  FISHERY_SEAFOOD
+  MEAT_POULTRY
+  DAIRY
+  ELECTRONICS
+  MOBILE_ACCESSORIES
+  CLOTHING
+  TEXTILES_APPAREL
+  FOOTWEAR
+  BEAUTY_PERSONAL_CARE
+  HOME_APPLIANCE
+  FURNITURE
+  HARDWARE
+  CONSTRUCTION_MATERIALS
+  AUTO_PARTS
+  PHARMACY
+  STATIONERY
+  OFFICE_SUPPLIES
+  PACKAGING
+  CHEMICALS
+  PLASTICS
+  RESTAURANT_SUPPLY
+  HOSPITALITY_SUPPLY
+  OTHER
+}
+
+enum PricingType {
+  BUDGET
+  VALUE
+  MID_RANGE
+  PREMIUM
+}
+
+enum NegotiationPreference {
+  FLEXIBLE
+  FIXED
+  NO_NEGOTIATION
+}
+
+enum DeliveryTime {
+  SAME_DAY
+  NEXT_DAY
+  TWO_THREE_DAYS
+  WITHIN_WEEK
+  FLEXIBLE
+}
+
+enum DistancePreference {
+  NEIGHBORHOOD
+  LOCAL
+  CITY
+  REGIONAL
+  NATIONWIDE
+  INTERNATIONAL
+}
+
+enum ServiceArea {
+  LOCAL
+  CITY
+  REGIONAL
+  NATIONWIDE
+  INTERNATIONAL
+}
+
+enum DeliveryMethod {
+  SELF
+  COURIER
+  BOTH
+  PICKUP
+  FREIGHT
+}
+
+enum BuyingPriority {
+  CHEAP
+  FAST
+  QUALITY
+  RELIABILITY
+  CONSISTENCY
+}
+
+enum SupplierTag {
+  FAST_DELIVERY
+  BULK_DISCOUNT
+  PREMIUM_QUALITY
+  LOW_PRICE
+  FACTORY_DIRECT
+  CASH_ON_DELIVERY
+  VAT_INVOICE
+  HALAL_CERTIFIED
+  BSTI_CERTIFIED
+  EXPORT_READY
+  COLD_CHAIN
+  SAMPLE_AVAILABLE
+}
+
+// =========================
+// USER MODEL
+// =========================
+
 model User {
-  id        String   @id
-  name      String
-  username  String   @unique
-  email     String?  @unique
-  password  String?
-  role      Role
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  onboarded Boolean  @default(false)
+
+  // -------- BASIC INFO --------
+  name         String
+  phone        String? @unique
+  email        String? @unique
+  username     String? @unique
+  password     String?
+  businessName String?
+
+  role         UserRole     @default(NONE)
+  businessType BusinessType?
+  businessSize BusinessSize?
+
+  // -------- LOCATION --------
+  district  String?
+  area      String?
+  latitude  Float?
+  longitude Float?
+
+  // -------- CATEGORY --------
+  primaryCategory Category?
+  subCategories   String[] @default([])
+
+  // =========================
+  // SELLER-SPECIFIC FIELDS
+  // =========================
+  monthlyPurchaseRange  String?
+  pricingPreference     PricingType?
+  negotiationPreference NegotiationPreference?
+  maxDeliveryTime       DeliveryTime?
+  preferredDistance     DistancePreference?
+  buyingPriority        BuyingPriority?
+  restockFrequency      String?
+
+  // =========================
+  // SUPPLIER-SPECIFIC FIELDS
+  // =========================
+  serviceArea           ServiceArea?
+  serviceRadiusKm       Int?
+  deliveryMethod        DeliveryMethod?
+  deliveryTimeRange     DeliveryTime?
+  pricingType           PricingType?
+  bulkDiscountAvailable Boolean?
+  orderCapacity         BusinessSize?
+  supplierTags          SupplierTag[] @default([])
+
+  // =========================
+  // TRUST / QUALITY SIGNALS
+  // =========================
+  isVerified        Boolean @default(false)
+  yearsInBusiness   Int?
+  avgRating         Float   @default(0)
+  totalTransactions Int     @default(0)
+
+  // =========================
+  // OPERATIONAL SIGNALS
+  // =========================
+  businessRegistrationId String?
+  paymentTerms           String?
+  minOrderValue          Float?
+  maxOrderValue          Float?
+  isActive               Boolean   @default(true)
+  lastActiveAt           DateTime?
+
+  @@index([role, district, primaryCategory])
+  @@index([businessType, businessSize])
 }

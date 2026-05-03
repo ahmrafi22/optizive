@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import prisma from "@/lib/prisma";
-import { Role } from "@/prisma/generated/prisma/client";
 
 type RegisterPayload = {
   name?: string;
@@ -51,7 +50,8 @@ export async function POST(request: Request) {
       username,
       email,
       password: hashedPassword,
-      role: Role.BOTH,
+      role: "NONE",
+      onboarded: false,
     },
   });
 
