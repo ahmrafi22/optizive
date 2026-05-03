@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/backend/auth/auth";
 import { redirect } from "next/navigation";
 
 export default async function UserRoutesLayout({

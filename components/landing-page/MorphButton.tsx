@@ -27,7 +27,6 @@ export function MorphButton({
       className={`btn-press relative overflow-hidden flex items-center justify-center h-12 px-7 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto ${isLoading ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
       style={{
         background: "var(--clr-yellow)",
-        boxShadow: (isHovered || isLoading) ? "none" : "0 0 28px rgba(255,244,79,0.4)",
         border: "1px solid var(--clr-yellow)",
         outline: "none",
       }}
