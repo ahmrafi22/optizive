@@ -5,6 +5,7 @@ import { CredentialsSignin } from "@auth/core/errors";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { UserRole } from "@/prisma/generated/prisma/enums";
 
 const authConfig = {
   providers: [
@@ -44,7 +45,7 @@ const authConfig = {
           name: user.name,
           email: user.email ?? undefined,
           role: user.role,
-          username: user.username,
+          username: user.username ?? undefined,
           onboarded: user.onboarded,
         };
       },
@@ -87,9 +88,9 @@ const authConfig = {
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role?: string }).role;
-        token.username = (user as { username?: string }).username;
-        token.onboarded = (user as { onboarded?: boolean }).onboarded;
+        token.role = user.role;
+        token.username = user.username;
+        token.onboarded = user.onboarded;
       } else if (token.email) {
         // Fetch user data for Google users
         const dbUser = await prisma.user.findFirst({
@@ -106,7 +107,7 @@ const authConfig = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub ?? "";
-        session.user.role = token.role as string | undefined;
+        session.user.role = token.role as UserRole | undefined;
         session.user.username = token.username as string | undefined;
         session.user.onboarded = token.onboarded as boolean | undefined;
       }

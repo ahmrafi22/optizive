@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ChangeEvent, type FormEvent } from "react";
+import { useMemo, useState, useTransition, type ChangeEvent, type FormEvent, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { saveOnboarding } from "@/backend/onboarding";
+import { MorphButton } from "@/components/landing-page/MorphButton";
 import {
   type BusinessSize,
   type BusinessType,
@@ -32,7 +33,7 @@ type FormState = {
   district: string;
   area: string;
   primaryCategory: SelectValue<Category>;
-  subCategories: Category[];
+  subCategories: string[];
   monthlyPurchaseRange: string;
   pricingPreference: SelectValue<PricingType>;
   negotiationPreference: SelectValue<NegotiationPreference>;
@@ -192,20 +193,149 @@ const SUPPLIER_TAGS = [
 
 const ORDER_CAPACITY = BUSINESS_SIZES;
 
-const INPUT_BASE =
-  "w-full rounded-xl border border-white/10 bg-[#1a1a1a] px-4 py-3 text-sm text-white transition-all focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50";
+const InlineInput = ({ value, onChange, placeholder, ...props }: any) => {
+  const pStr = placeholder || "_______";
+  const displayString = value.length > pStr.length ? value : pStr;
 
-const SELECT_BASE =
-  "w-full rounded-xl border border-white/10 bg-[#1a1a1a] px-4 py-3 text-sm text-white transition-all focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50";
-
-const LABEL_BASE =
-  "text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500";
-
-function OptionalBadge() {
   return (
-    <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">Optional</span>
+    <span className="relative inline-block group mx-1 align-baseline">
+      <span className="invisible whitespace-pre px-1 font-sans text-2xl md:text-3xl font-bold italic text-primary">
+        {displayString}
+      </span>
+      <input
+        className="absolute inset-0 w-full bg-transparent border-b-2 border-dashed border-white/20 text-primary placeholder:text-white/20 focus:border-primary focus:border-solid focus:outline-none font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
+        value={value}
+        onChange={onChange}
+        placeholder={pStr}
+        {...props}
+      />
+    </span>
   );
-}
+};
+
+const InlineSelect = ({ value, onChange, options, placeholder }: any) => {
+  const label = options.find((o: any) => o.value === value)?.label || options.find((o: any) => o.value === value)?.title || placeholder || "_______";
+  return (
+    <span className="relative inline-block cursor-pointer group mx-1 align-baseline">
+      <span className="invisible whitespace-pre px-4 font-sans text-2xl md:text-3xl font-bold italic text-primary">{label}</span>
+      <select
+        className="absolute inset-0 w-full appearance-none bg-transparent border-b-2 border-dashed border-white/20 text-primary focus:outline-none focus:border-primary focus:border-solid cursor-pointer font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
+        value={value}
+        onChange={onChange}
+      >
+        <option value="" disabled className="bg-[#111] font-sans text-base text-zinc-400 italic">{placeholder || "_______"}</option>
+        {options.map((o: any) => (
+          <option key={o.value} value={o.value} className="bg-[#111] font-sans text-base text-white">
+            {o.label || o.title}
+          </option>
+        ))}
+      </select>
+      <span className="absolute right-0 top-[60%] -translate-y-1/2 pointer-events-none text-white/30 text-[10px] group-hover:text-primary transition-colors">▼</span>
+    </span>
+  );
+};
+
+const InlineMultiSelect = ({ values, onChange, options, placeholder }: any) => {
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const matched = options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase());
+      if (matched) {
+        if (!values.includes(matched.value)) {
+          onChange([...values, matched.value]);
+          setInputValue("");
+        }
+      } else if (inputValue.trim()) {
+        if (!values.includes(inputValue.trim())) {
+          onChange([...values, inputValue.trim()]);
+          setInputValue("");
+        }
+      }
+    } else if (e.key === "Backspace" && inputValue === "" && values.length > 0) {
+      onChange(values.slice(0, -1));
+    }
+  };
+
+  const filteredOptions = options.filter((o: any) => 
+    o.label.toLowerCase().includes(inputValue.toLowerCase()) && !values.includes(o.value)
+  );
+
+  const pStr = values.length === 0 ? (placeholder || "_______") : "...";
+  const displayString = inputValue.length > pStr.length ? inputValue : pStr;
+
+  return (
+    <span className="inline-flex flex-wrap items-center gap-2 align-middle mx-1 relative">
+      {values.map((val: string) => {
+        const option = options.find((o: any) => o.value === val);
+        return (
+          <span key={val} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-3 py-1 font-sans text-sm font-bold italic border border-primary/20 hover:border-primary/50 transition-colors relative top-[1px]">
+            {option?.label || val}
+            <button
+              type="button"
+              onClick={() => onChange(values.filter((v: string) => v !== val))}
+              className="text-primary/70 hover:text-white ml-1 flex items-center justify-center focus:outline-none"
+            >
+              &times;
+            </button>
+          </span>
+        );
+      })}
+      <span className="relative inline-block group">
+        <span className="invisible whitespace-pre px-1 font-sans text-2xl md:text-3xl font-bold italic text-primary">
+          {displayString}
+        </span>
+        <input
+          ref={inputRef}
+          className="absolute inset-0 w-full bg-transparent border-b-2 border-dashed border-white/20 text-primary placeholder:text-white/20 focus:border-primary focus:border-solid focus:outline-none font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsOpen(true)}
+          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+          placeholder={pStr}
+        />
+        {isOpen && (filteredOptions.length > 0 || (inputValue.trim() && !options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase()))) && (
+          <div className="absolute top-[calc(100%+8px)] left-0 max-h-48 overflow-auto bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl z-50 p-1 flex flex-col min-w-[220px] text-left text-base font-medium">
+            {filteredOptions.map((o: any) => (
+              <button
+                key={o.value}
+                type="button"
+                className="text-left px-3 py-2 text-zinc-300 font-sans text-base italic hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                onMouseDown={(e) => {
+                  e.preventDefault(); // prevent blur
+                  onChange([...values, o.value]);
+                  setInputValue("");
+                  inputRef.current?.focus();
+                }}
+              >
+                {o.label}
+              </button>
+            ))}
+            {inputValue.trim() && !options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase()) && !values.includes(inputValue.trim()) && (
+              <button
+                type="button"
+                className="text-left px-3 py-2 text-primary font-sans text-base italic hover:bg-white/5 rounded-lg transition-colors border-t border-white/5 mt-1"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange([...values, inputValue.trim()]);
+                  setInputValue("");
+                  inputRef.current?.focus();
+                }}
+              >
+                Add "{inputValue.trim()}"...
+              </button>
+            )}
+          </div>
+        )}
+      </span>
+      <span className="pointer-events-none absolute right-[-14px] text-white/30 text-[10px] opacity-0 group-focus-within:opacity-100 transition-opacity">▼</span>
+    </span>
+  );
+};
 
 export default function OnboardingForm({ initialName }: { initialName: string }) {
   const router = useRouter();
@@ -255,22 +385,14 @@ export default function OnboardingForm({ initialName }: { initialName: string })
     return missing;
   }, [form]);
 
-  const handleMultiSelect = (
-    event: ChangeEvent<HTMLSelectElement>,
-    key: "subCategories" | "supplierTags"
-  ) => {
-    const values = Array.from(event.target.selectedOptions).map((option) => option.value);
-    setForm((prev) => ({ ...prev, [key]: values as FormState[typeof key] }));
-  };
-
   const handleSelect =
     <K extends keyof FormState>(key: K) =>
     (event: ChangeEvent<HTMLSelectElement>) => {
       setForm((prev) => ({ ...prev, [key]: event.target.value as FormState[K] }));
     };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
+    if (event) event.preventDefault();
     setError(null);
 
     if (requiredMissing.length > 0) {
@@ -326,502 +448,146 @@ export default function OnboardingForm({ initialName }: { initialName: string })
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col lg:flex-row">
-      <section className="relative flex min-h-[40vh] flex-col items-center justify-center bg-primary px-6 py-12 text-[#111111] lg:min-h-screen lg:w-[46%]">
-        <div className="absolute left-6 top-6 text-xs font-semibold uppercase tracking-[0.2em] text-[#111111]/70">
-          Onboarding
-        </div>
-        <div className="max-w-md text-center">
-          <h1 className="font-naston text-4xl md:text-5xl tracking-widest">OPTIZIVE</h1>
-          <p className="mt-4 font-instrument text-xl italic text-[#111111]/80">
-            Shape your supply chain profile with Bangladesh-ready context and global reach.
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-[#0d0d0d] px-6 py-16 lg:py-24 overflow-x-hidden">
+      <div className="w-full max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12"
+        >
+          <div className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-4">
+            Profile Setup
+          </div>
+          <h1 className="font-naston text-4xl md:text-5xl tracking-widest text-white mb-4">OPTIZIVE</h1>
+          <p className="font-instrument text-xl md:text-2xl italic text-zinc-400">
+            Tell us about your business context.
           </p>
-          <div className="mt-10 grid gap-3 text-left text-sm font-archivo text-[#111111]/80">
-            <div className="rounded-2xl bg-white/90 px-4 py-3">
-              Share the essentials, then refine later.
-            </div>
-            <div className="rounded-2xl bg-white/90 px-4 py-3">
-              Roles unlock the right fields instantly.
-            </div>
-            <div className="rounded-2xl bg-white/90 px-4 py-3">
-              Optional data is clearly labeled.
-            </div>
-          </div>
-        </div>
-      </section>
+        </motion.div>
 
-      <section className="flex flex-1 items-start justify-center bg-[#111111] px-6 py-12 lg:py-16">
-        <form onSubmit={handleSubmit} className="w-full max-w-2xl space-y-8">
-          <div>
-            <h2 className="font-naston text-3xl text-white">Let us set you up</h2>
-            <p className="mt-2 font-archivo text-sm text-zinc-400">
-              Fill the fields that matter for your role. You can update everything later.
-            </p>
-          </div>
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="font-archivo text-3xl md:text-4xl leading-[1.8] md:leading-[2] text-zinc-300 font-medium">
+            <motion.div layout className="mb-10">
+              Hello, my name is{" "}
+              <InlineInput value={form.name} onChange={(e: any) => setForm(p => ({ ...p, name: e.target.value }))} placeholder="your name" />
+              and I can be reached at{" "}
+              <InlineInput value={form.phone} onChange={(e: any) => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="phone number" />
+              I am joining as a{" "}
+              <InlineSelect value={form.role} onChange={handleSelect("role")} options={ROLE_OPTIONS} placeholder="role" />
+            </motion.div>
 
-          <div className="space-y-5 rounded-3xl border border-white/10 bg-[#141414] p-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Full name</label>
-                <input
-                  className={INPUT_BASE}
-                  value={form.name}
-                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Phone</label>
-                <input
-                  className={INPUT_BASE}
-                  value={form.phone}
-                  onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-                  placeholder="e.g. +8801XXXXXXXXX"
-                  required
-                />
-              </div>
-            </div>
+            <motion.div layout className="mb-10">
+              My business is called{" "}
+              <InlineInput value={form.businessName} onChange={(e: any) => setForm(p => ({ ...p, businessName: e.target.value }))} placeholder="business name" />
+              we operate as a{" "}
+              <InlineSelect value={form.businessType} onChange={handleSelect("businessType")} options={BUSINESS_TYPES} placeholder="business type" />{" "}
+              of{" "}
+              <InlineSelect value={form.businessSize} onChange={handleSelect("businessSize")} options={BUSINESS_SIZES} placeholder="size" />{" "}
+              scale and we are based in{" "}
+              <InlineInput value={form.area} onChange={(e: any) => setForm(p => ({ ...p, area: e.target.value }))} placeholder="area" />
+              ,{" "}
+              <InlineInput value={form.district} onChange={(e: any) => setForm(p => ({ ...p, district: e.target.value }))} placeholder="district" />
+            </motion.div>
 
-            <div className="space-y-2">
-              <label className={LABEL_BASE}>You are</label>
-              <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-[#1a1a1a] p-2 md:flex-row">
-                {ROLE_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setForm((prev) => ({ ...prev, role: option.value }))}
-                    className={`relative flex-1 rounded-xl px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                      form.role === option.value ? "text-[#111111]" : "text-zinc-300"
-                    }`}
-                    style={{ WebkitTapHighlightColor: "transparent" }}
-                  >
-                    {form.role === option.value && (
-                      <motion.div
-                        layoutId="roleHighlight"
-                        className="absolute inset-0 rounded-xl bg-primary"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <div className="relative z-10">
-                      <div className="font-archivo text-sm font-semibold">{option.title}</div>
-                      <div
-                        className={`text-xs ${
-                          form.role === option.value
-                            ? "text-[#111111]/70"
-                            : "text-zinc-400"
-                        }`}
-                      >
-                        {option.blurb}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+            <motion.div layout className="mb-10">
+              Our primary category is{" "}
+              <InlineSelect value={form.primaryCategory} onChange={handleSelect("primaryCategory")} options={CATEGORIES} placeholder="category" />
+              and we also deal with{" "}
+              <InlineMultiSelect
+                values={form.subCategories}
+                onChange={(vals: string[]) => setForm(p => ({ ...p, subCategories: vals }))}
+                options={CATEGORIES}
+                placeholder="other categories (optional)"
+              />
+            </motion.div>
 
-          <div className="space-y-5 rounded-3xl border border-white/10 bg-[#141414] p-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Business name</label>
-                <input
-                  className={INPUT_BASE}
-                  value={form.businessName}
-                  onChange={(event) => setForm((prev) => ({ ...prev, businessName: event.target.value }))}
-                  placeholder="Your business name"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Business type</label>
-                <select
-                  className={SELECT_BASE}
-                  value={form.businessType}
-                  onChange={handleSelect("businessType")}
-                  required
+            <AnimatePresence mode="popLayout">
+              {showBuyerFields && (
+                <motion.div
+                  key="buyer-fields"
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-10 pt-10 border-t border-white/5"
                 >
-                  <option value="">Select type</option>
-                  {BUSINESS_TYPES.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Business size</label>
-                <select
-                  className={SELECT_BASE}
-                  value={form.businessSize}
-                  onChange={handleSelect("businessSize")}
-                  required
+                  As a buyer, I usually purchase{" "}
+                  <InlineSelect value={form.monthlyPurchaseRange} onChange={handleSelect("monthlyPurchaseRange")} options={MONTHLY_PURCHASE_RANGES} placeholder="an amount (optional)" />{" "}
+                  per month, I prefer{" "}
+                  <InlineSelect value={form.pricingPreference} onChange={handleSelect("pricingPreference")} options={PRICING_TYPES} placeholder="pricing (optional)" />{" "}
+                  pricing and{" "}
+                  <InlineSelect value={form.negotiationPreference} onChange={handleSelect("negotiationPreference")} options={NEGOTIATION_PREFERENCES} placeholder="negotiation (optional)" />{" "}
+                  negotiation where my biggest priority is{" "}
+                  <InlineSelect value={form.buyingPriority} onChange={handleSelect("buyingPriority")} options={BUYING_PRIORITIES} placeholder="priority (optional)" />{" "}
+                  and I restock{" "}
+                  <InlineSelect value={form.restockFrequency} onChange={handleSelect("restockFrequency")} options={RESTOCK_FREQUENCIES} placeholder="frequency (optional)" />
+                  using suppliers within a{" "}
+                  <InlineSelect value={form.preferredDistance} onChange={handleSelect("preferredDistance")} options={DISTANCE_PREFERENCES} placeholder="distance (optional)" />{" "}
+                  distance and delivery within{" "}
+                  <InlineSelect value={form.maxDeliveryTime} onChange={handleSelect("maxDeliveryTime")} options={DELIVERY_TIMES} placeholder="timeframe (optional)" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="popLayout">
+              {showSupplierFields && (
+                <motion.div
+                  key="supplier-fields"
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-10 pt-10 border-t border-white/5"
                 >
-                  <option value="">Select size</option>
-                  {BUSINESS_SIZES.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Primary category</label>
-                <select
-                  className={SELECT_BASE}
-                  value={form.primaryCategory}
-                  onChange={handleSelect("primaryCategory")}
-                  required
-                >
-                  <option value="">Select category</option>
-                  {CATEGORIES.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>District</label>
-                <input
-                  className={INPUT_BASE}
-                  value={form.district}
-                  onChange={(event) => setForm((prev) => ({ ...prev, district: event.target.value }))}
-                  placeholder="District"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={LABEL_BASE}>Area</label>
-                <input
-                  className={INPUT_BASE}
-                  value={form.area}
-                  onChange={(event) => setForm((prev) => ({ ...prev, area: event.target.value }))}
-                  placeholder="Area or zone"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className={LABEL_BASE}>Sub-categories</label>
-                <OptionalBadge />
-              </div>
-              <select
-                className={`${SELECT_BASE} h-32`}
-                multiple
-                value={form.subCategories}
-                onChange={(event) => handleMultiSelect(event, "subCategories")}
-              >
-                {CATEGORIES.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {showBuyerFields && (
-            <div className="space-y-5 rounded-3xl border border-white/10 bg-[#141414] p-6">
-              <div>
-                <h3 className="font-archivo text-base font-semibold text-white">Buyer preferences</h3>
-                <p className="mt-1 text-xs text-zinc-500">Optional fields for store owners.</p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Monthly purchase range</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.monthlyPurchaseRange}
-                    onChange={handleSelect("monthlyPurchaseRange")}
-                  >
-                    <option value="">Select range</option>
-                    {MONTHLY_PURCHASE_RANGES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Pricing preference</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.pricingPreference}
-                    onChange={handleSelect("pricingPreference")}
-                  >
-                    <option value="">Select pricing</option>
-                    {PRICING_TYPES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Negotiation preference</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.negotiationPreference}
-                    onChange={handleSelect("negotiationPreference")}
-                  >
-                    <option value="">Select preference</option>
-                    {NEGOTIATION_PREFERENCES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Max delivery time</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.maxDeliveryTime}
-                    onChange={handleSelect("maxDeliveryTime")}
-                  >
-                    <option value="">Select time</option>
-                    {DELIVERY_TIMES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Preferred distance</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.preferredDistance}
-                    onChange={handleSelect("preferredDistance")}
-                  >
-                    <option value="">Select distance</option>
-                    {DISTANCE_PREFERENCES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Buying priority</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.buyingPriority}
-                    onChange={handleSelect("buyingPriority")}
-                  >
-                    <option value="">Select priority</option>
-                    {BUYING_PRIORITIES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Restock frequency</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.restockFrequency}
-                    onChange={handleSelect("restockFrequency")}
-                  >
-                    <option value="">Select frequency</option>
-                    {RESTOCK_FREQUENCIES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {showSupplierFields && (
-            <div className="space-y-5 rounded-3xl border border-white/10 bg-[#141414] p-6">
-              <div>
-                <h3 className="font-archivo text-base font-semibold text-white">Supplier details</h3>
-                <p className="mt-1 text-xs text-zinc-500">Optional fields for suppliers.</p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Service area</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.serviceArea}
-                    onChange={handleSelect("serviceArea")}
-                  >
-                    <option value="">Select area</option>
-                    {SERVICE_AREAS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Service radius (km)</label>
-                    <OptionalBadge />
-                  </div>
-                  <input
-                    className={INPUT_BASE}
-                    value={form.serviceRadiusKm}
-                    onChange={(event) => setForm((prev) => ({ ...prev, serviceRadiusKm: event.target.value }))}
-                    placeholder="e.g. 30"
-                    inputMode="numeric"
+                  As a supplier, I serve the{" "}
+                  <InlineSelect value={form.serviceArea} onChange={handleSelect("serviceArea")} options={SERVICE_AREAS} placeholder="service area (optional)" />{" "}
+                  area within a{" "}
+                  <InlineInput value={form.serviceRadiusKm} onChange={(e: any) => setForm(p => ({ ...p, serviceRadiusKm: e.target.value }))} placeholder="radius (optional)" />{" "}
+                  km radius where I can offer{" "}
+                  <InlineSelect value={form.deliveryMethod} onChange={handleSelect("deliveryMethod")} options={DELIVERY_METHODS} placeholder="delivery method (optional)" />{" "}
+                  within{" "}
+                  <InlineSelect value={form.deliveryTimeRange} onChange={handleSelect("deliveryTimeRange")} options={DELIVERY_TIMES} placeholder="timeframe (optional)" />
+                  while providing{" "}
+                  <InlineSelect value={form.pricingType} onChange={handleSelect("pricingType")} options={PRICING_TYPES} placeholder="pricing type (optional)" />{" "}
+                  pricing and bulk discounts are{" "}
+                  <InlineSelect value={form.bulkDiscountAvailable} onChange={handleSelect("bulkDiscountAvailable")} options={[{label: "available", value: "true"}, {label: "not available", value: "false"}]} placeholder="availability (optional)" />
+                  where my operation can handle orders of{" "}
+                  <InlineSelect value={form.orderCapacity} onChange={handleSelect("orderCapacity")} options={ORDER_CAPACITY} placeholder="capacity (optional)" />{" "}
+                  size and I specialize in{" "}
+                  <InlineMultiSelect
+                    values={form.supplierTags}
+                    onChange={(vals: string[]) => setForm(p => ({ ...p, supplierTags: vals as any }))}
+                    options={SUPPLIER_TAGS}
+                    placeholder="specialties (optional)"
                   />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Delivery method</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.deliveryMethod}
-                    onChange={handleSelect("deliveryMethod")}
-                  >
-                    <option value="">Select method</option>
-                    {DELIVERY_METHODS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Delivery time range</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.deliveryTimeRange}
-                    onChange={handleSelect("deliveryTimeRange")}
-                  >
-                    <option value="">Select time</option>
-                    {DELIVERY_TIMES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Pricing type</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.pricingType}
-                    onChange={handleSelect("pricingType")}
-                  >
-                    <option value="">Select pricing</option>
-                    {PRICING_TYPES.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Bulk discount</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.bulkDiscountAvailable}
-                    onChange={handleSelect("bulkDiscountAvailable")}
-                  >
-                    <option value="">Select</option>
-                    <option value="true">Available</option>
-                    <option value="false">Not available</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className={LABEL_BASE}>Order capacity</label>
-                    <OptionalBadge />
-                  </div>
-                  <select
-                    className={SELECT_BASE}
-                    value={form.orderCapacity}
-                    onChange={handleSelect("orderCapacity")}
-                  >
-                    <option value="">Select capacity</option>
-                    {ORDER_CAPACITY.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className={LABEL_BASE}>Supplier tags</label>
-                  <OptionalBadge />
-                </div>
-                <select
-                  className={`${SELECT_BASE} h-32`}
-                  multiple
-                  value={form.supplierTags}
-                  onChange={(event) => handleMultiSelect(event, "supplierTags")}
-                >
-                  {SUPPLIER_TAGS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <motion.div layout className="pt-6 flex flex-col items-center gap-4">
+            {error && (
+              <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-sm font-medium text-red-400 bg-red-400/10 px-4 py-2 rounded-lg">
+                {error}
+              </motion.p>
+            )}
+            
+            <div className="mt-4">
+              <MorphButton
+                isLoading={isPending}
+                onClick={() => handleSubmit()}
+              >
+                Complete Profile
+                <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </MorphButton>
             </div>
-          )}
-
-          {error && <p className="text-sm font-medium text-red-400">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="btn-press w-full rounded-xl bg-primary py-4 text-sm font-bold text-[#111111] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isPending ? "Saving..." : "Save and continue"}
-          </button>
+          </motion.div>
         </form>
-      </section>
+      </div>
     </div>
   );
 }
