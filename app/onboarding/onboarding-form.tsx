@@ -214,7 +214,7 @@ export default function OnboardingForm({ initialName }: { initialName: string })
                 <button
                   type="button"
                   onClick={() => setCurrentTab(tab.id)}
-                  className={`group flex items-center gap-2 md:gap-3 px-4 md:px-4 py-1.5 rounded-xl transition-all duration-300 ${
+                  className={`group flex items-center gap-2 md:gap-3 px-4 md:px-4 py-1.5 rounded-full transition-all duration-300 ${
                     currentTab === tab.id
                       ? "bg-primary/10 border-2 border-primary"
                       : "bg-white/5 border-2 border-white/10 hover:border-white/20"
