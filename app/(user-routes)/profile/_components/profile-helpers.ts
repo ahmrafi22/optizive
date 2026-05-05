@@ -1,0 +1,37 @@
+import {
+  ROLE_OPTIONS,
+  BUSINESS_TYPES,
+  BUSINESS_SIZES,
+  CATEGORIES,
+  PRICING_TYPES,
+  DELIVERY_TIMES,
+  DISTANCE_PREFERENCES,
+  SERVICE_AREAS,
+  DELIVERY_METHODS,
+  BUYING_PRIORITIES,
+  NEGOTIATION_PREFERENCES,
+  MONTHLY_PURCHASE_RANGES,
+  RESTOCK_FREQUENCIES,
+  SUPPLIER_TAGS,
+  ORDER_CAPACITY,
+} from "@/app/onboarding/_components/constants";
+
+function toMap(arr: { value: string; label?: string; title?: string }[]) {
+  return new Map(arr.map((item) => [item.value, item.label ?? item.title ?? item.value]));
+}
+
+export const ROLE_LABELS = toMap(ROLE_OPTIONS);
+export const BUSINESS_TYPE_LABELS = toMap(BUSINESS_TYPES);
+export const BUSINESS_SIZE_LABELS = toMap(BUSINESS_SIZES);
+export const CATEGORY_LABELS = toMap(CATEGORIES);
+export const PRICING_TYPE_LABELS = toMap(PRICING_TYPES);
+export const DELIVERY_TIME_LABELS = toMap(DELIVERY_TIMES);
+export const DISTANCE_PREFERENCE_LABELS = toMap(DISTANCE_PREFERENCES);
+export const SERVICE_AREA_LABELS = toMap(SERVICE_AREAS);
+export const DELIVERY_METHOD_LABELS = toMap(DELIVERY_METHODS);
+export const BUYING_PRIORITY_LABELS = toMap(BUYING_PRIORITIES);
+export const NEGOTIATION_PREFERENCE_LABELS = toMap(NEGOTIATION_PREFERENCES);
+export const MONTHLY_PURCHASE_RANGE_LABELS = toMap(MONTHLY_PURCHASE_RANGES);
+export const RESTOCK_FREQUENCY_LABELS = toMap(RESTOCK_FREQUENCIES);
+export const SUPPLIER_TAG_LABELS = toMap(SUPPLIER_TAGS);
+export const ORDER_CAPACITY_LABELS = toMap(ORDER_CAPACITY);

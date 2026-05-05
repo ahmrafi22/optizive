@@ -6,19 +6,32 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-6 py-16">
-      <h1 className="text-3xl font-semibold text-zinc-900">Dashboard</h1>
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <p className="text-sm text-zinc-500">Signed in as</p>
-        <p className="mt-1 text-lg font-medium text-zinc-900">
-          {session?.user?.name ?? "User"}
-        </p>
-        <p className="text-sm text-zinc-600">{session?.user?.email ?? ""}</p>
-        <div className="mt-4 flex items-center gap-3 text-sm text-zinc-600">
-          <span>Role: {session?.user?.role ?? ""}</span>
-          <span>Username: {session?.user?.username ?? ""}</span>
+
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-200">
+          <svg
+            className="h-6 w-6 animate-spin text-zinc-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
+          </svg>
         </div>
-      </div>
-      <SignOutButton />
+        <h2 className="text-lg font-semibold text-zinc-900">Build in Progress</h2>
+      </div>  
     </main>
   );
 }
