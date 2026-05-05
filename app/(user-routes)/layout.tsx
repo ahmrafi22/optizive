@@ -1,5 +1,6 @@
 import { auth } from "@/backend/auth/auth";
 import { redirect } from "next/navigation";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default async function UserRoutesLayout({
   children,
@@ -16,5 +17,5 @@ export default async function UserRoutesLayout({
     redirect("/onboarding");
   }
 
-  return <div className="min-h-screen bg-zinc-50">{children}</div>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

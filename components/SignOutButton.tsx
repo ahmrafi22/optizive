@@ -2,14 +2,19 @@
 
 import { signOut } from "next-auth/react";
 
-export default function SignOutButton() {
+interface SignOutButtonProps {
+  className?: string;
+  label?: string;
+}
+
+export default function SignOutButton({ className = "", label = "Sign out" }: SignOutButtonProps) {
   return (
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/login" })}
-      className="w-fit rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100"
+      className={`inline-flex w-fit items-center justify-center rounded-full border border-[color:var(--clr-border)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--clr-fg)] transition hover:border-[color:var(--clr-border-hover)] ${className}`}
     >
-      Sign out
+      {label}
     </button>
   );
 }
