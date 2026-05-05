@@ -86,7 +86,7 @@ function AuthForms() {
     setIsSigningUp(false);
 
     if (result?.ok) {
-      router.push("/dashboard");
+      router.push("/onboarding");
       return;
     }
 
@@ -96,7 +96,7 @@ function AuthForms() {
   const handleGoogleSignIn = async () => {
     setLoginError(null);
     setSignupError(null);
-    await signIn("google", { callbackUrl: "/dashboard" });
+    await signIn("google", { callbackUrl: "/onboarding" });
   };
 
   return (

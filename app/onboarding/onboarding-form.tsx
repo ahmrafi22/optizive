@@ -1,346 +1,42 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ChangeEvent, type FormEvent, useRef } from "react";
+import { useMemo, useState, useTransition, type ChangeEvent, type FormEvent, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { saveOnboarding } from "@/backend/onboarding";
+import { saveOnboarding } from "@/backend/onboarding/onboarding";
 import { MorphButton } from "@/components/landing-page/MorphButton";
+import type { SupplierTag } from "@/prisma/generated/prisma/client";
+
 import {
-  type BusinessSize,
-  type BusinessType,
-  type BuyingPriority,
-  type Category,
-  type DeliveryMethod,
-  type DeliveryTime,
-  type DistancePreference,
-  type NegotiationPreference,
-  type PricingType,
-  type ServiceArea,
-  type SupplierTag,
-} from "@/prisma/generated/prisma/client";
-
-type UserRole = "STORE_OWNER" | "SUPPLIER" | "BOTH";
-
-type SelectValue<T> = T | "";
-
-type FormState = {
-  name: string;
-  role: UserRole;
-  phone: string;
-  businessName: string;
-  businessType: SelectValue<BusinessType>;
-  businessSize: SelectValue<BusinessSize>;
-  district: string;
-  area: string;
-  primaryCategory: SelectValue<Category>;
-  subCategories: string[];
-  monthlyPurchaseRange: string;
-  pricingPreference: SelectValue<PricingType>;
-  negotiationPreference: SelectValue<NegotiationPreference>;
-  maxDeliveryTime: SelectValue<DeliveryTime>;
-  preferredDistance: SelectValue<DistancePreference>;
-  buyingPriority: SelectValue<BuyingPriority>;
-  restockFrequency: string;
-  serviceArea: SelectValue<ServiceArea>;
-  serviceRadiusKm: string;
-  deliveryMethod: SelectValue<DeliveryMethod>;
-  deliveryTimeRange: SelectValue<DeliveryTime>;
-  pricingType: SelectValue<PricingType>;
-  bulkDiscountAvailable: string;
-  orderCapacity: SelectValue<BusinessSize>;
-  supplierTags: SupplierTag[];
-};
-
-const ROLE_OPTIONS: Array<{ value: UserRole; title: string; blurb: string }> = [
-  { value: "STORE_OWNER", title: "Store Owner", blurb: "Buying for a shop or outlet" },
-  { value: "SUPPLIER", title: "Supplier", blurb: "Selling inventory to others" },
-  { value: "BOTH", title: "Both", blurb: "Buying and supplying" },
-];
-
-const BUSINESS_TYPES = [
-  { value: "RETAILER", label: "Retailer" },
-  { value: "WHOLESALER", label: "Wholesaler" },
-  { value: "DISTRIBUTOR", label: "Distributor" },
-  { value: "MANUFACTURER", label: "Manufacturer" },
-  { value: "IMPORTER", label: "Importer" },
-  { value: "EXPORTER", label: "Exporter" },
-  { value: "TRADER", label: "Trader" },
-  { value: "PROCESSOR", label: "Processor" },
-  { value: "AGRO_PROCESSOR", label: "Agro processor" },
-  { value: "APPAREL_FACTORY", label: "Apparel factory" },
-  { value: "SERVICE_PROVIDER", label: "Service provider" },
-];
-
-const BUSINESS_SIZES = [
-  { value: "SMALL", label: "Small" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "LARGE", label: "Large" },
-  { value: "ENTERPRISE", label: "Enterprise" },
-];
-
-const CATEGORIES = [
-  { value: "GROCERIES", label: "Groceries" },
-  { value: "FMCG", label: "FMCG" },
-  { value: "FRESH_PRODUCE", label: "Fresh produce" },
-  { value: "AGRO_PRODUCTS", label: "Agro products" },
-  { value: "FISHERY_SEAFOOD", label: "Fishery and seafood" },
-  { value: "MEAT_POULTRY", label: "Meat and poultry" },
-  { value: "DAIRY", label: "Dairy" },
-  { value: "ELECTRONICS", label: "Electronics" },
-  { value: "MOBILE_ACCESSORIES", label: "Mobile accessories" },
-  { value: "CLOTHING", label: "Clothing" },
-  { value: "TEXTILES_APPAREL", label: "Textiles and apparel" },
-  { value: "FOOTWEAR", label: "Footwear" },
-  { value: "BEAUTY_PERSONAL_CARE", label: "Beauty and personal care" },
-  { value: "HOME_APPLIANCE", label: "Home appliances" },
-  { value: "FURNITURE", label: "Furniture" },
-  { value: "HARDWARE", label: "Hardware" },
-  { value: "CONSTRUCTION_MATERIALS", label: "Construction materials" },
-  { value: "AUTO_PARTS", label: "Auto parts" },
-  { value: "PHARMACY", label: "Pharmacy" },
-  { value: "STATIONERY", label: "Stationery" },
-  { value: "OFFICE_SUPPLIES", label: "Office supplies" },
-  { value: "PACKAGING", label: "Packaging" },
-  { value: "CHEMICALS", label: "Chemicals" },
-  { value: "PLASTICS", label: "Plastics" },
-  { value: "RESTAURANT_SUPPLY", label: "Restaurant supply" },
-  { value: "HOSPITALITY_SUPPLY", label: "Hospitality supply" },
-  { value: "OTHER", label: "Other" },
-];
-
-const PRICING_TYPES = [
-  { value: "BUDGET", label: "Budget" },
-  { value: "VALUE", label: "Value" },
-  { value: "MID_RANGE", label: "Mid range" },
-  { value: "PREMIUM", label: "Premium" },
-];
-
-const DELIVERY_TIMES = [
-  { value: "SAME_DAY", label: "Same day" },
-  { value: "NEXT_DAY", label: "Next day" },
-  { value: "TWO_THREE_DAYS", label: "2-3 days" },
-  { value: "WITHIN_WEEK", label: "Within week" },
-  { value: "FLEXIBLE", label: "Flexible" },
-];
-
-const DISTANCE_PREFERENCES = [
-  { value: "NEIGHBORHOOD", label: "Neighborhood" },
-  { value: "LOCAL", label: "Local" },
-  { value: "CITY", label: "City" },
-  { value: "REGIONAL", label: "Regional" },
-  { value: "NATIONWIDE", label: "Nationwide" },
-  { value: "INTERNATIONAL", label: "International" },
-];
-
-const SERVICE_AREAS = [
-  { value: "LOCAL", label: "Local" },
-  { value: "CITY", label: "City" },
-  { value: "REGIONAL", label: "Regional" },
-  { value: "NATIONWIDE", label: "Nationwide" },
-  { value: "INTERNATIONAL", label: "International" },
-];
-
-const DELIVERY_METHODS = [
-  { value: "SELF", label: "Self delivery" },
-  { value: "COURIER", label: "Courier" },
-  { value: "BOTH", label: "Both" },
-  { value: "PICKUP", label: "Pickup" },
-  { value: "FREIGHT", label: "Freight" },
-];
-
-const BUYING_PRIORITIES = [
-  { value: "CHEAP", label: "Low cost" },
-  { value: "FAST", label: "Fast" },
-  { value: "QUALITY", label: "Quality" },
-  { value: "RELIABILITY", label: "Reliability" },
-  { value: "CONSISTENCY", label: "Consistency" },
-];
-
-const NEGOTIATION_PREFERENCES = [
-  { value: "FLEXIBLE", label: "Flexible" },
-  { value: "FIXED", label: "Fixed" },
-  { value: "NO_NEGOTIATION", label: "No negotiation" },
-];
-
-const MONTHLY_PURCHASE_RANGES = [
-  { value: "UNDER_500", label: "Under 500" },
-  { value: "500_2000", label: "500 - 2,000" },
-  { value: "2000_10000", label: "2,000 - 10,000" },
-  { value: "10000_PLUS", label: "10,000+" },
-];
-
-const RESTOCK_FREQUENCIES = [
-  { value: "WEEKLY", label: "Weekly" },
-  { value: "BIWEEKLY", label: "Bi-weekly" },
-  { value: "MONTHLY", label: "Monthly" },
-  { value: "SEASONAL", label: "Seasonal" },
-];
-
-const SUPPLIER_TAGS = [
-  { value: "FAST_DELIVERY", label: "Fast delivery" },
-  { value: "BULK_DISCOUNT", label: "Bulk discount" },
-  { value: "PREMIUM_QUALITY", label: "Premium quality" },
-  { value: "LOW_PRICE", label: "Low price" },
-  { value: "FACTORY_DIRECT", label: "Factory direct" },
-  { value: "CASH_ON_DELIVERY", label: "Cash on delivery" },
-  { value: "VAT_INVOICE", label: "VAT invoice" },
-  { value: "HALAL_CERTIFIED", label: "Halal certified" },
-  { value: "BSTI_CERTIFIED", label: "BSTI certified" },
-  { value: "EXPORT_READY", label: "Export ready" },
-  { value: "COLD_CHAIN", label: "Cold chain" },
-  { value: "SAMPLE_AVAILABLE", label: "Sample available" },
-];
-
-const ORDER_CAPACITY = BUSINESS_SIZES;
-
-const InlineInput = ({ value, onChange, placeholder, ...props }: any) => {
-  const pStr = placeholder || "_______";
-  const displayString = value.length > pStr.length ? value : pStr;
-
-  return (
-    <span className="relative inline-block group mx-1 align-baseline">
-      <span className="invisible whitespace-pre px-1 font-sans text-2xl md:text-3xl font-bold italic text-primary">
-        {displayString}
-      </span>
-      <input
-        className="absolute inset-0 w-full bg-transparent border-b-2 border-dashed border-white/20 text-primary placeholder:text-white/20 focus:border-primary focus:border-solid focus:outline-none font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
-        value={value}
-        onChange={onChange}
-        placeholder={pStr}
-        {...props}
-      />
-    </span>
-  );
-};
-
-const InlineSelect = ({ value, onChange, options, placeholder }: any) => {
-  const label = options.find((o: any) => o.value === value)?.label || options.find((o: any) => o.value === value)?.title || placeholder || "_______";
-  return (
-    <span className="relative inline-block cursor-pointer group mx-1 align-baseline">
-      <span className="invisible whitespace-pre px-4 font-sans text-2xl md:text-3xl font-bold italic text-primary">{label}</span>
-      <select
-        className="absolute inset-0 w-full appearance-none bg-transparent border-b-2 border-dashed border-white/20 text-primary focus:outline-none focus:border-primary focus:border-solid cursor-pointer font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
-        value={value}
-        onChange={onChange}
-      >
-        <option value="" disabled className="bg-[#111] font-sans text-base text-zinc-400 italic">{placeholder || "_______"}</option>
-        {options.map((o: any) => (
-          <option key={o.value} value={o.value} className="bg-[#111] font-sans text-base text-white">
-            {o.label || o.title}
-          </option>
-        ))}
-      </select>
-      <span className="absolute right-0 top-[60%] -translate-y-1/2 pointer-events-none text-white/30 text-[10px] group-hover:text-primary transition-colors">▼</span>
-    </span>
-  );
-};
-
-const InlineMultiSelect = ({ values, onChange, options, placeholder }: any) => {
-  const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const matched = options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase());
-      if (matched) {
-        if (!values.includes(matched.value)) {
-          onChange([...values, matched.value]);
-          setInputValue("");
-        }
-      } else if (inputValue.trim()) {
-        if (!values.includes(inputValue.trim())) {
-          onChange([...values, inputValue.trim()]);
-          setInputValue("");
-        }
-      }
-    } else if (e.key === "Backspace" && inputValue === "" && values.length > 0) {
-      onChange(values.slice(0, -1));
-    }
-  };
-
-  const filteredOptions = options.filter((o: any) => 
-    o.label.toLowerCase().includes(inputValue.toLowerCase()) && !values.includes(o.value)
-  );
-
-  const pStr = values.length === 0 ? (placeholder || "_______") : "...";
-  const displayString = inputValue.length > pStr.length ? inputValue : pStr;
-
-  return (
-    <span className="inline-flex flex-wrap items-center gap-2 align-middle mx-1 relative">
-      {values.map((val: string) => {
-        const option = options.find((o: any) => o.value === val);
-        return (
-          <span key={val} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-3 py-1 font-sans text-sm font-bold italic border border-primary/20 hover:border-primary/50 transition-colors relative top-[1px]">
-            {option?.label || val}
-            <button
-              type="button"
-              onClick={() => onChange(values.filter((v: string) => v !== val))}
-              className="text-primary/70 hover:text-white ml-1 flex items-center justify-center focus:outline-none"
-            >
-              &times;
-            </button>
-          </span>
-        );
-      })}
-      <span className="relative inline-block group">
-        <span className="invisible whitespace-pre px-1 font-sans text-2xl md:text-3xl font-bold italic text-primary">
-          {displayString}
-        </span>
-        <input
-          ref={inputRef}
-          className="absolute inset-0 w-full bg-transparent border-b-2 border-dashed border-white/20 text-primary placeholder:text-white/20 focus:border-primary focus:border-solid focus:outline-none font-sans text-2xl md:text-3xl text-center font-bold italic transition-all"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setIsOpen(true)}
-          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-          placeholder={pStr}
-        />
-        {isOpen && (filteredOptions.length > 0 || (inputValue.trim() && !options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase()))) && (
-          <div className="absolute top-[calc(100%+8px)] left-0 max-h-48 overflow-auto bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl z-50 p-1 flex flex-col min-w-[220px] text-left text-base font-medium">
-            {filteredOptions.map((o: any) => (
-              <button
-                key={o.value}
-                type="button"
-                className="text-left px-3 py-2 text-zinc-300 font-sans text-base italic hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                onMouseDown={(e) => {
-                  e.preventDefault(); // prevent blur
-                  onChange([...values, o.value]);
-                  setInputValue("");
-                  inputRef.current?.focus();
-                }}
-              >
-                {o.label}
-              </button>
-            ))}
-            {inputValue.trim() && !options.find((o: any) => o.label.toLowerCase() === inputValue.toLowerCase()) && !values.includes(inputValue.trim()) && (
-              <button
-                type="button"
-                className="text-left px-3 py-2 text-primary font-sans text-base italic hover:bg-white/5 rounded-lg transition-colors border-t border-white/5 mt-1"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  onChange([...values, inputValue.trim()]);
-                  setInputValue("");
-                  inputRef.current?.focus();
-                }}
-              >
-                Add "{inputValue.trim()}"...
-              </button>
-            )}
-          </div>
-        )}
-      </span>
-      <span className="pointer-events-none absolute right-[-14px] text-white/30 text-[10px] opacity-0 group-focus-within:opacity-100 transition-opacity">▼</span>
-    </span>
-  );
-};
+  ROLE_OPTIONS,
+  BUSINESS_TYPES,
+  BUSINESS_SIZES,
+  CATEGORIES,
+  PRICING_TYPES,
+  DELIVERY_TIMES,
+  DISTANCE_PREFERENCES,
+  SERVICE_AREAS,
+  DELIVERY_METHODS,
+  BUYING_PRIORITIES,
+  NEGOTIATION_PREFERENCES,
+  MONTHLY_PURCHASE_RANGES,
+  RESTOCK_FREQUENCIES,
+  SUPPLIER_TAGS,
+  ORDER_CAPACITY,
+  BULK_DISCOUNT_OPTIONS,
+} from "./_components/constants";
+import type { FormState, TabId } from "./_components/types";
+import { InlineInput } from "./_components/InlineInput";
+import { InlineSelect } from "./_components/InlineSelect";
+import { InlineMultiSelect } from "./_components/InlineMultiSelect";
+import { WelcomeModal } from "./_components/WelcomeModal";
 
 export default function OnboardingForm({ initialName }: { initialName: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [currentTab, setCurrentTab] = useState<TabId>("personal");
   const [form, setForm] = useState<FormState>({
     name: initialName,
     role: "STORE_OWNER",
@@ -372,6 +68,12 @@ export default function OnboardingForm({ initialName }: { initialName: string })
   const showBuyerFields = form.role === "STORE_OWNER" || form.role === "BOTH";
   const showSupplierFields = form.role === "SUPPLIER" || form.role === "BOTH";
 
+  const tabs = [
+    { id: "personal" as TabId, label: "Personal Info", number: 1 },
+    { id: "business" as TabId, label: "Business Details", number: 2 },
+    { id: "preferences" as TabId, label: "Preferences", number: 3 },
+  ];
+
   const requiredMissing = useMemo(() => {
     const missing: string[] = [];
     if (!form.name.trim()) missing.push("name");
@@ -384,6 +86,36 @@ export default function OnboardingForm({ initialName }: { initialName: string })
     if (!form.primaryCategory) missing.push("primary category");
     return missing;
   }, [form]);
+
+  const canProceedToNext = () => {
+    if (currentTab === "personal") {
+      return form.name.trim() && form.phone.trim();
+    }
+    if (currentTab === "business") {
+      return form.businessName.trim() && form.businessType && form.businessSize && form.district.trim() && form.area.trim() && form.primaryCategory;
+    }
+    return true;
+  };
+
+  const isTabCompleted = (tabId: TabId) => {
+    if (tabId === "personal") {
+      return form.name.trim() && form.phone.trim();
+    }
+    if (tabId === "business") {
+      return form.businessName.trim() && form.businessType && form.businessSize && form.district.trim() && form.area.trim() && form.primaryCategory;
+    }
+    return false;
+  };
+
+  const handleNext = () => {
+    if (currentTab === "personal") setCurrentTab("business");
+    else if (currentTab === "business") setCurrentTab("preferences");
+  };
+
+  const handlePrevious = () => {
+    if (currentTab === "preferences") setCurrentTab("business");
+    else if (currentTab === "business") setCurrentTab("personal");
+  };
 
   const handleSelect =
     <K extends keyof FormState>(key: K) =>
@@ -440,21 +172,25 @@ export default function OnboardingForm({ initialName }: { initialName: string })
           return;
         }
 
-        router.push("/dashboard");
+        setShowWelcomeModal(true);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong.");
       }
     });
   };
 
+  const handleRedirectToDashboard = useCallback(() => {
+    router.push("/dashboard");
+  }, [router]);
+
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-[#0d0d0d] px-6 py-16 lg:py-24 overflow-x-hidden">
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-12"
+          className="mb-12 text-center"
         >
           <div className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-4">
             Profile Setup
@@ -465,129 +201,376 @@ export default function OnboardingForm({ initialName }: { initialName: string })
           </p>
         </motion.div>
 
-        <form onSubmit={handleSubmit} className="w-full">
-          <div className="font-archivo text-3xl md:text-4xl leading-[1.8] md:leading-[2] text-zinc-300 font-medium">
-            <motion.div layout className="mb-10">
-              Hello, my name is{" "}
-              <InlineInput value={form.name} onChange={(e: any) => setForm(p => ({ ...p, name: e.target.value }))} placeholder="your name" />
-              and I can be reached at{" "}
-              <InlineInput value={form.phone} onChange={(e: any) => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="phone number" />
-              I am joining as a{" "}
-              <InlineSelect value={form.role} onChange={handleSelect("role")} options={ROLE_OPTIONS} placeholder="role" />
-            </motion.div>
-
-            <motion.div layout className="mb-10">
-              My business is called{" "}
-              <InlineInput value={form.businessName} onChange={(e: any) => setForm(p => ({ ...p, businessName: e.target.value }))} placeholder="business name" />
-              we operate as a{" "}
-              <InlineSelect value={form.businessType} onChange={handleSelect("businessType")} options={BUSINESS_TYPES} placeholder="business type" />{" "}
-              of{" "}
-              <InlineSelect value={form.businessSize} onChange={handleSelect("businessSize")} options={BUSINESS_SIZES} placeholder="size" />{" "}
-              scale and we are based in{" "}
-              <InlineInput value={form.area} onChange={(e: any) => setForm(p => ({ ...p, area: e.target.value }))} placeholder="area" />
-              ,{" "}
-              <InlineInput value={form.district} onChange={(e: any) => setForm(p => ({ ...p, district: e.target.value }))} placeholder="district" />
-            </motion.div>
-
-            <motion.div layout className="mb-10">
-              Our primary category is{" "}
-              <InlineSelect value={form.primaryCategory} onChange={handleSelect("primaryCategory")} options={CATEGORIES} placeholder="category" />
-              and we also deal with{" "}
-              <InlineMultiSelect
-                values={form.subCategories}
-                onChange={(vals: string[]) => setForm(p => ({ ...p, subCategories: vals }))}
-                options={CATEGORIES}
-                placeholder="other categories (optional)"
-              />
-            </motion.div>
-
-            <AnimatePresence mode="popLayout">
-              {showBuyerFields && (
-                <motion.div
-                  key="buyer-fields"
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-10 pt-10 border-t border-white/5"
+        {/* Tab Navigation */}
+        <motion.div
+          initial={{ opacity: 0}}
+          animate={{ opacity: 1}}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="flex items-center justify-center gap-2 md:gap-4">
+            {tabs.map((tab, index) => (
+              <div key={tab.id} className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab(tab.id)}
+                  className={`group flex items-center gap-2 md:gap-3 px-4 md:px-4 py-1.5 rounded-xl transition-all duration-300 ${
+                    currentTab === tab.id
+                      ? "bg-primary/10 border-2 border-primary"
+                      : "bg-white/5 border-2 border-white/10 hover:border-white/20"
+                  }`}
                 >
-                  As a buyer, I usually purchase{" "}
-                  <InlineSelect value={form.monthlyPurchaseRange} onChange={handleSelect("monthlyPurchaseRange")} options={MONTHLY_PURCHASE_RANGES} placeholder="an amount (optional)" />{" "}
-                  per month, I prefer{" "}
-                  <InlineSelect value={form.pricingPreference} onChange={handleSelect("pricingPreference")} options={PRICING_TYPES} placeholder="pricing (optional)" />{" "}
-                  pricing and{" "}
-                  <InlineSelect value={form.negotiationPreference} onChange={handleSelect("negotiationPreference")} options={NEGOTIATION_PREFERENCES} placeholder="negotiation (optional)" />{" "}
-                  negotiation where my biggest priority is{" "}
-                  <InlineSelect value={form.buyingPriority} onChange={handleSelect("buyingPriority")} options={BUYING_PRIORITIES} placeholder="priority (optional)" />{" "}
-                  and I restock{" "}
-                  <InlineSelect value={form.restockFrequency} onChange={handleSelect("restockFrequency")} options={RESTOCK_FREQUENCIES} placeholder="frequency (optional)" />
-                  using suppliers within a{" "}
-                  <InlineSelect value={form.preferredDistance} onChange={handleSelect("preferredDistance")} options={DISTANCE_PREFERENCES} placeholder="distance (optional)" />{" "}
-                  distance and delivery within{" "}
-                  <InlineSelect value={form.maxDeliveryTime} onChange={handleSelect("maxDeliveryTime")} options={DELIVERY_TIMES} placeholder="timeframe (optional)" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence mode="popLayout">
-              {showSupplierFields && (
-                <motion.div
-                  key="supplier-fields"
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-10 pt-10 border-t border-white/5"
-                >
-                  As a supplier, I serve the{" "}
-                  <InlineSelect value={form.serviceArea} onChange={handleSelect("serviceArea")} options={SERVICE_AREAS} placeholder="service area (optional)" />{" "}
-                  area within a{" "}
-                  <InlineInput value={form.serviceRadiusKm} onChange={(e: any) => setForm(p => ({ ...p, serviceRadiusKm: e.target.value }))} placeholder="radius (optional)" />{" "}
-                  km radius where I can offer{" "}
-                  <InlineSelect value={form.deliveryMethod} onChange={handleSelect("deliveryMethod")} options={DELIVERY_METHODS} placeholder="delivery method (optional)" />{" "}
-                  within{" "}
-                  <InlineSelect value={form.deliveryTimeRange} onChange={handleSelect("deliveryTimeRange")} options={DELIVERY_TIMES} placeholder="timeframe (optional)" />
-                  while providing{" "}
-                  <InlineSelect value={form.pricingType} onChange={handleSelect("pricingType")} options={PRICING_TYPES} placeholder="pricing type (optional)" />{" "}
-                  pricing and bulk discounts are{" "}
-                  <InlineSelect value={form.bulkDiscountAvailable} onChange={handleSelect("bulkDiscountAvailable")} options={[{label: "available", value: "true"}, {label: "not available", value: "false"}]} placeholder="availability (optional)" />
-                  where my operation can handle orders of{" "}
-                  <InlineSelect value={form.orderCapacity} onChange={handleSelect("orderCapacity")} options={ORDER_CAPACITY} placeholder="capacity (optional)" />{" "}
-                  size and I specialize in{" "}
-                  <InlineMultiSelect
-                    values={form.supplierTags}
-                    onChange={(vals: string[]) => setForm(p => ({ ...p, supplierTags: vals as any }))}
-                    options={SUPPLIER_TAGS}
-                    placeholder="specialties (optional)"
+                  <span
+                    className={`flex items-center justify-center w-3 h-3 md:w-4.5 md:h-4.5 rounded-full font-bold text-md  transition-all ${
+                      currentTab === tab.id
+                        ? "bg-primary text-black"
+                        : isTabCompleted(tab.id)
+                        ? "bg-primary/80 text-black"
+                        : "bg-white/10 text-white/50 group-hover:bg-white/20 group-hover:text-white/70"
+                    }`}
+                  >
+                    {tab.number}
+                  </span>
+                  <span
+                    className={`hidden sm:block font-sans text-sm md:text-base font-medium transition-all ${
+                      currentTab === tab.id 
+                        ? "text-primary" 
+                        : isTabCompleted(tab.id)
+                        ? "text-primary/70"
+                        : "text-white/50 group-hover:text-white/70"
+                    }`}
+                  >
+                    {tab.label}
+                  </span>
+                </button>
+                {index < tabs.length - 1 && (
+                  <div 
+                    className={`w-6 md:w-12 h-[2px] mx-1 md:mx-2 transition-all duration-300 ${
+                      isTabCompleted(tabs[index].id) ? "bg-primary" : "bg-white/10"
+                    }`} 
                   />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </div>
+            ))}
           </div>
+        </motion.div>
 
-          <motion.div layout className="pt-6 flex flex-col items-center gap-4">
+        <form onSubmit={handleSubmit} className="w-full">
+          <AnimatePresence mode="wait">
+            {/* Tab 1: Personal Info */}
+            {currentTab === "personal" && (
+              <motion.div
+                key="personal"
+                initial={{ opacity: 0}}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0,  }}
+                className="font-archivo text-2xl md:text-3xl leading-[1.9] md:leading-[2.1] text-zinc-300 font-medium min-h-[300px]"
+              >
+                <div className="mb-8">
+                  Hello, my name is{" "}
+                  <InlineInput 
+                    value={form.name} 
+                    onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))} 
+                    placeholder="your name"
+                    size="large"
+                  />
+                  {" "}and I can be reached at{" "}
+                  <InlineInput 
+                    value={form.phone} 
+                    onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} 
+                    placeholder="phone number"
+                    size="large"
+                  />
+                  {" "}I am joining as a{" "}
+                  <InlineSelect 
+                    value={form.role} 
+                    onChange={handleSelect("role")} 
+                    options={ROLE_OPTIONS} 
+                    placeholder="role"
+                    size="large"
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Tab 2: Business Details */}
+            {currentTab === "business" && (
+              <motion.div
+                key="business"
+                initial={{ opacity: 0}}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="font-archivo text-2xl md:text-3xl leading-[1.9] md:leading-[2.1] text-zinc-300 font-medium min-h-[300px]"
+              >
+                <div className="mb-8">
+                  My business is called{" "}
+                  <InlineInput 
+                    value={form.businessName} 
+                    onChange={(e) => setForm(p => ({ ...p, businessName: e.target.value }))} 
+                    placeholder="business name"
+                    size="large"
+                  />
+                  {" "}we operate as a{" "}
+                  <InlineSelect 
+                    value={form.businessType} 
+                    onChange={handleSelect("businessType")} 
+                    options={BUSINESS_TYPES} 
+                    placeholder="business type"
+                    size="large"
+                  />
+                  {" "}of{" "}
+                  <InlineSelect 
+                    value={form.businessSize} 
+                    onChange={handleSelect("businessSize")} 
+                    options={BUSINESS_SIZES} 
+                    placeholder="size"
+                    size="large"
+                  />
+                  {" "}scale and we are based in{" "}
+                  <InlineInput 
+                    value={form.area} 
+                    onChange={(e) => setForm(p => ({ ...p, area: e.target.value }))} 
+                    placeholder="area"
+                    size="large"
+                  />
+                  {", "}
+                  <InlineInput 
+                    value={form.district} 
+                    onChange={(e) => setForm(p => ({ ...p, district: e.target.value }))} 
+                    placeholder="district"
+                    size="large"
+                  />
+                </div>
+
+                <div className="mb-8">
+                  Our primary category is{" "}
+                  <InlineSelect 
+                    value={form.primaryCategory} 
+                    onChange={handleSelect("primaryCategory")} 
+                    options={CATEGORIES} 
+                    placeholder="category"
+                    size="large"
+                  />
+                  {" "}and we also deal with{" "}
+                  <InlineMultiSelect
+                    values={form.subCategories}
+                    onChange={(vals: string[]) => setForm(p => ({ ...p, subCategories: vals }))}
+                    options={CATEGORIES}
+                    placeholder="other categories"
+                    size="large"
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Tab 3: Preferences */}
+            {currentTab === "preferences" && (
+              <motion.div
+                key="preferences"
+                initial={{ opacity: 0}}
+                animate={{ opacity: 1 }}
+                className="font-archivo text-xl md:text-2xl leading-[1.9] md:leading-[2.1] text-zinc-300 font-medium min-h-[300px]"
+              >
+                {showBuyerFields && (
+                  <div className="mb-10 pb-10 border-b border-white/5">
+                    <div className="text-sm font-bold uppercase tracking-[0.2em] text-primary/70 mb-6">
+                      Buyer Preferences
+                    </div>
+                    <div>
+                      As a buyer, I usually purchase{" "}
+                      <InlineSelect 
+                        value={form.monthlyPurchaseRange} 
+                        onChange={handleSelect("monthlyPurchaseRange")} 
+                        options={MONTHLY_PURCHASE_RANGES} 
+                        placeholder="an amount"
+                        size="base"
+                      />
+                      {" "}per month, I prefer{" "}
+                      <InlineSelect 
+                        value={form.pricingPreference} 
+                        onChange={handleSelect("pricingPreference")} 
+                        options={PRICING_TYPES} 
+                        placeholder="pricing"
+                        size="base"
+                      />
+                      {" "}pricing and{" "}
+                      <InlineSelect 
+                        value={form.negotiationPreference} 
+                        onChange={handleSelect("negotiationPreference")} 
+                        options={NEGOTIATION_PREFERENCES} 
+                        placeholder="negotiation"
+                        size="base"
+                      />
+                      {" "}negotiation where my biggest priority is{" "}
+                      <InlineSelect 
+                        value={form.buyingPriority} 
+                        onChange={handleSelect("buyingPriority")} 
+                        options={BUYING_PRIORITIES} 
+                        placeholder="priority"
+                        size="base"
+                      />
+                      {" "}and I restock{" "}
+                      <InlineSelect 
+                        value={form.restockFrequency} 
+                        onChange={handleSelect("restockFrequency")} 
+                        options={RESTOCK_FREQUENCIES} 
+                        placeholder="frequency"
+                        size="base"
+                      />
+                      {" "}using suppliers within a{" "}
+                      <InlineSelect 
+                        value={form.preferredDistance} 
+                        onChange={handleSelect("preferredDistance")} 
+                        options={DISTANCE_PREFERENCES} 
+                        placeholder="distance"
+                        size="base"
+                      />
+                      {" "}distance and delivery within{" "}
+                      <InlineSelect 
+                        value={form.maxDeliveryTime} 
+                        onChange={handleSelect("maxDeliveryTime")} 
+                        options={DELIVERY_TIMES} 
+                        placeholder="timeframe"
+                        size="base"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {showSupplierFields && (
+                  <div className="mb-10">
+                    <div className="text-sm font-bold uppercase tracking-[0.2em] text-primary/70 mb-6">
+                      Supplier Preferences
+                    </div>
+                    <div>
+                      As a supplier, I serve the{" "}
+                      <InlineSelect 
+                        value={form.serviceArea} 
+                        onChange={handleSelect("serviceArea")} 
+                        options={SERVICE_AREAS} 
+                        placeholder="service area"
+                        size="base"
+                      />
+                      {" "}area within a{" "}
+                      <InlineInput 
+                        value={form.serviceRadiusKm} 
+                        onChange={(e) => setForm(p => ({ ...p, serviceRadiusKm: e.target.value }))} 
+                        placeholder="radius"
+                        size="base"
+                      />
+                      {" "}km radius where I can offer{" "}
+                      <InlineSelect 
+                        value={form.deliveryMethod} 
+                        onChange={handleSelect("deliveryMethod")} 
+                        options={DELIVERY_METHODS} 
+                        placeholder="delivery method"
+                        size="base"
+                      />
+                      {" "}within{" "}
+                      <InlineSelect 
+                        value={form.deliveryTimeRange} 
+                        onChange={handleSelect("deliveryTimeRange")} 
+                        options={DELIVERY_TIMES} 
+                        placeholder="timeframe"
+                        size="base"
+                      />
+                      {" "}while providing{" "}
+                      <InlineSelect 
+                        value={form.pricingType} 
+                        onChange={handleSelect("pricingType")} 
+                        options={PRICING_TYPES} 
+                        placeholder="pricing type"
+                        size="base"
+                      />
+                      {" "}pricing and bulk discounts are{" "}
+                      <InlineSelect 
+                        value={form.bulkDiscountAvailable} 
+                        onChange={handleSelect("bulkDiscountAvailable")} 
+                        options={BULK_DISCOUNT_OPTIONS} 
+                        placeholder="availability"
+                        size="base"
+                      />
+                      {" "}where my operation can handle orders of{" "}
+                      <InlineSelect 
+                        value={form.orderCapacity} 
+                        onChange={handleSelect("orderCapacity")} 
+                        options={ORDER_CAPACITY} 
+                        placeholder="capacity"
+                        size="base"
+                      />
+                      {" "}size and I specialize in{" "}
+                      <InlineMultiSelect
+                        values={form.supplierTags}
+                        onChange={(vals: string[]) => setForm(p => ({ ...p, supplierTags: vals as SupplierTag[] }))}
+                        options={SUPPLIER_TAGS}
+                        placeholder="specialties"
+                        size="base"
+                      />
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div layout className="pt-8 flex flex-col items-center gap-6">
             {error && (
-              <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-sm font-medium text-red-400 bg-red-400/10 px-4 py-2 rounded-lg">
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className="text-sm font-medium text-red-400 bg-red-400/10 px-4 py-2 rounded-lg"
+              >
                 {error}
               </motion.p>
             )}
             
-            <div className="mt-4">
-              <MorphButton
-                isLoading={isPending}
-                onClick={() => handleSubmit()}
-              >
-                Complete Profile
-                <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </MorphButton>
+            <div className="flex items-center gap-4">
+              {currentTab !== "personal" && (
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  className="px-6 py-3 rounded-xl bg-white/5 border-2 border-white/10 text-white/70 hover:border-white/20 hover:text-white transition-all font-sans font-medium"
+                >
+                  <svg className="mr-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Previous
+                </button>
+              )}
+
+              {currentTab !== "preferences" ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!canProceedToNext()}
+                  className="px-6 py-3 rounded-xl bg-primary text-black font-sans font-bold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                  <svg className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
+              ) : (
+                <MorphButton
+                  isLoading={isPending}
+                  onClick={() => handleSubmit()}
+                >
+                  Complete Profile
+                  <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </MorphButton>
+              )}
             </div>
           </motion.div>
         </form>
       </div>
+
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+        onRedirect={handleRedirectToDashboard}
+      />
     </div>
   );
 }
