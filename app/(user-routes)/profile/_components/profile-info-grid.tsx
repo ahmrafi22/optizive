@@ -1,4 +1,4 @@
-import { SectionCard, InfoRow } from './profile-primitives';
+import { GlowCard, InfoRow, SizeVisualizer, IconPill } from './profile-primitives';
 import {
   BUSINESS_TYPE_LABELS,
   BUSINESS_SIZE_LABELS,
@@ -15,6 +15,7 @@ import {
   LuUser,
   LuIdCard,
   LuCalendar,
+  LuLayers,
 } from 'react-icons/lu';
 import type { SerializedUser } from '@/backend/user/user';
 
@@ -35,15 +36,23 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <SectionCard title="Business Information" icon={LuBuilding2}>
+      <GlowCard title="Business Information" icon={LuBuilding2} glowColor="yellow">
         <div className="divide-y divide-[color:var(--clr-border)]">
           <InfoRow icon={LuBriefcase} label="Business Name" value={user.businessName} />
           <InfoRow icon={LuBuilding2} label="Business Type" value={businessTypeLabel} />
           <InfoRow icon={LuTrendingUp} label="Business Size" value={businessSizeLabel} />
+          {user.businessSize && (
+            <div className="py-3">
+              <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-2">
+                Size Progression
+              </p>
+              <SizeVisualizer size={user.businessSize} />
+            </div>
+          )}
           <InfoRow icon={LuTag} label="Primary Category" value={categoryLabel} />
           {user.subCategories.length > 0 && (
             <InfoRow
-              icon={LuTag}
+              icon={LuLayers}
               label="Sub Categories"
               value={user.subCategories.join(', ')}
             />
@@ -54,9 +63,9 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
             value={[user.district, user.area].filter(Boolean).join(', ') || undefined}
           />
         </div>
-      </SectionCard>
+      </GlowCard>
 
-      <SectionCard title="Contact & Identity" icon={LuPhone}>
+      <GlowCard title="Contact & Identity" icon={LuPhone} glowColor="teal">
         <div className="divide-y divide-[color:var(--clr-border)]">
           <InfoRow icon={LuMail} label="Email" value={user.email} />
           <InfoRow icon={LuPhone} label="Phone" value={user.phone} />
@@ -64,7 +73,21 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
           <InfoRow icon={LuIdCard} label="Registration ID" value={user.businessRegistrationId} />
           <InfoRow icon={LuCalendar} label="Member Since" value={memberSince} />
         </div>
-      </SectionCard>
+        <div className="mt-5 pt-5 border-t border-(--clr-border)">
+          <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-3">
+            Profile Quick Tags
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {user.email && <IconPill icon={LuMail} label="Email Set" color="blue" />}
+            {user.phone && <IconPill icon={LuPhone} label="Phone Set" color="green" />}
+            {user.businessRegistrationId && <IconPill icon={LuIdCard} label="Registered" color="purple" />}
+            {user.businessName && <IconPill icon={LuBuilding2} label="Biz Name Set" color="yellow" />}
+            {!user.email && !user.phone && !user.businessRegistrationId && !user.businessName && (
+              <span className="text-xs text-[color:var(--clr-fg-dim)]">No quick tags yet</span>
+            )}
+          </div>
+        </div>
+      </GlowCard>
     </div>
   );
 }
