@@ -19,13 +19,29 @@ export default function ProfileView({ user }: { user: ProfileUser }) {
   const isSupplier = user.role === 'SUPPLIER' || user.role === 'BOTH';
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <ProfileHeader user={user} onEdit={() => setIsEditing(true)} />
-      <ProfileStats user={user} />
-      <ProfileInfoGrid user={user} />
-      {isBuyer && <ProfileBuyerPreferences user={user} />}
-      {isSupplier && <ProfileSupplierDetails user={user} />}
-      <ProfileTrustOps user={user} />
+    <div className="space-y-5 max-w-6xl mx-auto py-4">
+      <div className="fade-up" style={{ animationDelay: '0ms' }}>
+        <ProfileHeader user={user} onEdit={() => setIsEditing(true)} />
+      </div>
+      <div className="fade-up" style={{ animationDelay: '80ms' }}>
+        <ProfileStats user={user} />
+      </div>
+      <div className="fade-up" style={{ animationDelay: '160ms' }}>
+        <ProfileInfoGrid user={user} />
+      </div>
+      {isBuyer && (
+        <div className="fade-up" style={{ animationDelay: '240ms' }}>
+          <ProfileBuyerPreferences user={user} />
+        </div>
+      )}
+      {isSupplier && (
+        <div className="fade-up" style={{ animationDelay: '320ms' }}>
+          <ProfileSupplierDetails user={user} />
+        </div>
+      )}
+      <div className="fade-up" style={{ animationDelay: '400ms' }}>
+        <ProfileTrustOps user={user} />
+      </div>
       <ProfileEditModal user={user} isOpen={isEditing} onClose={() => setIsEditing(false)} />
     </div>
   );
