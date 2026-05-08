@@ -29,7 +29,6 @@ enum BusinessType {
   PROCESSOR
   AGRO_PROCESSOR
   APPAREL_FACTORY
-  SERVICE_PROVIDER
 }
 
 enum BusinessSize {
@@ -138,6 +137,27 @@ enum SupplierTag {
   SAMPLE_AVAILABLE
 }
 
+enum PaymentStatus {
+  PAID
+  PARTIAL
+  UNPAID
+}
+
+enum StockUnit {
+  PCS
+  KG
+  GRAM
+  LITER
+  ML
+  METER
+  BOX
+  PACK
+  DOZEN
+  BOTTLE
+  CAN
+  ROLL
+}
+
 // =========================
 // USER MODEL
 // =========================
@@ -212,6 +232,141 @@ model User {
   isActive               Boolean   @default(true)
   lastActiveAt           DateTime?
 
+  // =========================
+  // RELATIONS
+  // =========================
+  inventory      Product[] @relation("ProductOwner")
+  suppliedProducts Product[] @relation("ProductSupplier")
+  bundles        Bundle[]  @relation("BundleOwner")
+  sales          Sale[]    @relation("SaleOwner")
+
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])
+}
+
+// =========================
+// PRODUCT (INVENTORY + EXPIRY)
+// =========================
+
+model Product {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], name: "ProductOwner")
+
+  supplierId  String?
+  supplier    User?    @relation(fields: [supplierId], references: [id], name: "ProductSupplier")
+
+  name        String
+  description String?
+  barcode     String?
+  sku         String?
+  category    Category?
+
+  costPrice   Float    @default(0)
+  sellingPrice Float   @default(0)
+
+  quantity    Float    @default(0)
+  unit        StockUnit @default(PCS)
+  minStock    Float?    // alert threshold
+
+  expiryDate  DateTime?
+  batchNumber String?
+
+  isActive    Boolean  @default(true)
+
+  saleItems   SaleItem[]
+  bundleItems BundleItem[]
+
+  @@index([ownerId, category])
+  @@index([barcode])
+  @@index([expiryDate])
+}
+
+// =========================
+// BUNDLES
+// =========================
+
+model Bundle {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], name: "BundleOwner")
+
+  name        String
+  description String?
+  discount    Float    @default(0)
+  isActive    Boolean  @default(true)
+
+  items       BundleItem[]
+
+  @@index([ownerId, isActive])
+}
+
+model BundleItem {
+  id        String  @id @default(uuid())
+
+  bundleId  String
+  bundle    Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity  Float   @default(1)
+
+  @@index([bundleId])
+  @@index([productId])
+}
+
+// =========================
+// SALES & INVOICES
+// =========================
+
+model Sale {
+  id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  ownerId       String
+  owner         User          @relation(fields: [ownerId], references: [id], name: "SaleOwner")
+
+  invoiceNumber String        @unique
+  customerName  String?
+  customerPhone String?
+
+  totalAmount   Float
+  discount      Float         @default(0)
+  finalAmount   Float
+
+  paymentStatus PaymentStatus @default(UNPAID)
+  paidAmount    Float         @default(0)
+  dueAmount     Float
+
+  notes         String?
+
+  items         SaleItem[]
+
+  @@index([ownerId, createdAt])
+  @@index([paymentStatus])
+}
+
+model SaleItem {
+  id         String  @id @default(uuid())
+
+  saleId     String
+  sale       Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+
+  quantity   Float
+  unitPrice  Float
+  totalPrice Float
+
+  @@index([saleId])
+  @@index([productId])
 }

@@ -44,6 +44,7 @@ const authConfig = {
           id: user.id.toString(),
           name: user.name,
           email: user.email ?? undefined,
+          image: user.profileImage ?? undefined,
           role: user.role,
           username: user.username ?? undefined,
           onboarded: user.onboarded,
@@ -91,8 +92,8 @@ const authConfig = {
         token.role = user.role;
         token.username = user.username;
         token.onboarded = user.onboarded;
+        token.image = user.image ?? token.image;
       } else if (token.email) {
-        // Fetch user data for Google users
         const dbUser = await prisma.user.findFirst({
           where: { email: token.email },
         });
@@ -100,6 +101,7 @@ const authConfig = {
           token.role = dbUser.role;
           token.username = dbUser.username;
           token.onboarded = dbUser.onboarded;
+          token.image = dbUser.profileImage ?? token.image;
         }
       }
       return token;
@@ -110,6 +112,7 @@ const authConfig = {
         session.user.role = token.role as UserRole | undefined;
         session.user.username = token.username as string | undefined;
         session.user.onboarded = token.onboarded as boolean | undefined;
+        session.user.image = (token.image as string | undefined) ?? session.user.image;
       }
       return session;
     },
