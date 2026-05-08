@@ -44,6 +44,7 @@ export default function OnboardingForm({ initialName }: { initialName: string })
     businessName: "",
     businessType: "",
     businessSize: "",
+    yearsInBusiness: "",
     district: "",
     area: "",
     primaryCategory: "",
@@ -164,6 +165,9 @@ export default function OnboardingForm({ initialName }: { initialName: string })
           bulkDiscountAvailable:
             form.bulkDiscountAvailable === "" ? undefined : form.bulkDiscountAvailable === "true",
           orderCapacity: form.orderCapacity || undefined,
+          yearsInBusiness: form.yearsInBusiness.trim()
+            ? Number(form.yearsInBusiness)
+            : undefined,
           supplierTags: form.supplierTags,
         });
 
@@ -326,7 +330,14 @@ export default function OnboardingForm({ initialName }: { initialName: string })
                     placeholder="size"
                     size="large"
                   />
-                  {" "}scale and we are based in{" "}
+                  {" "}scale. We have been in business for{" "}
+                  <InlineInput 
+                    value={form.yearsInBusiness} 
+                    onChange={(e) => setForm(p => ({ ...p, yearsInBusiness: e.target.value }))} 
+                    placeholder="years"
+                    size="large"
+                  />
+                  {" "}and are based in{" "}
                   <InlineInput 
                     value={form.area} 
                     onChange={(e) => setForm(p => ({ ...p, area: e.target.value }))} 

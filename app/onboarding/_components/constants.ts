@@ -17,7 +17,6 @@ export const BUSINESS_TYPES: SelectOption[] = [
   { value: "PROCESSOR", label: "Processor" },
   { value: "AGRO_PROCESSOR", label: "Agro processor" },
   { value: "APPAREL_FACTORY", label: "Apparel factory" },
-  { value: "SERVICE_PROVIDER", label: "Service provider" },
 ];
 
 export const BUSINESS_SIZES: SelectOption[] = [

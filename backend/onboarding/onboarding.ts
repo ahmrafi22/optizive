@@ -24,6 +24,7 @@ type OnboardingPayload = {
   businessName?: string;
   businessType?: BusinessType;
   businessSize?: BusinessSize;
+  yearsInBusiness?: number;
   district?: string;
   area?: string;
   primaryCategory?: Category;
@@ -66,6 +67,7 @@ export async function saveOnboarding(payload: OnboardingPayload) {
       businessName: payload.businessName?.trim() || null,
       businessType: payload.businessType ?? null,
       businessSize: payload.businessSize ?? null,
+      yearsInBusiness: Number.isFinite(payload.yearsInBusiness) ? payload.yearsInBusiness : null,
       district: payload.district?.trim() || null,
       area: payload.area?.trim() || null,
       primaryCategory: payload.primaryCategory ?? null,

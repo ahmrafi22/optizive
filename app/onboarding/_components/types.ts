@@ -23,6 +23,7 @@ export type FormState = {
   businessName: string;
   businessType: SelectValue<BusinessType>;
   businessSize: SelectValue<BusinessSize>;
+  yearsInBusiness: string;
   district: string;
   area: string;
   primaryCategory: SelectValue<Category>;

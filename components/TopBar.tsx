@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { LuMenu, LuMoon, LuSun } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
+import { useSession } from 'next-auth/react';
 import SignOutButton from './SignOutButton';
 
 interface TopBarProps {
@@ -12,6 +13,7 @@ interface TopBarProps {
 
 export default function TopBar({ onMenuToggle }: TopBarProps) {
   const { resolvedTheme, setTheme } = useTheme();
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -19,6 +21,12 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   }, []);
 
   const isDark = mounted ? resolvedTheme === 'dark' : true;
+
+  const user = session?.user;
+  const userImage = user?.image;
+  const userInitials = user?.name
+    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'OP';
 
   return (
     <header className="grid h-16 grid-cols-[1fr_auto_1fr] items-center border-b border-[color:var(--clr-border)] bg-[color:var(--clr-surface)] px-4 sm:flex">
@@ -38,10 +46,18 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
       <div className="justify-self-end flex items-center gap-3 sm:ml-auto">
         <Link
           href="/profile"
-          className="group flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--clr-border)] bg-[color:var(--clr-surface2)] text-[color:var(--clr-fg)] transition-colors hover:border-[color:var(--clr-border-hover)]"
+          className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--clr-border)] bg-[color:var(--clr-surface2)] text-[color:var(--clr-fg)] transition-colors hover:border-[color:var(--clr-border-hover)] overflow-hidden"
           aria-label="Go to profile"
         >
-          <span className="text-xs font-semibold tracking-wide">OP</span>
+          {userImage ? (
+            <img
+              src={userImage}
+              alt={user?.name ?? 'Profile'}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="text-xs font-semibold tracking-wide">{userInitials}</span>
+          )}
         </Link>
 
         <button

@@ -121,34 +121,41 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
               key={item.href}
               href={item.href}
               className={`
-                group relative flex items-center gap-3 px-4 py-3 rounded-full
+                group relative flex items-center gap-3 px-3 py-2.5 rounded-full
                 transition-all duration-200 ease-out
                 ${
                   isActive
-                    ? 'bg-[color:rgba(255,244,79,0.25)] text-[color:var(--clr-charcoal)] dark:text-[color:var(--clr-yellow)]'
-                    : 'text-[color:var(--clr-fg)] hover:bg-[color:var(--clr-surface)]'
+                    ? 'bg-[rgba(58,181,173,0.10)] text-[color:var(--clr-teal-dim)]'
+                    : 'text-[color:var(--clr-fg-muted)] hover:text-[color:var(--clr-fg)] hover:bg-[color:var(--clr-surface)]'
                 }
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2
-                active:scale-95
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--clr-teal-dim)] focus-visible:ring-offset-2
+                active:scale-[0.98]
               `}
               aria-current={isActive ? 'page' : undefined}
             >
               {/* Icon */}
-              <Icon
+              <span
                 className={`
-                  flex-shrink-0 w-5 h-5
-                  transition-transform duration-200
-                  ${isActive ? 'scale-110' : 'group-hover:scale-105'}
+                  flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full
+                  transition-all duration-200
+                  ${
+                    isActive
+                      ? 'bg-[color:var(--clr-teal-dim)] text-white shadow-[0_2px_6px_rgba(58,181,173,0.35)]'
+                      : 'text-[color:var(--clr-fg-muted)] group-hover:text-[color:var(--clr-fg)]'
+                  }
                 `}
                 aria-hidden="true"
-              />
+              >
+                <Icon className="w-5 h-5" />
+              </span>
 
               {/* Label - always visible on mobile, desktop depends on isExpanded */}
               <span
                 className={`
-                  font-medium text-sm whitespace-nowrap
+                  text-sm whitespace-nowrap
                   transition-all duration-300
                   opacity-100 translate-x-0 w-auto
+                  ${isActive ? 'font-semibold' : 'font-medium'}
                   ${isExpanded ? 'sm:opacity-100 sm:translate-x-0 sm:w-auto' : 'sm:opacity-0 sm:-translate-x-4 sm:w-0 sm:overflow-hidden'}
                 `}
               >
