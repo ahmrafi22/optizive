@@ -29,7 +29,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
     : 'OP';
 
   return (
-    <header className="grid h-16 grid-cols-[1fr_auto_1fr] items-center border-b border-[color:var(--clr-border)] bg-[color:var(--clr-surface)] px-4 sm:flex">
+    <header className="sticky top-0 z-50 grid h-16 grid-cols-[1fr_auto_1fr] items-center border-b border-[color:var(--clr-border)] bg-[color:var(--clr-surface)]/80 backdrop-blur-md px-4 sm:flex">
       <button
         type="button"
         onClick={onMenuToggle}
