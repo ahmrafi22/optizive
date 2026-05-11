@@ -1,0 +1,36 @@
+model Product {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], name: "ProductOwner")
+
+  supplierId  String?
+  supplier    User?    @relation(fields: [supplierId], references: [id], name: "ProductSupplier")
+
+  name        String
+  description String?
+  barcode     String?
+  sku         String?
+  category    Category?
+
+  costPrice   Float    @default(0)
+  sellingPrice Float   @default(0)
+
+  quantity    Float    @default(0)
+  unit        StockUnit @default(PCS)
+  minStock    Float?    // alert threshold
+
+  expiryDate  DateTime?
+  batchNumber String?
+
+  isActive    Boolean  @default(true)
+
+  saleItems   SaleItem[]
+  bundleItems BundleItem[]
+
+  @@index([ownerId, category])
+  @@index([barcode])
+  @@index([expiryDate])
+}

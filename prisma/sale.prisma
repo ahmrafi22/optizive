@@ -1,0 +1,44 @@
+model Sale {
+  id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  ownerId       String
+  owner         User          @relation(fields: [ownerId], references: [id], name: "SaleOwner")
+
+  invoiceNumber String        @unique
+  customerName  String?
+  customerPhone String?
+
+  totalAmount   Float
+  discount      Float         @default(0)
+  finalAmount   Float
+
+  paymentStatus PaymentStatus @default(UNPAID)
+  paidAmount    Float         @default(0)
+  dueAmount     Float
+
+  notes         String?
+
+  items         SaleItem[]
+
+  @@index([ownerId, createdAt])
+  @@index([paymentStatus])
+}
+
+model SaleItem {
+  id         String  @id @default(uuid())
+
+  saleId     String
+  sale       Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+
+  quantity   Float
+  unitPrice  Float
+  totalPrice Float
+
+  @@index([saleId])
+  @@index([productId])
+}
