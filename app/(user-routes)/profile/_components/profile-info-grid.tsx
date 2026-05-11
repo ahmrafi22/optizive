@@ -36,14 +36,14 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <GlowCard title="Business Information" icon={LuBuilding2} glowColor="yellow">
-        <div className="divide-y divide-[color:var(--clr-border)]">
+      <GlowCard title="Business Information" icon={LuBuilding2} glowColor="purple">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow icon={LuBriefcase} label="Business Name" value={user.businessName} />
           <InfoRow icon={LuBuilding2} label="Business Type" value={businessTypeLabel} />
           <InfoRow icon={LuTrendingUp} label="Business Size" value={businessSizeLabel} />
           {user.businessSize && (
             <div className="py-3">
-              <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-2">
+              <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-2">
                 Size Progression
               </p>
               <SizeVisualizer size={user.businessSize} />
@@ -65,8 +65,8 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
         </div>
       </GlowCard>
 
-      <GlowCard title="Contact & Identity" icon={LuPhone} glowColor="teal">
-        <div className="divide-y divide-[color:var(--clr-border)]">
+      <GlowCard title="Contact & Identity" icon={LuPhone} glowColor="blue">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow icon={LuMail} label="Email" value={user.email} />
           <InfoRow icon={LuPhone} label="Phone" value={user.phone} />
           <InfoRow icon={LuUser} label="Username" value={user.username} />
@@ -74,7 +74,7 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
           <InfoRow icon={LuCalendar} label="Member Since" value={memberSince} />
         </div>
         <div className="mt-5 pt-5 border-t border-(--clr-border)">
-          <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-3">
             Profile Quick Tags
           </p>
           <div className="flex flex-wrap gap-2">
@@ -83,7 +83,7 @@ export function ProfileInfoGrid({ user }: { user: SerializedUser }) {
             {user.businessRegistrationId && <IconPill icon={LuIdCard} label="Registered" color="purple" />}
             {user.businessName && <IconPill icon={LuBuilding2} label="Biz Name Set" color="yellow" />}
             {!user.email && !user.phone && !user.businessRegistrationId && !user.businessName && (
-              <span className="text-xs text-[color:var(--clr-fg-dim)]">No quick tags yet</span>
+              <span className="text-xs text-(--clr-fg-dim)">No quick tags yet</span>
             )}
           </div>
         </div>

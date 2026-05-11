@@ -292,7 +292,7 @@ function AuthForms() {
           <div className="mt-6">
             <div className="relative flex items-center mb-6">
               <div className="flex-grow border-t border-white/10"></div>
-              <span className="flex-shrink-0 mx-4 text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Or continue with</span>
+              <span className="shrink-0 mx-4 text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Or continue with</span>
               <div className="flex-grow border-t border-white/10"></div>
             </div>
 

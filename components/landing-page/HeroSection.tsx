@@ -195,7 +195,7 @@ export function HeroSection() {
               {[...FEATURE_PILLS, ...FEATURE_PILLS].map((pill, i) => (
                 <div key={i} className="feature-pill mx-1 text-xs md:text-sm whitespace-nowrap">
                   <span className="pill-dot" aria-hidden="true" />
-                  <pill.Icon className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                  <pill.Icon className="w-3.5 h-3.5 opacity-60 shrink-0" />
                   <span>{pill.label}</span>
                 </div>
               ))}
