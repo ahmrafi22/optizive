@@ -99,7 +99,7 @@ export function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.1, duration: 0.4, ease: EASE_OUT }}
                 onClick={() => setIsOpen(false)}
-                className="text-2xl font-archivo font-semibold text-white hover:text-[#fff44f] transition-colors"
+                className="text-2xl font-archivo font-semibold text-white hover:text-primary transition-colors"
               >
                 {link.label}
               </motion.a>

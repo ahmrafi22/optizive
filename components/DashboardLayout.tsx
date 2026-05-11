@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[color:var(--clr-surface)] text-[color:var(--clr-fg)]">
+    <div className="flex h-screen overflow-hidden bg-(--clr-surface) text-(--clr-fg)">
       {/* Sidebar */}
       <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 

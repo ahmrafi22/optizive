@@ -12,7 +12,7 @@ export default function SignOutButton({ className = "", label = "Sign out" }: Si
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/login" })}
-      className={`inline-flex w-fit items-center justify-center rounded-full border border-[color:var(--clr-border)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--clr-fg)] transition hover:border-[color:var(--clr-border-hover)] ${className}`}
+      className={`inline-flex w-fit items-center justify-center rounded-full border border-(--clr-border) px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-(--clr-fg) transition hover:border-(--clr-border-hover) ${className}`}
     >
       {label}
     </button>

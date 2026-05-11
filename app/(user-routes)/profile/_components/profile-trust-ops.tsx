@@ -18,7 +18,7 @@ export function ProfileTrustOps({ user }: { user: SerializedUser }) {
   return (
     <GlowCard title="Trust & Operations" icon={LuShield} glowColor="green">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow icon={LuCreditCard} label="Payment Terms" value={user.paymentTerms} />
           <InfoRow
             icon={LuDollarSign}
@@ -26,7 +26,7 @@ export function ProfileTrustOps({ user }: { user: SerializedUser }) {
             value={user.minOrderValue ? `৳${user.minOrderValue.toLocaleString()}` : undefined}
           />
         </div>
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow
             icon={LuDollarSign}
             label="Max Order Value"
@@ -52,11 +52,11 @@ export function ProfileTrustOps({ user }: { user: SerializedUser }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="flex items-center gap-4">
             <CircularProgress value={trustScore} size={64} stroke={5} color="#4ade80">
-              <span className="text-[11px] font-bold text-[color:var(--clr-fg)]">{Math.round(trustScore)}</span>
+              <span className="text-[11px] font-bold text-(--clr-fg)">{Math.round(trustScore)}</span>
             </CircularProgress>
             <div>
-              <p className="text-xs font-bold text-[color:var(--clr-fg)]">Trust Score</p>
-              <p className="text-[10px] text-[color:var(--clr-fg-dim)] mt-0.5">
+              <p className="text-xs font-bold text-(--clr-fg)">Trust Score</p>
+              <p className="text-[10px] text-(--clr-fg-dim) mt-0.5">
                 Based on verification, experience & ratings
               </p>
               <div className="flex items-center gap-1.5 mt-2">
@@ -68,12 +68,12 @@ export function ProfileTrustOps({ user }: { user: SerializedUser }) {
 
           {(minVal > 0 || maxVal > 0) && (
             <div className="flex flex-col justify-center">
-              <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-2">
+              <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-2">
                 Order Value Range
               </p>
-              <div className="relative h-3 rounded-full bg-[color:var(--clr-border)] overflow-hidden">
+              <div className="relative h-3 rounded-full bg-[rgba(0,0,0,0.1)] dark:bg-(--clr-border) overflow-hidden">
                 <div
-                  className="absolute h-full rounded-full bg-gradient-to-r from-[color:var(--clr-yellow)] to-emerald-400 transition-all duration-700"
+                  className="absolute h-full rounded-full bg-linear-to-r from-(--clr-yellow) to-emerald-400 transition-all duration-700"
                   style={{
                     left: `${minPct}%`,
                     width: `${Math.max(maxPct - minPct, 2)}%`,
@@ -81,10 +81,10 @@ export function ProfileTrustOps({ user }: { user: SerializedUser }) {
                 />
               </div>
               <div className="flex justify-between mt-1.5">
-                <span className="text-[10px] font-bold text-[color:var(--clr-fg)] tabular-nums">
+                <span className="text-[10px] font-bold text-(--clr-fg) tabular-nums">
                   ৳{minVal.toLocaleString()}
                 </span>
-                <span className="text-[10px] font-bold text-[color:var(--clr-fg)] tabular-nums">
+                <span className="text-[10px] font-bold text-(--clr-fg) tabular-nums">
                   ৳{maxVal.toLocaleString()}
                 </span>
               </div>

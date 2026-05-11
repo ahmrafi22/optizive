@@ -120,7 +120,7 @@ export function FeaturesSection() {
               <span className="font-mono text-zinc-500 line-through group-hover:text-zinc-400 transition-colors">$29.99</span>
             </div>
             <div className="relative flex items-center justify-between p-3 bg-primary/10 border border-primary/20 rounded-xl text-sm overflow-hidden group-hover:bg-primary/20 transition-colors duration-300">
-              <div className="shimmer absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-x-full" />
+              <div className="shimmer absolute inset-0 bg-linear-to-r from-transparent via-primary/10 to-transparent -translate-x-full" />
               <span className="text-primary font-semibold relative z-10">OPTIZIVE AI</span>
               <span className="font-mono text-primary font-bold relative z-10 group-hover:scale-110 origin-right transition-transform duration-300 ease-out">$27.50</span>
             </div>
@@ -152,7 +152,7 @@ export function FeaturesSection() {
             <div className="flex-1 flex items-center justify-center pointer-events-none mt-4 md:mt-0 gap-4 md:gap-8 md:translate-y-6 -translate-y-2">
               {/* Circle 1 - 2 People */}
               <div className="relative h-24 w-24 md:h-36 md:w-36 shrink-0">
-                <div className="absolute inset-0 border-[2px] md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_10s_linear_infinite] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
+                <div className="absolute inset-0 border-2 md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_10s_linear_infinite] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
                 {/* 12 o'clock */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 md:w-10 md:h-10 bg-black rounded-full border-2 border-primary md:border-zinc-600 flex items-center justify-center md:group-hover:border-primary transition-colors duration-300">
                   <IoPeopleOutline className="w-3 h-3 md:w-5 md:h-5 text-primary md:text-zinc-400 md:group-hover:text-primary transition-colors duration-300" />
@@ -173,7 +173,7 @@ export function FeaturesSection() {
 
               {/* Circle 2 - 3 People */}
               <div className="relative h-20 w-20 md:h-32 md:w-32 shrink-0 md:translate-y-20 translate-y-0">
-                <div className="absolute inset-0 border-[2px] md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_12s_linear_infinite_reverse] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
+                <div className="absolute inset-0 border-2 md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_12s_linear_infinite_reverse] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
                 {/* 12 o'clock */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 bg-black rounded-full border-2 border-primary md:border-zinc-600 flex items-center justify-center md:group-hover:border-primary transition-colors duration-300">
                   <MdOutlineGroups className="w-3 h-3 md:w-4 md:h-4 text-primary md:text-zinc-400 md:group-hover:text-primary transition-colors duration-300" />
@@ -215,7 +215,7 @@ export function FeaturesSection() {
 
           <div className="relative h-24 md:h-32 w-full mt-6 md:mt-8 flex items-center px-4 md:px-8 border border-white/5 rounded-2xl bg-black group-hover:border-primary/20 transition-colors duration-500 overflow-hidden">
             {/* Bottom Glow */}
-            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-primary/10 to-transparent pointer-events-none" />
 
             {/* Basket 1 */}
             <div className="relative z-10 p-2 md:p-3 bg-black rounded-full border border-white/10 group-hover:border-primary/30 transition-all duration-500 ease-out shrink-0">
@@ -223,7 +223,7 @@ export function FeaturesSection() {
             </div>
 
             {/* Line 1 */}
-            <div className="flex-grow h-12 relative flex items-center shrink">
+            <div className="grow h-12 relative flex items-center shrink">
               <svg className="w-full h-1 opacity-40 group-hover:opacity-80 transition-opacity duration-500">
                 <motion.line
                   x1="0" y1="0.5" x2="100%" y2="0.5"
@@ -241,7 +241,7 @@ export function FeaturesSection() {
             </div>
 
             {/* Line 2 */}
-            <div className="flex-grow h-12 relative flex items-center shrink">
+            <div className="grow h-12 relative flex items-center shrink">
               <svg className="w-full h-1 opacity-40 group-hover:opacity-80 transition-opacity duration-500">
                 <motion.line
                   x1="0" y1="0.5" x2="100%" y2="0.5"
@@ -278,7 +278,7 @@ export function FeaturesSection() {
               </div>
               <ApiStatusTicker />
             </div>
-            <div className="space-y-1 text-zinc-500 bg-black/50 p-3 rounded-xl border border-white/5 group-hover:border-primary/20 transition-colors duration-300 relative overflow-hidden min-w-[280px]">
+            <div className="space-y-1 text-zinc-500 bg-black/50 p-3 rounded-xl border border-white/5 group-hover:border-primary/20 transition-colors duration-300 relative overflow-hidden min-w-70">
               <p><span className="text-zinc-300 group-hover:text-primary transition-colors duration-300">POST</span> /api/v1/payments/track</p>
               <p className="pl-4 text-zinc-600">{"{"}</p>
               <p className="pl-8">&quot;sellerID&quot;: <span className="text-primary/80 group-hover:text-primary transition-colors duration-300">&quot;INF_8829&quot;</span>,</p>

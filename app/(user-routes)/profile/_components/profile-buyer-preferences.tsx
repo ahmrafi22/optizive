@@ -30,7 +30,7 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
   return (
     <GlowCard title="Buyer Preferences" icon={LuPackage} glowColor="blue">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow
             icon={LuDollarSign}
             label="Monthly Purchase Range"
@@ -70,7 +70,7 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
             }
           />
         </div>
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow
             icon={LuMapPin}
             label="Preferred Distance"
@@ -105,27 +105,26 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
 
       {user.buyingPriority && (
         <div className="mt-5 pt-5 border-t border-(--clr-border)">
-          <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-3">
             Priority Balance
           </p>
           <div className="space-y-2">
             {PRIORITY_ORDER.map((key, i) => {
               const isActive = i === priorityIdx;
               const pct = isActive ? 85 : i < priorityIdx ? 40 : 15;
-              const color = isActive ? '#fff44f' : 'rgba(255,255,255,0.08)';
               const label = BUYING_PRIORITY_LABELS.get(key) ?? key;
               return (
                 <div key={key} className="flex items-center gap-3">
-                  <span className={`text-[11px] font-semibold w-20 text-right ${isActive ? 'text-[color:var(--clr-yellow)]' : 'text-[color:var(--clr-fg-dim)]'}`}>
+                  <span className={`text-[11px] font-semibold w-20 text-right ${isActive ? 'priority-text-active' : 'text-(--clr-fg-dim)'}`}>
                     {label}
                   </span>
-                  <div className="flex-1 h-2 rounded-full overflow-hidden bg-[color:var(--clr-border)]">
+                  <div className="flex-1 h-2 rounded-full overflow-hidden priority-bar-bg">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%`, background: color }}
+                      className={`h-full rounded-full transition-all duration-500 ${isActive ? 'priority-bar-active' : 'priority-bar-inactive'}`}
+                      style={{ width: `${pct}%` }}
                     />
                   </div>
-                  {isActive && <LuZap className="w-3.5 h-3.5 text-[color:var(--clr-yellow)]" />}
+                  {isActive && <LuZap className="w-3.5 h-3.5 priority-text-active" />}
                 </div>
               );
             })}
@@ -134,7 +133,7 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
       )}
 
       <div className="mt-5 pt-5 border-t border-(--clr-border)">
-        <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-3">
+        <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-3">
           Preference Tags
         </p>
         <div className="flex flex-wrap gap-2">
@@ -151,7 +150,7 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
             <IconPill icon={LuMapPin} label={DISTANCE_PREFERENCE_LABELS.get(user.preferredDistance) ?? user.preferredDistance} color="green" />
           )}
           {!user.pricingPreference && !user.negotiationPreference && !user.maxDeliveryTime && !user.preferredDistance && (
-            <span className="text-xs text-[color:var(--clr-fg-dim)]">No tags set</span>
+            <span className="text-xs text-(--clr-fg-dim)">No tags set</span>
           )}
         </div>
       </div>

@@ -3,12 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LuLayoutDashboard,
-  LuPackage,
-  LuTrendingUp,
-  LuUser,
-} from 'react-icons/lu';
+import { FaUser } from "react-icons/fa";
+import { TbLayoutDashboardFilled, } from "react-icons/tb";
+import { FaCodeCompare,FaBoxesPacking } from "react-icons/fa6";
+
 import SignOutButton from './SignOutButton';
 
 interface NavItem {
@@ -18,10 +16,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LuLayoutDashboard },
-  { label: 'Inventory', href: '/inventory', icon: LuPackage },
-  { label: 'Price Compare', href: '/price-compare', icon: LuTrendingUp },
-  { label: 'Profile', href: '/profile', icon: LuUser },
+  { label: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboardFilled },
+  { label: 'Inventory', href: '/inventory', icon: FaBoxesPacking },
+  { label: 'Price Compare', href: '/price-compare', icon: FaCodeCompare },
+  { label: 'Profile', href: '/profile', icon: FaUser },
 ];
 
 interface SidebarProps {
@@ -73,8 +71,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       className={`
         fixed inset-y-0 left-0 z-50 
         flex h-screen flex-col
-        bg-[color:var(--clr-surface2)] text-[color:var(--clr-fg)]
-        border-r border-[color:var(--clr-border)]
+        bg-(--clr-surface2) text-(--clr-fg)
+        border-r border-(--clr-border)
         transition-all duration-300 ease-out
         sm:relative
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} 
@@ -85,10 +83,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       aria-label="Main navigation"
     >
       {/* Header with Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-[color:var(--clr-border)]">
+      <div className="flex items-center h-16 px-4 border-b border-(--clr-border)">
         <div className="flex items-center gap-3 min-w-0">
           {/* Logo */}
-          <div className="flex-shrink-0 rounded-xl bg-[color:var(--clr-yellow)] p-2">
+          <div className="shrink-0 rounded-xl bg-(--clr-yellow) p-2">
             <svg className="w-8 h-8" viewBox="0 0 366 357" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M211.713 307.81c34.152-5.907 65.566-21.841 89.276-45.285 23.711-23.444 38.365-53.06 41.647-84.165s-4.995-61.928-23.524-87.593-46.252-44.71-78.787-54.124l-19.299 49.189c20.555 5.947 38.069 17.979 49.775 34.193 11.706 16.215 16.935 35.687 14.862 55.338-2.074 19.652-11.332 38.362-26.311 53.173-14.98 14.81-34.826 24.877-56.401 28.609z" fill="#111111" />
               <path d="m133.226 324.474 78.652-16.815-8.788-50.656zm21.129-277.3c-34.322 4.82-66.225 19.75-90.668 42.43-24.442 22.68-40.029 51.816-44.296 82.802s3.029 62.055 20.734 88.295 44.81 46.155 77.03 56.596l20.85-48.552c-20.356-6.596-37.479-19.178-48.665-35.755s-15.795-36.206-13.099-55.782 12.543-37.982 27.985-52.31 35.597-23.761 57.28-26.806z" fill="#111111" />
@@ -99,7 +97,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           {/* Brand Text - always visible on mobile, desktop depends on isExpanded */}
           <span
             className={`
-              font-bold font-naston text-xl text-[color:var(--clr-fg)] tracking-wide
+              font-bold font-naston text-xl text-(--clr-fg) tracking-wide
               transition-all duration-300 whitespace-nowrap
               opacity-100 translate-x-0 w-auto
               ${isExpanded ? 'sm:opacity-100 sm:translate-x-0 sm:w-auto' : 'sm:opacity-0 sm:-translate-x-4 sm:w-0 sm:overflow-hidden'}
@@ -121,14 +119,14 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
               key={item.href}
               href={item.href}
               className={`
-                group relative flex items-center gap-3 px-3 py-2.5 rounded-full
+                group relative flex items-center gap-3 px-3 py-1 rounded-xl
                 transition-all duration-200 ease-out
                 ${
                   isActive
-                    ? 'bg-[rgba(58,181,173,0.10)] text-[color:var(--clr-teal-dim)]'
-                    : 'text-[color:var(--clr-fg-muted)] hover:text-[color:var(--clr-fg)] hover:bg-[color:var(--clr-surface)]'
+                    ? ' text-(--clr-teal-dim)'
+                    : 'text-(--clr-fg-muted) hover:text-(--clr-fg) hover:bg-(--clr-surface)'
                 }
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--clr-teal-dim)] focus-visible:ring-offset-2
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--clr-teal-dim) focus-visible:ring-offset-2
                 active:scale-[0.98]
               `}
               aria-current={isActive ? 'page' : undefined}
@@ -136,12 +134,12 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
               {/* Icon */}
               <span
                 className={`
-                  flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full
+                  flex items-center justify-center shrink-0 w-8 h-8 rounded-full
                   transition-all duration-200
                   ${
                     isActive
-                      ? 'bg-[color:var(--clr-teal-dim)] text-white shadow-[0_2px_6px_rgba(58,181,173,0.35)]'
-                      : 'text-[color:var(--clr-fg-muted)] group-hover:text-[color:var(--clr-fg)]'
+                      ? 'bg-(--clr-teal-dim) text-white shadow-[0_2px_6px_rgba(58,181,173,0.35)]'
+                      : 'text-(--clr-fg-muted) group-hover:text-(--clr-fg)'
                   }
                 `}
                 aria-hidden="true"
@@ -166,7 +164,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
               {!isExpanded && (
                 <span
                   className="
-                    absolute left-full ml-2 px-3 py-2 bg-[color:var(--clr-charcoal)] text-white text-sm rounded-lg
+                    absolute left-full ml-2 px-3 py-2 bg-(--clr-charcoal) text-white text-sm rounded-lg
                     opacity-0 invisible group-hover:opacity-100 group-hover:visible
                     transition-all duration-200 whitespace-nowrap z-50
                     pointer-events-none

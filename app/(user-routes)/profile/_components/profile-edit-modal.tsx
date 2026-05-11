@@ -310,8 +310,8 @@ export function ProfileEditModal({
   if (!show) return null;
 
   const roleAccentColor = user.role === 'SUPPLIER' ? '#4ecdc4' : user.role === 'STORE_OWNER' ? '#60a5fa' : '#fff44f';
-  const inputBase = 'w-full rounded-xl border border-(--clr-border) bg-[color:var(--clr-surface2)] px-3 py-2 text-sm text-[color:var(--clr-fg)] focus:outline-none focus:ring-2 focus:ring-[color:var(--clr-yellow)]/40 focus:border-[color:var(--clr-yellow)] transition-all';
-  const selectBase = 'w-full rounded-xl border border-(--clr-border) bg-[color:var(--clr-surface2)] px-3 py-2 text-sm text-[color:var(--clr-fg)] focus:outline-none focus:ring-2 focus:ring-[color:var(--clr-yellow)]/40 focus:border-[color:var(--clr-yellow)] transition-all appearance-none';
+  const inputBase = 'w-full rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-sm text-(--clr-fg) focus:outline-none focus:ring-2 focus:ring-[color:var(--clr-yellow)]/40 focus:border-(--clr-yellow) transition-all';
+  const selectBase = 'w-full rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-sm text-(--clr-fg) focus:outline-none focus:ring-2 focus:ring-[color:var(--clr-yellow)]/40 focus:border-(--clr-yellow) transition-all appearance-none';
 
   return (
     <div
@@ -331,7 +331,7 @@ export function ProfileEditModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-edit-title"
-        className="relative mx-4 max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-3xl border border-(--clr-border) bg-[color:var(--clr-surface2)] shadow-2xl transition-all duration-300 ease-out will-change-transform"
+        className="relative mx-4 max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface2) shadow-2xl transition-all duration-300 ease-out will-change-transform"
         style={{
           opacity: isOpen ? 1 : 0,
           transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(12px)',
@@ -343,13 +343,13 @@ export function ProfileEditModal({
         <div className="flex items-center justify-between border-b border-(--clr-border) px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[rgba(255,244,79,0.12)] flex items-center justify-center">
-              <LuUser className="w-4 h-4 text-[color:var(--clr-yellow)]" />
+              <LuUser className="w-4 h-4 text-(--clr-yellow)" />
             </div>
             <div>
-              <h2 id="profile-edit-title" className="text-base font-bold text-[color:var(--clr-fg)]">
+              <h2 id="profile-edit-title" className="text-base font-bold text-(--clr-fg)">
                 Edit Profile
               </h2>
-              <p className="text-[11px] text-[color:var(--clr-fg-muted)]">
+              <p className="text-[11px] text-(--clr-fg-muted)">
                 Update your info and matching preferences
               </p>
             </div>
@@ -357,7 +357,7 @@ export function ProfileEditModal({
           <button
             type="button"
             onClick={isSaving ? undefined : onClose}
-            className="btn-press inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-[color:var(--clr-surface)] text-[color:var(--clr-fg-dim)] hover:border-[color:var(--clr-border-hover)] hover:text-[color:var(--clr-fg)] transition-colors"
+            className="btn-press inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-dim) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             aria-label="Close profile editor"
           >
             <LuX className="h-4 w-4" />
@@ -370,14 +370,14 @@ export function ProfileEditModal({
         >
           <div className="px-6 py-6 space-y-6">
             {/* Profile Picture */}
-            <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-[color:var(--clr-surface)] p-5">
-              <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[color:var(--clr-yellow)] to-transparent opacity-50" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)] mb-4">
+            <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5">
+              <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-(--clr-yellow) to-transparent opacity-50" />
+              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim) mb-4">
                 Profile Picture
               </p>
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-20 h-20 rounded-2xl bg-[color:var(--clr-yellow)] flex items-center justify-center text-[color:var(--clr-charcoal)] text-2xl font-bold overflow-hidden ring-4 ring-[color:var(--clr-surface2)] shadow-lg">
+                  <div className="w-20 h-20 rounded-2xl bg-(--clr-yellow) flex items-center justify-center text-(--clr-charcoal) text-2xl font-bold overflow-hidden ring-4 ring-(--clr-surface2) shadow-lg">
                     {user.profileImage ? (
                       <img
                         src={user.profileImage}
@@ -393,8 +393,8 @@ export function ProfileEditModal({
                         .toUpperCase()
                     )}
                   </div>
-                  <label className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-[color:var(--clr-surface2)] border border-(--clr-border) flex items-center justify-center cursor-pointer hover:border-[color:var(--clr-border-hover)] transition-colors shadow-sm">
-                    <LuCamera className="w-3.5 h-3.5 text-[color:var(--clr-fg)]" />
+                  <label className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-(--clr-surface2) border border-(--clr-border) flex items-center justify-center cursor-pointer hover:border-(--clr-border-hover) transition-colors shadow-sm">
+                    <LuCamera className="w-3.5 h-3.5 text-(--clr-fg)" />
                     <input
                       type="file"
                       accept="image/*"
@@ -405,7 +405,7 @@ export function ProfileEditModal({
                   </label>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-[color:var(--clr-surface2)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--clr-fg)] hover:border-[color:var(--clr-border-hover)] cursor-pointer disabled:opacity-60">
+                  <label className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
                     <input
                       type="file"
                       accept="image/*"
@@ -421,7 +421,7 @@ export function ProfileEditModal({
                       type="button"
                       onClick={handleImageDelete}
                       disabled={isUploadingImage}
-                      className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-[color:var(--clr-surface2)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
+                      className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
                     >
                       <LuTrash2 className="h-3.5 w-3.5" />
                       Remove
@@ -431,7 +431,7 @@ export function ProfileEditModal({
               </div>
               {imageError && (
                 <div className="mt-3 flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2">
-                  <LuCircleAlert className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+                  <LuCircleAlert className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <p className="text-xs text-red-300">{imageError}</p>
                 </div>
               )}
@@ -439,9 +439,9 @@ export function ProfileEditModal({
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {/* Identity & Contact */}
-              <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-[color:var(--clr-surface)] p-5 space-y-4">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[color:var(--clr-yellow)] to-transparent opacity-40 rounded-l-2xl" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)]">
+              <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5 space-y-4">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-(--clr-yellow) to-transparent opacity-40 rounded-l-2xl" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
                   Identity & Contact
                 </p>
                 <Field label="Full name" htmlFor="name">
@@ -521,9 +521,9 @@ export function ProfileEditModal({
               </div>
 
               {/* Business Context */}
-              <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-[color:var(--clr-surface)] p-5 space-y-4">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[color:var(--clr-teal)] to-transparent opacity-40 rounded-l-2xl" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)]">
+              <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5 space-y-4">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-(--clr-teal) to-transparent opacity-40 rounded-l-2xl" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
                   Business Context
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -603,9 +603,9 @@ export function ProfileEditModal({
 
               {/* Buyer Preferences */}
               {isBuyer && (
-                <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-[color:var(--clr-surface)] p-5 space-y-4">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-transparent opacity-40 rounded-l-2xl" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)]">
+                <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5 space-y-4">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-blue-400 to-transparent opacity-40 rounded-l-2xl" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
                     Buyer Preferences
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -732,9 +732,9 @@ export function ProfileEditModal({
 
               {/* Supplier Capabilities */}
               {isSupplier && (
-                <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-[color:var(--clr-surface)] p-5 space-y-4">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[color:var(--clr-teal)] to-transparent opacity-40 rounded-l-2xl" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)]">
+                <div className="relative overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5 space-y-4">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-(--clr-teal) to-transparent opacity-40 rounded-l-2xl" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
                     Supplier Capabilities
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -873,7 +873,7 @@ export function ProfileEditModal({
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--clr-fg-dim)]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
                       Supplier tags
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -907,19 +907,19 @@ export function ProfileEditModal({
 
             {errorMessage && (
               <div className="flex items-center gap-2.5 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3">
-                <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <LuCircleAlert className="w-4 h-4 text-red-400 shrink-0" />
                 <p className="text-sm text-red-200">{errorMessage}</p>
               </div>
             )}
           </div>
 
           {/* Sticky footer */}
-          <div className="sticky bottom-0 border-t border-(--clr-border) bg-[color:var(--clr-surface2)] px-6 py-4 flex flex-wrap items-center justify-end gap-3">
+          <div className="sticky bottom-0 border-t border-(--clr-border) bg-(--clr-surface2) px-6 py-4 flex flex-wrap items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-[color:var(--clr-surface)] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--clr-fg-muted)] hover:border-[color:var(--clr-border-hover)] hover:text-[color:var(--clr-fg)] transition-colors"
+              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             >
               <LuX className="h-4 w-4" />
               Cancel
@@ -927,7 +927,7 @@ export function ProfileEditModal({
             <button
               type="submit"
               disabled={isSaving}
-              className="btn-press inline-flex items-center gap-2 rounded-full border border-[color:var(--clr-yellow)] bg-[color:var(--clr-yellow)] px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-[color:var(--clr-charcoal)] hover:brightness-105 disabled:opacity-60 transition-all shadow-[0_0_20px_rgba(255,244,79,0.15)]"
+              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-yellow) bg-(--clr-yellow) px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-(--clr-charcoal) hover:brightness-105 disabled:opacity-60 transition-all shadow-[0_0_20px_rgba(255,244,79,0.15)]"
             >
               <LuSave className="h-4 w-4" />
               {isSaving ? 'Saving...' : 'Save changes'}

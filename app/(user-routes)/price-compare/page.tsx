@@ -259,7 +259,7 @@ export default function PriceComparePage() {
   return (
     <div className="relative pb-10">
       <div className="flex flex-col xl:flex-row gap-6 items-start">
-        <div className="xl:sticky xl:top-24 xl:w-[360px] shrink-0 space-y-6 z-10">
+        <div className="xl:sticky xl:top-24 xl:w-90 shrink-0 space-y-6 z-10">
           <header className="relative">
             <h1 className="font-naston text-3xl md:text-5xl text-(--clr-fg)">
               Price Compare
@@ -313,7 +313,7 @@ export default function PriceComparePage() {
           />
 
           {emptyState && (
-            <div className="bento-card noise-overlay p-6 bg-[color:var(--clr-surface)] text-sm text-[color:var(--clr-fg-muted)] border border-[color:var(--clr-border)]">
+            <div className="bento-card noise-overlay p-6 text-sm text-(--clr-fg-muted) border border-(--clr-border)">
               Enter a product, pick a category, and compare to see results.
             </div>
           )}

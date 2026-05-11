@@ -50,7 +50,7 @@ export function ProfileSupplierDetails({ user }: { user: SerializedUser }) {
   return (
     <GlowCard title="Supplier Details" icon={LuTruck} glowColor="teal">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow
             icon={LuMapPin}
             label="Service Area"
@@ -94,7 +94,7 @@ export function ProfileSupplierDetails({ user }: { user: SerializedUser }) {
             }
           />
         </div>
-        <div className="divide-y divide-[color:var(--clr-border)]">
+        <div className="divide-y divide-(--clr-border)">
           <InfoRow
             icon={LuDollarSign}
             label="Pricing Type"
@@ -130,19 +130,19 @@ export function ProfileSupplierDetails({ user }: { user: SerializedUser }) {
       {user.deliveryTimeRange && (
         <div className="mt-5 pt-5 border-t border-(--clr-border)">
           <div className="flex items-center gap-2 mb-3">
-            <LuZap className="w-4 h-4 text-[color:var(--clr-teal)]" />
-            <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest">
+            <LuZap className="w-4 h-4 text-(--clr-teal)" />
+            <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest">
               Delivery Speed Score
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex-1 h-2.5 rounded-full bg-[color:var(--clr-border)] overflow-hidden">
+            <div className="flex-1 h-2.5 rounded-full bg-[rgba(0,0,0,0.1)] dark:bg-(--clr-border) overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-[color:var(--clr-teal)] to-emerald-400 transition-all duration-700"
+                className="h-full rounded-full bg-linear-to-r from-(--clr-teal) to-emerald-400 transition-all duration-700"
                 style={{ width: `${deliverySpeed}%` }}
               />
             </div>
-            <span className="text-xs font-bold text-[color:var(--clr-teal)] tabular-nums w-10 text-right">
+            <span className="text-xs font-bold text-(--clr-teal) tabular-nums w-10 text-right">
               {deliverySpeed}%
             </span>
           </div>
@@ -151,7 +151,7 @@ export function ProfileSupplierDetails({ user }: { user: SerializedUser }) {
 
       {user.supplierTags.length > 0 && (
         <div className="mt-5 pt-5 border-t border-(--clr-border)">
-          <p className="text-[10px] font-semibold text-[color:var(--clr-fg-dim)] uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-semibold text-(--clr-fg-dim) uppercase tracking-widest mb-3">
             Supplier Tags
           </p>
           <div className="flex flex-wrap gap-2">

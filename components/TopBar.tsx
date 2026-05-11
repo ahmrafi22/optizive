@@ -29,24 +29,24 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
     : 'OP';
 
   return (
-    <header className="sticky top-0 z-50 grid h-16 grid-cols-[1fr_auto_1fr] items-center border-b border-[color:var(--clr-border)] bg-[color:var(--clr-surface)]/80 backdrop-blur-md px-4 sm:flex">
+    <header className="sticky top-0 z-50 grid h-16 grid-cols-[1fr_auto_1fr] items-center border-b border-(--clr-border) bg-(--clr-surface)/80 backdrop-blur-md px-4 sm:flex">
       <button
         type="button"
         onClick={onMenuToggle}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--clr-border)] text-[color:var(--clr-fg)] transition-colors hover:border-[color:var(--clr-border-hover)] sm:hidden"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-(--clr-border) text-(--clr-fg) transition-colors hover:border-(--clr-border-hover) sm:hidden"
         aria-label="Open menu"
       >
         <LuMenu className="h-5 w-5" />
       </button>
 
-      <span className="justify-self-center font-naston text-lg font-bold tracking-wide text-[color:var(--clr-fg)] sm:hidden">
+      <span className="justify-self-center font-naston text-lg font-bold tracking-wide text-(--clr-fg) sm:hidden">
         OPTIZIVE
       </span>
 
       <div className="justify-self-end flex items-center gap-3 sm:ml-auto">
         <Link
           href="/profile"
-          className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--clr-border)] bg-[color:var(--clr-surface2)] text-[color:var(--clr-fg)] transition-colors hover:border-[color:var(--clr-border-hover)] overflow-hidden"
+          className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg) transition-colors hover:border-(--clr-border-hover) overflow-hidden"
           aria-label="Go to profile"
         >
           {userImage ? (
@@ -63,7 +63,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
         <button
           type="button"
           onClick={() => setTheme(isDark ? 'light' : 'dark')}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--clr-border)] bg-[color:var(--clr-surface2)] text-[color:var(--clr-fg)] transition-colors hover:border-[color:var(--clr-border-hover)]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg) transition-colors hover:border-(--clr-border-hover)"
           aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           disabled={!mounted}
         >

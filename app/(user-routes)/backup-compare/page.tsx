@@ -279,7 +279,7 @@ export default function PriceComparePage() {
   const receivedProductsRef = useRef(false);
 
   const inputBase =
-    "w-full rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) placeholder:text-[color:var(--clr-fg-dim)] focus:outline-none focus:border-[color:var(--clr-border-hover)] focus:ring-2 focus:ring-[color:rgba(255,244,79,0.25)] transition";
+    "w-full rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition";
 
   const progressPercent = useMemo(() => {
     if (!progress.total) return 0;
@@ -440,20 +440,20 @@ export default function PriceComparePage() {
       const response = payload as unknown as CompareResponse;
       endStageRef.current = "complete";
       console.log("Complete response:", response);
-      
+
       // For complete event, merge with existing products to ensure we have everything
       setExactMatches(prev => {
         const existingUrls = new Set(prev.map(p => p.productUrl));
         const newProducts = (response.exactMatches ?? []).filter(p => !existingUrls.has(p.productUrl));
         return [...prev, ...newProducts];
       });
-      
+
       setRelatedProducts(prev => {
         const existingUrls = new Set(prev.map(p => p.productUrl));
         const newProducts = (response.relatedProducts ?? []).filter(p => !existingUrls.has(p.productUrl));
         return [...prev, ...newProducts];
       });
-      
+
       setTotalFound(response.totalFound ?? 0);
       setBestPrice(response.bestPrice ?? null);
       setSellerPrice(response.sellerPrice ?? null);
@@ -480,7 +480,7 @@ export default function PriceComparePage() {
   const runStreamingCompare = async (payload: CompareRequest) => {
     const streamUrl = "/api/price-compare";
     console.log("🚀 Starting streaming request to:", streamUrl);
-    
+
     try {
       const response = await fetch(streamUrl, {
         method: "POST",
@@ -518,21 +518,21 @@ export default function PriceComparePage() {
       try {
         while (true) {
           const { value, done } = await reader.read();
-          
+
           if (done) {
             console.log("✅ Stream done signal received, total chunks:", chunkCount);
             break;
           }
-          
+
           if (!value || value.length === 0) {
             console.warn("⚠️ Empty chunk received, continuing...");
             continue;
           }
-          
+
           chunkCount++;
           const chunk = decoder.decode(value, { stream: true });
           console.log(`📦 Chunk ${chunkCount} (${value.length} bytes):`, chunk.substring(0, 200));
-          
+
           // Normalize \r\n to \n BEFORE adding to buffer so boundary detection works
           buffer += chunk.replace(/\r\n/g, "\n");
 
@@ -541,7 +541,7 @@ export default function PriceComparePage() {
           while (boundaryIndex !== -1) {
             const sseChunk = buffer.slice(0, boundaryIndex);
             buffer = buffer.slice(boundaryIndex + 2);
-            
+
             // Skip keepalive comments (: keepalive or empty comment lines)
             const trimmed = sseChunk.trim();
             if (!trimmed || trimmed.startsWith(":")) {
@@ -549,9 +549,9 @@ export default function PriceComparePage() {
               boundaryIndex = buffer.indexOf("\n\n");
               continue;
             }
-            
+
             console.log("🔍 Processing SSE chunk:", sseChunk.substring(0, 200));
-            
+
             const parsed = parseSseChunk(sseChunk);
             if (parsed) {
               console.log("✅ Parsed event:", parsed.eventType);
@@ -559,7 +559,7 @@ export default function PriceComparePage() {
             } else {
               console.warn("⚠️ Failed to parse SSE chunk:", sseChunk);
             }
-            
+
             boundaryIndex = buffer.indexOf("\n\n");
           }
         }
@@ -723,10 +723,7 @@ export default function PriceComparePage() {
       <div className="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6">
         <section className="bento-card noise-overlay p-6 md:p-7 bg-(--clr-charcoal)">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Request</p>
-              <h2 className="text-xl font-semibold text-white">Compare a product</h2>
-            </div>
+            <h2 className="text-xl font-semibold text-white">Compare a product</h2>
             <div className="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
               <LuSearch className="h-5 w-5 text-primary" aria-hidden="true" />
             </div>
@@ -1033,8 +1030,8 @@ export default function PriceComparePage() {
                 {exactMatches.length > 0 ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {exactMatches.map((product, idx) => (
-                      <ProductCard 
-                        key={`exact-${product.source}-${product.productUrl}-${idx}`} 
+                      <ProductCard
+                        key={`exact-${product.source}-${product.productUrl}-${idx}`}
                         product={product}
                         isStreaming={isLoading}
                       />
@@ -1070,8 +1067,8 @@ export default function PriceComparePage() {
                 {relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {relatedProducts.map((product, idx) => (
-                      <ProductCard 
-                        key={`related-${product.source}-${product.productUrl}-${idx}`} 
+                      <ProductCard
+                        key={`related-${product.source}-${product.productUrl}-${idx}`}
                         product={product}
                         isStreaming={isLoading}
                       />

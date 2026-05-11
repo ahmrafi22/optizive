@@ -30,9 +30,9 @@ interface CompareFormProps {
 }
 
 const inputBase =
-  "w-full rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) placeholder:text-[color:var(--clr-fg-dim)] focus:outline-none focus:border-[color:var(--clr-border-hover)] focus:ring-2 focus:ring-[color:rgba(255,244,79,0.25)] transition";
+  "w-full rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition";
 
-const labelBase = "block text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500 mb-1.5";
+const labelBase = "block text-[11px] font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) mb-1.5";
 
 // ---------------------------------------------------------------------------
 // Custom country selector with flag image
@@ -54,7 +54,7 @@ function CountrySelector({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) focus:outline-none focus:border-[color:var(--clr-border-hover)] focus:ring-2 focus:ring-[color:rgba(255,244,79,0.25)] transition hover:border-white/20"
+        className="w-full flex items-center gap-3 rounded-2xl bg-(--clr-surface2) border border-(--clr-border) px-4 py-3 text-sm text-(--clr-fg) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition hover:border-white/20"
       >
         <img
           src={`https://flagcdn.com/24x18/${selected.tld}.png`}
@@ -64,7 +64,7 @@ function CountrySelector({
         />
         <span className="flex-1 text-left truncate">{selected.label}</span>
         <LuChevronDown
-          className={`h-4 w-4 text-zinc-400 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-(--clr-fg-muted) transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         />
       </button>
@@ -78,7 +78,7 @@ function CountrySelector({
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute top-full left-0 right-0 mt-2 z-20 max-h-64 overflow-y-auto rounded-2xl border border-[color:var(--clr-border)] bg-[color:var(--clr-surface)] shadow-2xl py-1">
+          <div className="absolute top-full left-0 right-0 mt-2 z-20 max-h-64 overflow-y-auto rounded-2xl border border-(--clr-border) bg-(--clr-surface) shadow-2xl py-1">
             {COUNTRY_OPTIONS.map((country) => (
               <button
                 key={country.value}
@@ -87,8 +87,8 @@ function CountrySelector({
                   onChange(country.value);
                   setOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors hover:bg-[color:var(--clr-surface2)] ${
-                  country.value === value ? "text-[color:var(--clr-fg)] bg-[color:var(--clr-surface2)]" : "text-[color:var(--clr-fg-muted)]"
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors hover:bg-(--clr-surface2) ${
+                  country.value === value ? "text-(--clr-fg) bg-(--clr-surface2)" : "text-(--clr-fg-muted)"
                 }`}
               >
                 <img
@@ -126,15 +126,14 @@ export function CompareForm({
   onClear,
 }: CompareFormProps) {
   return (
-    <section className="rounded-3xl border border-[color:var(--clr-border)] shadow-xl noise-overlay p-6 md:p-8 bg-[color:var(--clr-surface)] flex flex-col gap-0">
+    <section className="rounded-3xl border border-(--clr-border) shadow-xl noise-overlay p-6 md:p-8 flex flex-col gap-0 bg-(--clr-surface)">
       {/* Header */}
       <div className="flex items-center justify-between mb-7">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-0.5">Request</p>
-          <h2 className="text-xl font-semibold text-[color:var(--clr-fg)]">Compare a product</h2>
+          <h2 className="text-xl font-semibold text-(--clr-fg)">Compare a product</h2>
         </div>
-        <div className="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-          <LuSearch className="h-5 w-5 text-primary" aria-hidden="true" />
+        <div className="h-10 w-10 rounded-full bg-amber-400/10 dark:bg-primary/10 border border-amber-400/20 dark:border-primary/20 flex items-center justify-center shrink-0">
+          <LuSearch className="h-5 w-5 text-amber-600 dark:text-primary" aria-hidden="true" />
         </div>
       </div>
 
@@ -168,7 +167,7 @@ export function CompareForm({
                 </option>
               ))}
             </select>
-            <LuChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" aria-hidden="true" />
+            <LuChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-(--clr-fg-muted)" aria-hidden="true" />
           </div>
         </div>
 
@@ -181,7 +180,7 @@ export function CompareForm({
             onChange={(e) => onFormChange("info", e.target.value)}
             placeholder="e.g. 256GB Blue"
           />
-          <p className="mt-1.5 text-[11px] text-zinc-600">Optional — size, color, or bundle variant.</p>
+          <p className="mt-1.5 text-[11px] text-(--clr-fg-muted)">Optional — size, color, or bundle variant.</p>
         </div>
 
         {/* City + Country — two column layout */}
@@ -205,9 +204,9 @@ export function CompareForm({
         </div>
 
         {/* Streaming toggle */}
-        <div className="flex items-center justify-between rounded-xl border border-[color:var(--clr-border)] bg-[color:var(--clr-surface2)] px-4 py-3">
-          <span className="flex items-center gap-2 text-sm text-[color:var(--clr-fg)]">
-            <LuInfo className="h-4 w-4 text-[color:var(--clr-fg-muted)]" aria-hidden="true" />
+        <div className="flex items-center justify-between rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-3">
+          <span className="flex items-center gap-2 text-sm text-(--clr-fg)">
+            <LuInfo className="h-4 w-4 text-(--clr-fg-muted)" aria-hidden="true" />
             Stream live updates
           </span>
           <button
@@ -254,7 +253,7 @@ export function CompareForm({
             <button
               type="button"
               onClick={onAbort}
-              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--clr-border)] px-5 py-3 text-xs font-semibold text-[color:var(--clr-fg-muted)] hover:border-red-400/40 hover:text-red-500 dark:hover:text-red-300 transition-colors"
+              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-red-400/40 hover:text-red-500 dark:hover:text-red-300 transition-colors"
             >
               <LuX className="h-3.5 w-3.5" aria-hidden="true" />
               Cancel request
@@ -263,7 +262,7 @@ export function CompareForm({
             <button
               type="button"
               onClick={onClear}
-              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--clr-border)] px-5 py-3 text-xs font-semibold text-[color:var(--clr-fg-muted)] hover:border-[color:var(--clr-border-hover)] hover:text-[color:var(--clr-fg)] transition-colors"
+              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             >
               Clear form
             </button>
