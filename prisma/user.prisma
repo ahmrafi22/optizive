@@ -1,0 +1,81 @@
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  onboarded Boolean  @default(false)
+
+  // -------- BASIC INFO --------
+  name         String
+  phone        String? @unique
+  email        String? @unique
+  username     String? @unique
+  password     String?
+  profileImage String?
+  businessName String?
+
+  role         UserRole     @default(NONE)
+  businessType BusinessType?
+  businessSize BusinessSize?
+
+  // -------- LOCATION --------
+  district  String?
+  area      String?
+  latitude  Float?
+  longitude Float?
+
+  // -------- CATEGORY --------
+  primaryCategory Category?
+  subCategories   String[] @default([])
+
+  // =========================
+  // SELLER-SPECIFIC FIELDS
+  // =========================
+  monthlyPurchaseRange  String?
+  pricingPreference     PricingType?
+  negotiationPreference NegotiationPreference?
+  maxDeliveryTime       DeliveryTime?
+  preferredDistance     DistancePreference?
+  buyingPriority        BuyingPriority?
+  restockFrequency      String?
+
+  // =========================
+  // SUPPLIER-SPECIFIC FIELDS
+  // =========================
+  serviceArea           ServiceArea?
+  serviceRadiusKm       Int?
+  deliveryMethod        DeliveryMethod?
+  deliveryTimeRange     DeliveryTime?
+  pricingType           PricingType?
+  bulkDiscountAvailable Boolean?
+  orderCapacity         BusinessSize?
+  supplierTags          SupplierTag[] @default([])
+
+  // =========================
+  // TRUST / QUALITY SIGNALS
+  // =========================
+  isVerified        Boolean @default(false)
+  yearsInBusiness   Int?
+  avgRating         Float   @default(0)
+  totalTransactions Int     @default(0)
+
+  // =========================
+  // OPERATIONAL SIGNALS
+  // =========================
+  businessRegistrationId String?
+  paymentTerms           String?
+  minOrderValue          Float?
+  maxOrderValue          Float?
+  isActive               Boolean   @default(true)
+  lastActiveAt           DateTime?
+
+  // =========================
+  // RELATIONS
+  // =========================
+  inventory        Product[] @relation("ProductOwner")
+  suppliedProducts Product[] @relation("ProductSupplier")
+  bundles          Bundle[]  @relation("BundleOwner")
+  sales            Sale[]    @relation("SaleOwner")
+
+  @@index([role, district, primaryCategory])
+  @@index([businessType, businessSize])
+}
