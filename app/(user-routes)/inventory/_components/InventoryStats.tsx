@@ -30,9 +30,9 @@ export function InventoryStats({
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       <StatCard
-        label="Inventory value"
-        value={formatCurrency(stats.totalValue)}
-        hint={`Showing ${totalCount} of ${overallCount} products`}
+        label="Total products"
+        value={String(overallCount)}
+        hint="All inventory items"
       />
       <StatCard
         label="Low stock"
@@ -45,9 +45,9 @@ export function InventoryStats({
         hint="Unavailable right now"
       />
       <StatCard
-        label="Inactive"
-        value={String(stats.inactive)}
-        hint="Paused or archived"
+        label="Inventory value"
+        value={formatCurrency(stats.totalValue)}
+        hint="Total worth of stock"
       />
     </section>
   );

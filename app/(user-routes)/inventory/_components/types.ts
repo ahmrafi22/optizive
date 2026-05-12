@@ -18,6 +18,7 @@ export type InventoryProduct = {
   minStock: number | null;
   sku: string | null;
   barcode: string | null;
+  imageLink: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

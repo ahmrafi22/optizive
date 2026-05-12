@@ -1,4 +1,6 @@
-import { LuPackage } from "react-icons/lu";
+"use client";
+
+import { LuPackage, LuChevronDown } from "react-icons/lu";
 
 import { ProductCard } from "./ProductCard";
 import { ProductRow } from "./ProductRow";
@@ -9,9 +11,12 @@ export interface ProductListProps {
   view: ViewMode;
   isLoading: boolean;
   isFetching: boolean;
+  isFetchingMore: boolean;
   isEmpty: boolean;
+  hasMore: boolean;
   totalCount: number;
   overallCount: number;
+  onLoadMore: () => void;
 }
 
 export function ProductList({
@@ -19,26 +24,23 @@ export function ProductList({
   view,
   isLoading,
   isFetching,
+  isFetchingMore,
   isEmpty,
+  hasMore,
   totalCount,
   overallCount,
+  onLoadMore,
 }: ProductListProps) {
   const gridClass =
     view === "grid"
-      ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       : view === "large"
-        ? "grid-cols-1 lg:grid-cols-2"
+        ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         : "grid-cols-1";
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between text-xs text-(--clr-fg-muted)">
-        <span>
-          {isFetching ? "Updating results..." : `Showing ${totalCount} product${totalCount === 1 ? "" : "s"}`}
-        </span>
-        <span>{overallCount > 0 ? `${overallCount} total SKUs` : "No inventory yet"}</span>
-      </div>
-
+      
       {isLoading ? (
         <div className={`grid ${gridClass} gap-4`}>
           {Array.from({ length: view === "list" ? 4 : 6 }).map((_, index) => (
@@ -56,11 +58,42 @@ export function ProductList({
           </p>
         </div>
       ) : (
-        <div className={`grid ${gridClass} gap-4`}>
-          {view === "list"
-            ? products.map((product) => <ProductRow key={product.id} product={product} />)
-            : products.map((product) => <ProductCard key={product.id} product={product} view={view} />)}
-        </div>
+        <>
+          <div className={`grid ${gridClass} gap-4`}>
+            {view === "list"
+              ? products.map((product) => <ProductRow key={product.id} product={product} />)
+              : products.map((product) => <ProductCard key={product.id} product={product} view={view} />)}
+          </div>
+          
+          {hasMore && !isLoading && (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={onLoadMore}
+                disabled={isFetchingMore}
+                className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-6 py-2.5 text-sm font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isFetchingMore ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-(--clr-border) border-t-(--clr-fg) rounded-full" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    Load More
+                    <LuChevronDown className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+          
+          {!hasMore && products.length > 0 && (
+            <div className="text-center py-4 text-xs text-(--clr-fg-muted)">
+              End of results
+            </div>
+          )}
+        </>
       )}
     </section>
   );

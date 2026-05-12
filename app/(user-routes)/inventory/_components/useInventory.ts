@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { listInventoryProducts } from "@/backend/inventory/inventory";
 import { Category } from "@/prisma/generated/prisma/client";
@@ -28,45 +28,119 @@ export function useInventory(
   const [overallCount, setOverallCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const offsetRef = useRef(0);
+  
+  const currentQueryRef = useRef({
+    search,
+    category,
+    status,
+    sort,
+    minPrice,
+    maxPrice,
+    activeOnly,
+  });
 
-  useEffect(() => {
-    const handler = window.setTimeout(async () => {
-      setIsFetching(true);
-      setError(null);
+  const fetchProducts = useCallback(async (reset: boolean = false) => {
+    const currentOffset = reset ? 0 : offsetRef.current;
+    
+    if (reset) {
+      setIsLoading(true);
+      setProducts([]);
+      offsetRef.current = 0;
+    } else {
+      setIsFetchingMore(true);
+    }
+    
+    setIsFetching(true);
+    setError(null);
 
-      try {
-        const result = await listInventoryProducts({
-          ...(search.trim() && { search: search.trim() }),
-          ...(category !== "ALL" && { category: category as Category }),
-          ...(status !== "ALL" && { status }),
-          sort: sort.value,
-          order: sort.order,
-          ...(minPrice.trim() && { minPrice: Number(minPrice.trim()) }),
-          ...(maxPrice.trim() && { maxPrice: Number(maxPrice.trim()) }),
-          activeOnly,
-        });
+    try {
+      const result = await listInventoryProducts({
+        ...(search.trim() && { search: search.trim() }),
+        ...(category !== "ALL" && { category: category as Category }),
+        ...(status !== "ALL" && { status }),
+        sort: sort.value,
+        order: sort.order,
+        ...(minPrice.trim() && { minPrice: Number(minPrice.trim()) }),
+        ...(maxPrice.trim() && { maxPrice: Number(maxPrice.trim()) }),
+        activeOnly,
+        limit: 20,
+        offset: currentOffset,
+      });
 
-        if (result === null) {
-          throw new Error("Unauthorized \u2014 please sign in again.");
-        }
+      if (result === null) {
+        throw new Error("Unauthorized \u2014 please sign in again.");
+      }
 
+      if (reset) {
         setProducts(result.items ?? []);
         setCategories(result.categories ?? []);
         setTotalCount(result.totalCount ?? 0);
         setOverallCount(result.overallCount ?? 0);
-      } catch (err) {
-        setError((err as Error).message ?? "Failed to load inventory.");
-      } finally {
-        setIsLoading(false);
-        setIsFetching(false);
+        offsetRef.current = 20;
+      } else {
+        setProducts(prev => [...prev, ...(result.items ?? [])]);
+        offsetRef.current += 20;
       }
+      
+      setHasMore((result.items?.length ?? 0) >= 20);
+    } catch (err) {
+      setError((err as Error).message ?? "Failed to load inventory.");
+    } finally {
+      setIsLoading(false);
+      setIsFetching(false);
+      setIsFetchingMore(false);
+    }
+  }, [search, category, status, sort, minPrice, maxPrice, activeOnly]);
+
+  useEffect(() => {
+    const hasQueryChanged = 
+      currentQueryRef.current.search !== search ||
+      currentQueryRef.current.category !== category ||
+      currentQueryRef.current.status !== status ||
+      currentQueryRef.current.sort.value !== sort.value ||
+      currentQueryRef.current.sort.order !== sort.order ||
+      currentQueryRef.current.minPrice !== minPrice ||
+      currentQueryRef.current.maxPrice !== maxPrice ||
+      currentQueryRef.current.activeOnly !== activeOnly;
+
+    if (hasQueryChanged) {
+      currentQueryRef.current = {
+        search,
+        category,
+        status,
+        sort,
+        minPrice,
+        maxPrice,
+        activeOnly,
+      };
+    }
+
+    const handler = window.setTimeout(() => {
+      fetchProducts(hasQueryChanged);
     }, 280);
 
     return () => {
       window.clearTimeout(handler);
     };
-  }, [search, category, status, sort, minPrice, maxPrice, activeOnly, refreshKey]);
+  }, [search, category, status, sort, minPrice, maxPrice, activeOnly, refreshKey, fetchProducts]);
+
+  const loadMoreRef = useRef<(() => void) | null>(null);
+
+  const loadMore = useCallback(() => {
+    if (!isFetching && !isFetchingMore && hasMore && !isLoading) {
+      fetchProducts(false);
+    }
+  }, [isFetching, isFetchingMore, hasMore, isLoading, fetchProducts]);
+
+  loadMoreRef.current = loadMore;
+
+  const stableLoadMore = useCallback(() => {
+    loadMoreRef.current?.();
+  }, []);
 
   const stats = useMemo(() => {
     const totalValue = products.reduce((sum, product) => sum + product.value, 0);
@@ -84,7 +158,10 @@ export function useInventory(
     overallCount,
     isLoading,
     isFetching,
+    isFetchingMore,
+    hasMore,
     error,
     stats,
+    loadMore: stableLoadMore,
   };
 }

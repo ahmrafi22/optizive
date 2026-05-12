@@ -148,6 +148,13 @@ body {
     opacity: 0.06;
     transform: scale(1.05) rotate(-5deg);
   }
+
+  /* Disable hover effect for specific cards */
+  .bento-card.bento-card-no-hover:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: var(--clr-border) !important;
+  }
 }
 
 .bento-icon {

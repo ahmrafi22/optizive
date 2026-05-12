@@ -1,4 +1,4 @@
-import { LuFilter, LuSearch } from "react-icons/lu";
+import { LuFilter, LuSearch, LuRefreshCw } from "react-icons/lu";
 
 import {
   SORT_OPTIONS,
@@ -29,6 +29,8 @@ export interface InventoryFiltersProps {
   view: ViewMode;
   onViewChange: (value: ViewMode) => void;
   onClear: () => void;
+  onRefresh: () => void;
+  isFetching: boolean;
   error: string | null;
 }
 
@@ -51,10 +53,12 @@ export function InventoryFilters({
   view,
   onViewChange,
   onClear,
+  onRefresh,
+  isFetching,
   error,
 }: InventoryFiltersProps) {
   return (
-    <section className="bento-card noise-overlay p-5 md:p-6 space-y-4">
+    <section className="bento-card bento-card-no-hover noise-overlay p-5 md:p-6 space-y-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_1.2fr_1fr] gap-3">
           <div className="relative">
@@ -102,7 +106,7 @@ export function InventoryFilters({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-xs text-(--clr-fg-muted)">
+          <div className="flex items-center gap-2 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-3 text-xs text-(--clr-fg-muted)">
             <span>Active only</span>
             <input
               type="checkbox"
@@ -117,9 +121,9 @@ export function InventoryFilters({
                 key={value}
                 type="button"
                 onClick={() => onViewChange(value)}
-                className={`btn-press inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-all ${view === value
+                className={`inline-flex items-center gap-2 rounded-2xl border px-3 py-3 text-xs font-semibold transition-colors ${view === value
                     ? "border-(--clr-border-hover) bg-(--clr-charcoal) text-white"
-                    : "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted) hover:text-(--clr-fg)"
+                    : "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted)"
                   }`}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
@@ -127,6 +131,14 @@ export function InventoryFilters({
               </button>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={onRefresh}
+            className="inline-flex items-center gap-2 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-3 text-xs font-semibold text-(--clr-fg-muted)"
+          >
+            <LuRefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+            Refresh
+          </button>
         </div>
       </div>
 

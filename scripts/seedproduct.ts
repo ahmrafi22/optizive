@@ -113,6 +113,7 @@ async function seed() {
     minStock: item.minStock ?? null,
     sku: buildSku(item.category, index),
     barcode: buildBarcode(index + 1),
+    imageLink: `https://picsum.photos/seed/${item.name.replace(/\s+/g, '-').toLowerCase()}-${index}/400/300.jpg`,
     isActive: true,
   }));
 

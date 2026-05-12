@@ -16,6 +16,7 @@ export interface InventoryQuery {
   maxPrice?: number | null;
   activeOnly?: boolean;
   limit?: number;
+  offset?: number;
 }
 
 export interface InventoryProduct {
@@ -30,6 +31,7 @@ export interface InventoryProduct {
   minStock: number | null;
   sku: string | null;
   barcode: string | null;
+  imageLink: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -121,7 +123,9 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
   const sort = query.sort ?? "updated";
   const order = query.order ?? "desc";
   const activeOnly = query.activeOnly ?? false;
-  const limit = Math.min(query.limit ?? 200, 500);
+  const baseLimit = query.limit ?? 20;
+  const limit = status === "LOW_STOCK" ? Math.min(baseLimit * 3, 100) : Math.min(baseLimit, 100);
+  const offset = query.offset ?? 0;
   const sellingPriceFilter: { gte?: number; lte?: number } = {};
 
   if (query.minPrice !== null && query.minPrice !== undefined) {
@@ -132,17 +136,32 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     sellingPriceFilter.lte = query.maxPrice;
   }
 
-  const where = {
+  const searchWhere = buildSearchWhere(search);
+  
+  const where: any = {
     ownerId: userId,
-    ...(buildSearchWhere(search) ?? {}),
+    ...(searchWhere ? searchWhere : {}),
     ...(category !== "ALL" ? { category } : {}),
-    ...(activeOnly ? { isActive: true } : {}),
-    ...(status === "INACTIVE" ? { isActive: false } : {}),
-    ...(status === "IN_STOCK" ? { isActive: true, quantity: { gt: 0 } } : {}),
-    ...(status === "LOW_STOCK" ? { isActive: true, minStock: { not: null }, quantity: { gt: 0 } } : {}),
-    ...(status === "OUT_OF_STOCK" ? { isActive: true, quantity: { lte: 0 } } : {}),
     ...(Object.keys(sellingPriceFilter).length > 0 ? { sellingPrice: sellingPriceFilter } : {}),
   };
+
+  // Apply status filters
+  if (status === "INACTIVE") {
+    where.isActive = false;
+  } else if (status === "IN_STOCK") {
+    where.isActive = true;
+    where.quantity = { gt: 0 };
+  } else if (status === "LOW_STOCK") {
+    where.isActive = true;
+    where.minStock = { not: null };
+    where.quantity = { gt: 0 };
+  } else if (status === "OUT_OF_STOCK") {
+    where.isActive = true;
+    where.quantity = { lte: 0 };
+  } else if (activeOnly) {
+    // Only apply activeOnly filter when no specific status is selected
+    where.isActive = true;
+  }
 
   const orderBy =
     sort === "name"
@@ -158,6 +177,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       where,
       orderBy,
       take: limit,
+      skip: offset,
     }),
     prisma.product.count({ where }),
     prisma.product.count({ where: { ownerId: userId } }),
@@ -191,6 +211,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       minStock: product.minStock,
       sku: product.sku ?? null,
       barcode: product.barcode ?? null,
+      imageLink: product.imageLink ?? null,
       isActive: product.isActive,
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),

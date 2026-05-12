@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { LuRefreshCw } from "react-icons/lu";
 
 import { InventoryFilters } from "./_components/InventoryFilters";
 import { InventoryStats } from "./_components/InventoryStats";
@@ -16,7 +15,7 @@ export default function InventoryPage() {
   const [sort, setSort] = useState<SortOption>(SORT_OPTIONS[0]);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [activeOnly, setActiveOnly] = useState(true);
+  const [activeOnly, setActiveOnly] = useState(false);
   const [view, setView] = useState<ViewMode>("grid");
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -27,8 +26,11 @@ export default function InventoryPage() {
     overallCount,
     isLoading,
     isFetching,
+    isFetchingMore,
+    hasMore,
     error,
     stats,
+    loadMore,
   } = useInventory(search, category, status, sort, minPrice, maxPrice, activeOnly, refreshKey);
 
   const isEmpty = !isLoading && products.length === 0 && !error;
@@ -38,20 +40,8 @@ export default function InventoryPage() {
       <div className="absolute inset-0 pointer-events-none" />
 
       <div className="relative mx-auto w-full max-w-6xl space-y-8">
-        <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="mt-3 text-3xl md:text-4xl font-semibold text-(--clr-fg)">Inventory</h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setRefreshKey((prev) => prev + 1)}
-              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg)"
-            >
-              <LuRefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
-              Refresh
-            </button>
-          </div>
+        <header>
+          <h1 className="mt-3 text-3xl md:text-4xl font-naston text-(--clr-fg)">Inventory</h1>
         </header>
 
         <InventoryStats stats={stats} totalCount={totalCount} overallCount={overallCount} />
@@ -81,8 +71,10 @@ export default function InventoryPage() {
             setSort(SORT_OPTIONS[0]);
             setMinPrice("");
             setMaxPrice("");
-            setActiveOnly(true);
+            setActiveOnly(false);
           }}
+          onRefresh={() => setRefreshKey((prev) => prev + 1)}
+          isFetching={isFetching}
           error={error}
         />
 
@@ -91,9 +83,12 @@ export default function InventoryPage() {
           view={view}
           isLoading={isLoading}
           isFetching={isFetching}
+          isFetchingMore={isFetchingMore}
           isEmpty={isEmpty}
+          hasMore={hasMore}
           totalCount={totalCount}
           overallCount={overallCount}
+          onLoadMore={loadMore}
         />
       </div>
     </div>
