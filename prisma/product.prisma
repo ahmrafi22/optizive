@@ -14,6 +14,7 @@ model Product {
   barcode     String?
   sku         String?
   category    Category?
+  imageLink   String?
 
   costPrice   Float    @default(0)
   sellingPrice Float   @default(0)
