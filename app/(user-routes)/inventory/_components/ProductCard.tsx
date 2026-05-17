@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { StockBadge } from "./StockBadge";
 import {
   CATEGORY_PALETTES,
@@ -12,7 +14,10 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
   const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
 
   return (
-    <article className={`bento-card noise-overlay flex flex-col ${view === "large" ? "min-h-[380px]" : "min-h-[340px]"}`}>
+    <Link
+      href={`/inventory/${product.id}`}
+      className={`bento-card noise-overlay flex flex-col ${view === "large" ? "min-h-[380px]" : "min-h-[340px]"}`}
+    >
       {/* Square polaroid-style image */}
       <div className="w-full aspect-square border-b border-(--clr-border) relative p-4">
         <img
@@ -82,6 +87,6 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
           </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

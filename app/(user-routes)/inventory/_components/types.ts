@@ -44,6 +44,7 @@ export type SortOption = {
 
 export type InventoryStats = {
   totalValue: number;
+  totalProducts: number;
   lowStock: number;
   outOfStock: number;
   inactive: number;
@@ -70,6 +71,51 @@ export const VIEW_OPTIONS: { value: ViewMode; label: string; Icon: typeof LuGrid
   { value: "large", label: "Large", Icon: LuGrid2X2 },
   { value: "list", label: "List", Icon: LuList },
 ];
+
+export const CATEGORIES = [
+  "GROCERIES",
+  "FMCG",
+  "FRESH_PRODUCE",
+  "AGRO_PRODUCTS",
+  "FISHERY_SEAFOOD",
+  "MEAT_POULTRY",
+  "DAIRY",
+  "ELECTRONICS",
+  "MOBILE_ACCESSORIES",
+  "CLOTHING",
+  "TEXTILES_APPAREL",
+  "FOOTWEAR",
+  "BEAUTY_PERSONAL_CARE",
+  "HOME_APPLIANCE",
+  "FURNITURE",
+  "HARDWARE",
+  "CONSTRUCTION_MATERIALS",
+  "AUTO_PARTS",
+  "PHARMACY",
+  "STATIONERY",
+  "OFFICE_SUPPLIES",
+  "PACKAGING",
+  "CHEMICALS",
+  "PLASTICS",
+  "RESTAURANT_SUPPLY",
+  "HOSPITALITY_SUPPLY",
+  "OTHER",
+] as const;
+
+export const STOCK_UNITS = [
+  "PCS",
+  "KG",
+  "GRAM",
+  "LITER",
+  "ML",
+  "METER",
+  "BOX",
+  "PACK",
+  "DOZEN",
+  "BOTTLE",
+  "CAN",
+  "ROLL",
+] as const;
 
 export const STATUS_BADGES: Record<InventoryStockStatus, string> = {
   IN_STOCK: "border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",

@@ -20,18 +20,14 @@ function StatCard({
 
 export function InventoryStats({
   stats,
-  totalCount,
-  overallCount,
 }: {
   stats: InventoryStatsShape;
-  totalCount: number;
-  overallCount: number;
 }) {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       <StatCard
         label="Total products"
-        value={String(overallCount)}
+        value={String(stats.totalProducts)}
         hint="All inventory items"
       />
       <StatCard

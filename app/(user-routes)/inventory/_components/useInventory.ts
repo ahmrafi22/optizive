@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { listInventoryProducts } from "@/backend/inventory/inventory";
 import { Category } from "@/prisma/generated/prisma/client";
@@ -8,9 +8,18 @@ import { Category } from "@/prisma/generated/prisma/client";
 import type {
   InventoryCategoryOption,
   InventoryProduct,
+  InventoryStats,
   SortOption,
   StatusFilter,
 } from "./types";
+
+const DEFAULT_STATS: InventoryStats = {
+  totalValue: 0,
+  totalProducts: 0,
+  lowStock: 0,
+  outOfStock: 0,
+  inactive: 0,
+};
 
 export function useInventory(
   search: string,
@@ -26,13 +35,16 @@ export function useInventory(
   const [categories, setCategories] = useState<InventoryCategoryOption[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [overallCount, setOverallCount] = useState(0);
+  const [stats, setStats] = useState<InventoryStats>(DEFAULT_STATS);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const offsetRef = useRef(0);
-  
+
+  const initialLoadRef = useRef(true);
+  const prevRefreshKeyRef = useRef(refreshKey);
   const currentQueryRef = useRef({
     search,
     category,
@@ -45,7 +57,7 @@ export function useInventory(
 
   const fetchProducts = useCallback(async (reset: boolean = false) => {
     const currentOffset = reset ? 0 : offsetRef.current;
-    
+
     if (reset) {
       setIsLoading(true);
       setProducts([]);
@@ -53,7 +65,7 @@ export function useInventory(
     } else {
       setIsFetchingMore(true);
     }
-    
+
     setIsFetching(true);
     setError(null);
 
@@ -80,12 +92,13 @@ export function useInventory(
         setCategories(result.categories ?? []);
         setTotalCount(result.totalCount ?? 0);
         setOverallCount(result.overallCount ?? 0);
+        setStats(result.stats ?? DEFAULT_STATS);
         offsetRef.current = 20;
       } else {
         setProducts(prev => [...prev, ...(result.items ?? [])]);
         offsetRef.current += 20;
       }
-      
+
       setHasMore((result.items?.length ?? 0) >= 20);
     } catch (err) {
       setError((err as Error).message ?? "Failed to load inventory.");
@@ -97,7 +110,11 @@ export function useInventory(
   }, [search, category, status, sort, minPrice, maxPrice, activeOnly]);
 
   useEffect(() => {
-    const hasQueryChanged = 
+    const isRefresh = prevRefreshKeyRef.current !== refreshKey;
+    prevRefreshKeyRef.current = refreshKey;
+
+    const hasQueryChanged =
+      initialLoadRef.current ||
       currentQueryRef.current.search !== search ||
       currentQueryRef.current.category !== category ||
       currentQueryRef.current.status !== status ||
@@ -119,8 +136,12 @@ export function useInventory(
       };
     }
 
+    initialLoadRef.current = false;
+
+    const shouldReset = hasQueryChanged || isRefresh;
+
     const handler = window.setTimeout(() => {
-      fetchProducts(hasQueryChanged);
+      fetchProducts(shouldReset);
     }, 280);
 
     return () => {
@@ -141,15 +162,6 @@ export function useInventory(
   const stableLoadMore = useCallback(() => {
     loadMoreRef.current?.();
   }, []);
-
-  const stats = useMemo(() => {
-    const totalValue = products.reduce((sum, product) => sum + product.value, 0);
-    const lowStock = products.filter((product) => product.stockStatus === "LOW_STOCK").length;
-    const outOfStock = products.filter((product) => product.stockStatus === "OUT_OF_STOCK").length;
-    const inactive = products.filter((product) => product.stockStatus === "INACTIVE").length;
-
-    return { totalValue, lowStock, outOfStock, inactive };
-  }, [products]);
 
   return {
     products,
