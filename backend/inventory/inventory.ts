@@ -3,6 +3,7 @@
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { Category, StockUnit } from "@/prisma/generated/prisma/client";
+import { uploadImage, deleteImageByUrl } from "@/lib/cloudinary";
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
 
@@ -45,11 +46,35 @@ export interface InventoryCategoryOption {
   label: string;
 }
 
+export interface UpdateProductPayload {
+  name?: string;
+  description?: string | null;
+  category?: Category | null;
+  sellingPrice?: number;
+  costPrice?: number;
+  quantity?: number;
+  unit?: StockUnit;
+  minStock?: number | null;
+  sku?: string | null;
+  barcode?: string | null;
+  isActive?: boolean;
+  imageBase64?: string | null;
+}
+
+export interface InventoryStats {
+  totalValue: number;
+  totalProducts: number;
+  lowStock: number;
+  outOfStock: number;
+  inactive: number;
+}
+
 export interface InventoryResponse {
   items: InventoryProduct[];
   totalCount: number;
   overallCount: number;
   categories: InventoryCategoryOption[];
+  stats: InventoryStats;
 }
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -172,7 +197,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       ? { quantity: order }
       : { updatedAt: order };
 
-  const [items, rawCount, overallCount] = await Promise.all([
+  const [items, rawCount, overallCount, statsResult] = await Promise.all([
     prisma.product.findMany({
       where,
       orderBy,
@@ -181,6 +206,23 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     }),
     prisma.product.count({ where }),
     prisma.product.count({ where: { ownerId: userId } }),
+    prisma.$queryRawUnsafe<Array<{
+      totalValue: number;
+      totalProducts: number;
+      lowStock: number;
+      outOfStock: number;
+      inactive: number;
+    }>>(
+      `SELECT
+        COALESCE(SUM("sellingPrice" * "quantity"), 0) as "totalValue",
+        COUNT(*) as "totalProducts",
+        COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock"
+      FROM "Product"
+      WHERE "ownerId" = $1`,
+      userId,
+    ),
   ]);
 
   const filteredItems =
@@ -221,10 +263,143 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     } satisfies InventoryProduct;
   });
 
+  const serverStats = Array.isArray(statsResult) ? statsResult[0] : statsResult;
+
   return {
     items: products,
     totalCount,
     overallCount,
     categories: getCategoryOptions(),
+    stats: {
+      totalValue: Number(serverStats?.totalValue) || 0,
+      totalProducts: Number(serverStats?.totalProducts) || 0,
+      lowStock: Number(serverStats?.lowStock) || 0,
+      outOfStock: Number(serverStats?.outOfStock) || 0,
+      inactive: Number(serverStats?.inactive) || 0,
+    },
+  };
+}
+
+export async function getProductById(productId: string): Promise<InventoryProduct | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const product = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+  });
+
+  if (!product) return null;
+
+  const stockStatus = getStockStatus({
+    isActive: product.isActive,
+    quantity: product.quantity,
+    minStock: product.minStock,
+  });
+
+  const margin = Number((product.sellingPrice - product.costPrice).toFixed(2));
+  const value = Number((product.sellingPrice * product.quantity).toFixed(2));
+
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description ?? null,
+    category: product.category ?? null,
+    sellingPrice: product.sellingPrice,
+    costPrice: product.costPrice,
+    quantity: product.quantity,
+    unit: product.unit,
+    minStock: product.minStock,
+    sku: product.sku ?? null,
+    barcode: product.barcode ?? null,
+    imageLink: product.imageLink ?? null,
+    isActive: product.isActive,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    stockStatus,
+    margin,
+    value,
+  };
+}
+
+export async function updateProduct(
+  productId: string,
+  data: UpdateProductPayload,
+): Promise<InventoryProduct | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const existing = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+    select: { id: true, imageLink: true },
+  });
+  if (!existing) return null;
+
+  let imageLink = existing.imageLink;
+
+  if (data.imageBase64 === null) {
+    if (imageLink) {
+      await deleteImageByUrl(imageLink).catch(() => {});
+    }
+    imageLink = null;
+  } else if (data.imageBase64) {
+    if (imageLink) {
+      await deleteImageByUrl(imageLink).catch(() => {});
+    }
+    imageLink = await uploadImage(data.imageBase64, "products", {
+      width: 800,
+      height: 800,
+      crop: "fill",
+    });
+  }
+
+  const updateData: Record<string, unknown> = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description;
+  if (data.category !== undefined) updateData.category = data.category;
+  if (data.sellingPrice !== undefined) updateData.sellingPrice = data.sellingPrice;
+  if (data.costPrice !== undefined) updateData.costPrice = data.costPrice;
+  if (data.quantity !== undefined) updateData.quantity = data.quantity;
+  if (data.unit !== undefined) updateData.unit = data.unit;
+  if (data.minStock !== undefined) updateData.minStock = data.minStock;
+  if (data.sku !== undefined) updateData.sku = data.sku;
+  if (data.barcode !== undefined) updateData.barcode = data.barcode;
+  if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  if (imageLink !== existing.imageLink) updateData.imageLink = imageLink;
+
+  const updated = await prisma.product.update({
+    where: { id: productId },
+    data: updateData,
+  });
+
+  const stockStatus = getStockStatus({
+    isActive: updated.isActive,
+    quantity: updated.quantity,
+    minStock: updated.minStock,
+  });
+
+  const margin = Number((updated.sellingPrice - updated.costPrice).toFixed(2));
+  const value = Number((updated.sellingPrice * updated.quantity).toFixed(2));
+
+  return {
+    id: updated.id,
+    name: updated.name,
+    description: updated.description ?? null,
+    category: updated.category ?? null,
+    sellingPrice: updated.sellingPrice,
+    costPrice: updated.costPrice,
+    quantity: updated.quantity,
+    unit: updated.unit,
+    minStock: updated.minStock,
+    sku: updated.sku ?? null,
+    barcode: updated.barcode ?? null,
+    imageLink: updated.imageLink ?? null,
+    isActive: updated.isActive,
+    createdAt: updated.createdAt.toISOString(),
+    updatedAt: updated.updatedAt.toISOString(),
+    stockStatus,
+    margin,
+    value,
   };
 }

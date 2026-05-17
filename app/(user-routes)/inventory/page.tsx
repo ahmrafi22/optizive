@@ -44,7 +44,7 @@ export default function InventoryPage() {
           <h1 className="mt-3 text-3xl md:text-4xl font-naston text-(--clr-fg)">Inventory</h1>
         </header>
 
-        <InventoryStats stats={stats} totalCount={totalCount} overallCount={overallCount} />
+        <InventoryStats stats={stats} />
 
         <InventoryFilters
           search={search}
