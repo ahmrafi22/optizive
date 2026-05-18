@@ -1,0 +1,54 @@
+model SmartBasket {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  ownerId        String
+  owner          User     @relation(fields: [ownerId], references: [id], name: "SmartBasketOwner")
+
+  title          String
+  description    String?
+  isPublic       Boolean  @default(false)
+  publicId       String   @unique @default(cuid())
+
+  baseTotal      Float    @default(0)
+  customTotal    Float?
+  sourceCategory Category?
+
+  bundleId       String?
+  bundle         Bundle?  @relation(fields: [bundleId], references: [id])
+
+  items          SmartBasketItem[]
+
+  @@index([ownerId, createdAt])
+  @@index([isPublic, createdAt])
+}
+
+model SmartBasketItem {
+  id        String  @id @default(uuid())
+
+  basketId  String
+  basket    SmartBasket @relation(fields: [basketId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity  Float   @default(1)
+  position  Int?
+  role      SmartBasketItemRole @default(SEED)
+  source    SmartBasketSuggestionSource?
+  reason    String?
+
+  @@index([basketId])
+  @@index([productId])
+}
+
+enum SmartBasketItemRole {
+  SEED
+  ADDED
+}
+
+enum SmartBasketSuggestionSource {
+  RULE
+  AI
+}

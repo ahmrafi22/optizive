@@ -12,6 +12,7 @@ model Bundle {
   isActive    Boolean  @default(true)
 
   items       BundleItem[]
+  smartBaskets SmartBasket[]
 
   @@index([ownerId, isActive])
 }
