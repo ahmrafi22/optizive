@@ -75,6 +75,7 @@ model User {
   suppliedProducts Product[] @relation("ProductSupplier")
   bundles          Bundle[]  @relation("BundleOwner")
   sales            Sale[]    @relation("SaleOwner")
+  smartBaskets     SmartBasket[] @relation("SmartBasketOwner")
 
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])
