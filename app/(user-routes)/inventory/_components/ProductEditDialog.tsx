@@ -246,7 +246,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="btn-press rounded-full p-1.5 text-(--clr-fg-muted) hover:bg-(--clr-surface) hover:text-(--clr-fg) transition-colors disabled:opacity-50"
+            className="active:scale-[0.97] transition-transform duration-150 rounded-full p-1.5 text-(--clr-fg-muted) hover:bg-(--clr-surface) hover:text-(--clr-fg) transition-colors disabled:opacity-50"
           >
             <LuX className="h-4 w-4" />
           </button>
@@ -295,7 +295,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
                 </label>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
+                <label className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
                   <input
                     type="file"
                     accept="image/*"
@@ -311,7 +311,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
                     type="button"
                     onClick={handleRemoveImage}
                     disabled={isUploadingImage}
-                    className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
+                    className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
                   >
                     <LuTrash2 className="h-3.5 w-3.5" />
                     Remove
@@ -492,7 +492,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) hover:border-(--clr-border-hover) disabled:opacity-50 transition-colors"
+            className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) hover:border-(--clr-border-hover) disabled:opacity-50 transition-colors"
           >
             Cancel
           </button>
@@ -500,7 +500,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-yellow) bg-(--clr-yellow) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-charcoal) hover:opacity-90 disabled:opacity-50 transition-all"
+            className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-yellow) bg-(--clr-yellow) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-charcoal) hover:opacity-90 disabled:opacity-50 transition-all"
           >
             {isSaving ? (
               <>

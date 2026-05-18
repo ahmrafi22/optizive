@@ -121,47 +121,97 @@ export function HeroSection() {
                 {/* Unified Text Block */}
                 <span className="block leading-[1.2] md:leading-[1.1] " style={{ overflow: "hidden" }}>
                   {/* Desktop Only 'Manage' */}
-                  <span className="hidden md:inline-block">
-                    <span className="hero-word" style={{ animationDelay: "0.2s", marginRight: "0.28em" }}>Manage</span>
-                  </span>
-                  
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.28s", marginRight: "0.1em" }}>Inventory</span>
-                  <span className="inline-block align-middle"><HeroIcon icon={MdOutlineInventory} delay="0.32s" /></span>
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.36s", marginRight: "0.1em", marginLeft: "0.1em" }}>Pricing</span>
-                  <span className="inline-block align-middle"><HeroIcon icon={IoPricetagSharp} delay="0.4s" /></span>
-
-                  <br className="hidden md:block" />
-
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.48s", marginRight: "0.28em", marginLeft: "0.1em" }}>&</span>
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.56s", marginRight: "0.1em" }}>SupplyChain</span>
-                  <span className="inline-block align-middle"><HeroIcon icon={GiAndromedaChain} delay="0.6s" /></span>
-                  
-                  {/* Mobile Only 'Manage' (comes after SupplyChain icon) */}
-                  <span className="inline-block md:hidden">
-                    <span className="hero-word" style={{ animationDelay: "0.64s", marginRight: "0.28em", marginLeft: "0.1em" }}>Manage</span>
-                  </span>
-
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.68s", marginRight: "0.28em", marginLeft: "0.1em" }}>with</span>
-                  <span className="hero-word inline-block" style={{ animationDelay: "0.76s", marginRight: "0.28em" }}>Ease</span>
-                </span>
-                {/* Line 3 */}
-                <span className="flex items-center flex-wrap mt-2 italic" >
-
-                  {["Optimized", "with", "AI"].map((word, i) => (
-                    <span
-                      key={word + i}
-                      className="hero-word font-instrument"
-                      style={{
-                        color: "var(--clr-yellow)",
-                        fontSize: "1.15em",
-                        fontWeight: 500,
-                        animationDelay: `${0.88 + i * 0.08}s`,
-                        marginRight: "0.25em"
-                      }}
-                    >
-                      {word}
+                    <span className="hidden md:inline-block">
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.2, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.28em" }}
+                    >Manage</motion.span>
                     </span>
-                  ))}
+                    
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.28, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.1em" }}
+                    >Inventory</motion.span>
+                    <span className="inline-block align-middle"><HeroIcon icon={MdOutlineInventory} delay="0.32s" /></span>
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.36, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.1em", marginLeft: "0.1em" }}
+                    >Pricing</motion.span>
+                    <span className="inline-block align-middle"><HeroIcon icon={IoPricetagSharp} delay="0.4s" /></span>
+
+                    <br className="hidden md:block" />
+
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.48, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.28em", marginLeft: "0.1em" }}
+                    >&</motion.span>
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.56, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.1em" }}
+                    >SupplyChain</motion.span>
+                    <span className="inline-block align-middle"><HeroIcon icon={GiAndromedaChain} delay="0.6s" /></span>
+                    
+                    {/* Mobile Only 'Manage' (comes after SupplyChain icon) */}
+                    <span className="inline-block md:hidden">
+                      <motion.span
+                        initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                        animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                        transition={{ delay: 0.64, duration: 0.55, ease: EASE_OUT }}
+                        className="inline-block pr-[0.12em] -mr-[0.12em]"
+                        style={{ marginRight: "0.28em", marginLeft: "0.1em" }}
+                      >Manage</motion.span>
+                    </span>
+
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.68, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.28em", marginLeft: "0.1em" }}
+                    >with</motion.span>
+                    <motion.span
+                      initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                      transition={{ delay: 0.76, duration: 0.55, ease: EASE_OUT }}
+                      className="inline-block pr-[0.12em] -mr-[0.12em]"
+                      style={{ marginRight: "0.28em" }}
+                    >Ease</motion.span>
+                  </span>
+                  {/* Line 3 */}
+                  <span className="flex items-center flex-wrap mt-2 italic" >
+
+                    {["Optimized", "with", "AI"].map((word, i) => (
+                      <motion.span
+                        key={word + i}
+                        initial={{ opacity: 0, y: 18, clipPath: "inset(0 -0.5em 100% -0.5em)" }}
+                        animate={{ opacity: 1, y: 0, clipPath: "inset(0 -0.5em 0% -0.5em)" }}
+                        transition={{ delay: 0.88 + i * 0.08, duration: 0.55, ease: EASE_OUT }}
+                        className="font-instrument inline-block pr-[0.12em] -mr-[0.12em]"
+                        style={{
+                          color: "var(--clr-yellow)",
+                          fontSize: "1.15em",
+                          fontWeight: 500,
+                          marginRight: "0.25em"
+                        }}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
                 </span>
               </h1>
             </motion.div>
@@ -178,7 +228,7 @@ export function HeroSection() {
                 isLoading={isNavigating}
               >
                 Start Optimizing
-                <ArrowRight className="w-4 h-4 arrow-icon" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-220 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-1" />
               </MorphButton>
             </motion.div>
           </div>

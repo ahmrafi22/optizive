@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import { useState } from 'react';
 import type { SerializedUser } from '@/backend/user/user';
 import { ProfileHeader } from './profile-header';
@@ -10,7 +11,21 @@ import { ProfileSupplierDetails } from './profile-supplier-details';
 import { ProfileTrustOps } from './profile-trust-ops';
 import { ProfileEditModal } from './profile-edit-modal';
 
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
 type ProfileUser = SerializedUser;
+
+function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.56, ease: EASE_OUT }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function ProfileView({ user }: { user: ProfileUser }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -20,28 +35,28 @@ export default function ProfileView({ user }: { user: ProfileUser }) {
 
   return (
     <div className="space-y-5 max-w-6xl mx-auto py-4">
-      <div className="fade-up" style={{ animationDelay: '0ms' }}>
+      <FadeUp delay={0}>
         <ProfileHeader user={user} onEdit={() => setIsEditing(true)} />
-      </div>
-      <div className="fade-up" style={{ animationDelay: '80ms' }}>
+      </FadeUp>
+      <FadeUp delay={0.08}>
         <ProfileStats user={user} />
-      </div>
-      <div className="fade-up" style={{ animationDelay: '160ms' }}>
+      </FadeUp>
+      <FadeUp delay={0.16}>
         <ProfileInfoGrid user={user} />
-      </div>
+      </FadeUp>
       {isBuyer && (
-        <div className="fade-up" style={{ animationDelay: '240ms' }}>
+        <FadeUp delay={0.24}>
           <ProfileBuyerPreferences user={user} />
-        </div>
+        </FadeUp>
       )}
       {isSupplier && (
-        <div className="fade-up" style={{ animationDelay: '320ms' }}>
+        <FadeUp delay={0.32}>
           <ProfileSupplierDetails user={user} />
-        </div>
+        </FadeUp>
       )}
-      <div className="fade-up" style={{ animationDelay: '400ms' }}>
+      <FadeUp delay={0.4}>
         <ProfileTrustOps user={user} />
-      </div>
+      </FadeUp>
       <ProfileEditModal user={user} isOpen={isEditing} onClose={() => setIsEditing(false)} />
     </div>
   );

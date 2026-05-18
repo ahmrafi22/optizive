@@ -149,7 +149,7 @@ export function InventoryFilters({
               key={option.value}
               type="button"
               onClick={() => onStatusChange(option.value)}
-              className={`btn-press rounded-full border px-3 py-1.5 text-xs font-semibold ${status === option.value
+              className={`active:scale-[0.97] transition-transform duration-150 rounded-full border px-3 py-1.5 text-xs font-semibold ${status === option.value
                   ? "border-(--clr-border-hover) bg-(--clr-charcoal) text-white"
                   : "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted) hover:text-(--clr-fg)"
                 }`}
@@ -178,7 +178,7 @@ export function InventoryFilters({
           <button
             type="button"
             onClick={onClear}
-            className="btn-press rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg)"
+            className="active:scale-[0.97] transition-transform duration-150 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg)"
           >
             Clear filters
           </button>

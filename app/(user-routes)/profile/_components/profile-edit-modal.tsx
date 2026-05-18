@@ -357,7 +357,7 @@ export function ProfileEditModal({
           <button
             type="button"
             onClick={isSaving ? undefined : onClose}
-            className="btn-press inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-dim) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
+            className="active:scale-[0.97] transition-transform duration-150 inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-dim) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             aria-label="Close profile editor"
           >
             <LuX className="h-4 w-4" />
@@ -405,7 +405,7 @@ export function ProfileEditModal({
                   </label>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
+                  <label className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
                     <input
                       type="file"
                       accept="image/*"
@@ -421,7 +421,7 @@ export function ProfileEditModal({
                       type="button"
                       onClick={handleImageDelete}
                       disabled={isUploadingImage}
-                      className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
+                      className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
                     >
                       <LuTrash2 className="h-3.5 w-3.5" />
                       Remove
@@ -919,7 +919,7 @@ export function ProfileEditModal({
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface) px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             >
               <LuX className="h-4 w-4" />
               Cancel
@@ -927,7 +927,7 @@ export function ProfileEditModal({
             <button
               type="submit"
               disabled={isSaving}
-              className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-yellow) bg-(--clr-yellow) px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-(--clr-charcoal) hover:brightness-105 disabled:opacity-60 transition-all shadow-[0_0_20px_rgba(255,244,79,0.15)]"
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-yellow) bg-(--clr-yellow) px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-(--clr-charcoal) hover:brightness-105 disabled:opacity-60 transition-all shadow-[0_0_20px_rgba(255,244,79,0.15)]"
             >
               <LuSave className="h-4 w-4" />
               {isSaving ? 'Saving...' : 'Save changes'}

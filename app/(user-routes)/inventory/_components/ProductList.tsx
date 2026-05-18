@@ -71,7 +71,7 @@ export function ProductList({
                 type="button"
                 onClick={onLoadMore}
                 disabled={isFetchingMore}
-                className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-6 py-2.5 text-sm font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) disabled:opacity-50 disabled:cursor-not-allowed"
+                className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-6 py-2.5 text-sm font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isFetchingMore ? (
                   <>

@@ -446,7 +446,7 @@ export function OptionPill({
     <button
       type="button"
       onClick={onChange}
-      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold transition-all btn-press ${
+      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold transition-all active:scale-[0.97] transition-transform duration-150 ${
         checked
           ? 'border-(--clr-yellow) bg-[rgba(255,244,79,0.16)] text-(--clr-yellow)'
           : 'border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-muted)'

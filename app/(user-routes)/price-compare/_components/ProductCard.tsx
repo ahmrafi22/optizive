@@ -1,3 +1,5 @@
+"use client";
+import { motion } from "motion/react";
 import { LuActivity, LuExternalLink, LuGlobe, LuTag } from "react-icons/lu";
 import type { ProductResult } from "./types";
 import { availabilityTone, formatCurrency, matchTone } from "./utils";
@@ -17,8 +19,11 @@ export function ProductCard({ product, isStreaming }: ProductCardProps) {
   const hasUnit = product.unitValue && product.unitName;
 
   return (
-    <article
-      className={`bento-card noise-overlay overflow-hidden flex flex-col ${isStreaming ? "animate-fade-in" : ""}`}
+    <motion.article
+      initial={isStreaming ? { opacity: 0, y: 10, scale: 0.98 } : false}
+      animate={isStreaming ? { opacity: 1, y: 0, scale: 1 } : undefined}
+      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+      className="bento-card noise-overlay overflow-hidden flex flex-col"
     >
       {/* Top section — image + meta + title */}
       <div className="p-5 md:p-6 flex gap-5 items-start">
@@ -123,13 +128,13 @@ export function ProductCard({ product, isStreaming }: ProductCardProps) {
           href={product.productUrl}
           target="_blank"
           rel="noreferrer"
-          className="btn-press group flex items-center justify-center gap-2 w-full rounded-xl border border-(--clr-border) px-4 py-2.5 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:bg-(--clr-surface2) hover:text-(--clr-fg) transition-all"
+          className="active:scale-[0.97] transition-transform duration-150 group flex items-center justify-center gap-2 w-full rounded-xl border border-(--clr-border) px-4 py-2.5 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:bg-(--clr-surface2) hover:text-(--clr-fg) transition-all"
         >
           <LuTag className="h-3.5 w-3.5 text-(--clr-fg-muted) group-hover:text-primary transition-colors" aria-hidden="true" />
           View listing
           <LuExternalLink className="ml-auto h-3.5 w-3.5 text-(--clr-fg-muted) group-hover:text-(--clr-fg-muted) transition-colors" aria-hidden="true" />
         </a>
       </div>
-    </article>
+    </motion.article>
   );
 }

@@ -115,16 +115,16 @@ export function ProfileBuyerPreferences({ user }: { user: SerializedUser }) {
               const label = BUYING_PRIORITY_LABELS.get(key) ?? key;
               return (
                 <div key={key} className="flex items-center gap-3">
-                  <span className={`text-[11px] font-semibold w-20 text-right ${isActive ? 'priority-text-active' : 'text-(--clr-fg-dim)'}`}>
+                  <span className={`text-[11px] font-semibold w-20 text-right ${isActive ? 'text-[#d4c000] dark:text-[#fff44f]' : 'text-(--clr-fg-dim)'}`}>
                     {label}
                   </span>
-                  <div className="flex-1 h-2 rounded-full overflow-hidden priority-bar-bg">
+                  <div className="flex-1 h-2 rounded-full overflow-hidden bg-black/12 dark:bg-white/8">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${isActive ? 'priority-bar-active' : 'priority-bar-inactive'}`}
+                      className={`h-full rounded-full transition-all duration-500 ${isActive ? 'bg-[#d4c000] dark:bg-[#fff44f]' : 'bg-black/15 dark:bg-white/8'}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  {isActive && <LuZap className="w-3.5 h-3.5 priority-text-active" />}
+                  {isActive && <LuZap className="w-3.5 h-3.5 text-[#d4c000] dark:text-[#fff44f]" />}
                 </div>
               );
             })}

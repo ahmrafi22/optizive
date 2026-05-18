@@ -77,7 +77,7 @@ export default function ProductDetailPage() {
           <button
             type="button"
             onClick={() => router.push("/inventory")}
-            className="btn-press mt-4 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-6 py-2.5 text-sm font-semibold text-(--clr-fg) hover:border-(--clr-border-hover)"
+            className="active:scale-[0.97] transition-transform duration-150 mt-4 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-6 py-2.5 text-sm font-semibold text-(--clr-fg) hover:border-(--clr-border-hover)"
           >
             <LuArrowLeft className="h-4 w-4" />
             Back to Inventory
@@ -99,7 +99,7 @@ export default function ProductDetailPage() {
     <div className="relative mx-auto w-full max-w-4xl space-y-6">
       <div className="bento-card noise-overlay overflow-hidden">
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-80 lg:w-96 aspect-square md:aspect-auto md:min-h-[400px] relative">
+          <div className="w-full md:w-80 lg:w-96 aspect-square md:aspect-auto md:min-h-100 relative">
             <img
               src={product.imageLink || ""}
               alt={product.name}
@@ -135,7 +135,7 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={() => setIsEditOpen(true)}
-                className="btn-press inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover)"
+                className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover)"
               >
                 <LuPencil className="h-3.5 w-3.5" />
                 Edit

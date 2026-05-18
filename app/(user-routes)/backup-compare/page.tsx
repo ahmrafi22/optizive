@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import {
   LuActivity,
@@ -161,7 +162,12 @@ function ProductCard({ product, isStreaming }: { product: ProductResult; isStrea
     : "Unknown";
 
   return (
-    <article className={`bento-card noise-overlay p-4 md:p-5 bg-(--clr-charcoal) ${isStreaming ? "animate-fade-in" : ""}`}>
+    <motion.article
+  initial={isStreaming ? { opacity: 0, y: 10, scale: 0.98 } : false}
+  animate={isStreaming ? { opacity: 1, y: 0, scale: 1 } : undefined}
+  transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+  className="bento-card noise-overlay p-4 md:p-5 bg-(--clr-charcoal)"
+>
       <div className="flex items-start gap-4">
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center">
           {product.imageUrl ? (
@@ -205,7 +211,7 @@ function ProductCard({ product, isStreaming }: { product: ProductResult; isStrea
           href={product.productUrl}
           target="_blank"
           rel="noreferrer"
-          className="btn-press shrink-0 rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-white/30 hover:bg-white/5 transition-all"
+          className="active:scale-[0.97] transition-transform duration-150 shrink-0 rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-white/30 hover:bg-white/5 transition-all"
         >
           View
           <LuExternalLink className="ml-1 inline h-3.5 w-3.5" aria-hidden="true" />
@@ -243,7 +249,7 @@ function ProductCard({ product, isStreaming }: { product: ProductResult; isStrea
           </div>
         </div>
       </div>
-    </article>
+      </motion.article>
   );
 }
 
@@ -826,7 +832,7 @@ export default function PriceComparePage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="btn-press inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-[#111111] transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-[#111111] transition disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isLoading ? (
                   <>
@@ -844,7 +850,7 @@ export default function PriceComparePage() {
                 <button
                   type="button"
                   onClick={handleAbort}
-                  className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-xs font-semibold text-zinc-200 hover:border-white/30"
+                  className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-xs font-semibold text-zinc-200 hover:border-white/30"
                 >
                   Cancel
                   <LuX className="h-4 w-4" aria-hidden="true" />
@@ -853,7 +859,7 @@ export default function PriceComparePage() {
                 <button
                   type="button"
                   onClick={() => setForm({ productName: "", category: "", info: "", city: "", country: "" })}
-                  className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-xs font-semibold text-zinc-300 hover:border-white/30"
+                  className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-xs font-semibold text-zinc-300 hover:border-white/30"
                 >
                   Clear form
                 </button>
