@@ -235,7 +235,7 @@ export function CompareForm({
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-press inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-[#111111] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+            className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-[#111111] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading ? (
               <>
@@ -253,7 +253,7 @@ export function CompareForm({
             <button
               type="button"
               onClick={onAbort}
-              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-red-400/40 hover:text-red-500 dark:hover:text-red-300 transition-colors"
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-red-400/40 hover:text-red-500 dark:hover:text-red-300 transition-colors"
             >
               <LuX className="h-3.5 w-3.5" aria-hidden="true" />
               Cancel request
@@ -262,7 +262,7 @@ export function CompareForm({
             <button
               type="button"
               onClick={onClear}
-              className="btn-press inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center justify-center gap-2 rounded-full border border-(--clr-border) px-5 py-3 text-xs font-semibold text-(--clr-fg-muted) hover:border-(--clr-border-hover) hover:text-(--clr-fg) transition-colors"
             >
               Clear form
             </button>

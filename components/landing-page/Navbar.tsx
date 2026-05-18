@@ -25,7 +25,7 @@ export function Navbar() {
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.55, ease: EASE_OUT }}
-          className="select-none flex items-center gap-2 sm:gap-3 logo-mark z-50"
+          className="select-none flex items-center gap-2 sm:gap-3 hover:-translate-y-0.5 hover:scale-[1.04] transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] z-50"
         >
           <div
             style={{

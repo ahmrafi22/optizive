@@ -29,7 +29,7 @@ export function CtaSection() {
           <button
             id="cta-create-btn"
             onClick={() => router.push("/login")}
-            className="btn-press h-12 md:h-14 px-8 md:px-10 rounded-full bg-white text-black font-semibold text-base md:text-lg w-full sm:w-auto"
+            className="active:scale-[0.97] transition-transform duration-150 h-12 md:h-14 px-8 md:px-10 rounded-full bg-white text-black font-semibold text-base md:text-lg w-full sm:w-auto"
           >
             Create Free Account
           </button>

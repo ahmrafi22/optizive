@@ -29,7 +29,7 @@ export function FeaturesSection() {
         >
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4 md:mb-6">
-              <MdOutlineInventory className="bento-icon w-8 h-8 md:w-10 md:h-10 text-primary" />
+              <MdOutlineInventory className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
               <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">SmartInventory &amp; Expiry Tracker</h3>
             </div>
             <p className="text-zinc-400 max-w-md mb-8 text-base md:text-lg leading-relaxed">
@@ -42,7 +42,7 @@ export function FeaturesSection() {
                   <LuMilk className="w-4 h-4 text-primary/60 group-hover:text-primary transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Milk</div>
-                <div className="progress-bar mt-2 md:mt-4"><div className="progress-fill bg-primary/50 group-hover:bg-primary w-4/5" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary/50 group-hover:bg-primary w-4/5" /></div>
               </div>
 
               <div className="bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-zinc-400/50 transition-colors duration-300">
@@ -51,7 +51,7 @@ export function FeaturesSection() {
                   <LuCoffee className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Cold Brew</div>
-                <div className="progress-bar mt-2 md:mt-4"><div className="progress-fill bg-zinc-600 group-hover:bg-zinc-400 w-full" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-zinc-600 group-hover:bg-zinc-400 w-full" /></div>
               </div>
 
               <div className="bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
@@ -60,7 +60,7 @@ export function FeaturesSection() {
                   <PiBreadFill className="w-4 h-4 text-red-400 transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Bread</div>
-                <div className="progress-bar mt-2 md:mt-4"><div className="progress-fill bg-red-500/50 group-hover:bg-red-500 w-[15%]" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-red-500/50 group-hover:bg-red-500 w-[15%]" /></div>
               </div>
 
               <div className="hidden md:block bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
@@ -69,7 +69,7 @@ export function FeaturesSection() {
                   <GiChickenOven className="w-4 h-4 text-primary transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Chicken</div>
-                <div className="progress-bar mt-2 md:mt-4"><div className="progress-fill bg-primary w-1/5" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary w-1/5" /></div>
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@ export function FeaturesSection() {
           className="bento-card md:col-span-6 lg:col-span-4 p-6 md:p-8 flex flex-col group"
         >
           <div className="flex items-center gap-3 mb-4 md:mb-6">
-            <MdOutlineAutoGraph className="bento-icon w-8 h-8 md:w-10 md:h-10 text-primary" />
+            <MdOutlineAutoGraph className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
             <h3 className="text-xl md:text-2xl font-naston text-zinc-100">Demand Forecasting</h3>
           </div>
           <p className="text-zinc-400 mb-auto leading-relaxed text-sm md:text-base">
@@ -94,7 +94,7 @@ export function FeaturesSection() {
             {[33, 50, 66, 90, 50].map((h, i) => (
               <div
                 key={i}
-                className="bar-chart-bar flex-1 bg-primary/30 group-hover:bg-primary"
+                className="rounded-t-md transition-all duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] flex-1 bg-primary/30 group-hover:bg-primary"
                 style={{ height: `${h}%`, transitionDelay: `${i * 40}ms` }}
               />
             ))}
@@ -110,7 +110,7 @@ export function FeaturesSection() {
           className="bento-card md:col-span-6 lg:col-span-4 p-6 md:p-8 group"
         >
           <div className="flex items-center gap-3 mb-4 md:mb-6">
-            <IoPricetagSharp className="bento-icon w-8 h-8 md:w-10 md:h-10 text-primary" />
+            <IoPricetagSharp className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
             <h3 className="text-xl md:text-2xl font-naston text-zinc-100">Price Monitor</h3>
           </div>
           <p className="text-zinc-400 mb-6 leading-relaxed text-sm md:text-base">Comparative charts &amp; insights to outpace competitors.</p>
@@ -120,7 +120,12 @@ export function FeaturesSection() {
               <span className="font-mono text-zinc-500 line-through group-hover:text-zinc-400 transition-colors">$29.99</span>
             </div>
             <div className="relative flex items-center justify-between p-3 bg-primary/10 border border-primary/20 rounded-xl text-sm overflow-hidden group-hover:bg-primary/20 transition-colors duration-300">
-              <div className="shimmer absolute inset-0 bg-linear-to-r from-transparent via-primary/10 to-transparent -translate-x-full" />
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{ duration: 2.4, ease: "linear", repeat: Infinity }}
+                className="absolute inset-0 bg-linear-to-r from-transparent via-primary/10 to-transparent"
+              />
               <span className="text-primary font-semibold relative z-10">OPTIZIVE AI</span>
               <span className="font-mono text-primary font-bold relative z-10 group-hover:scale-110 origin-right transition-transform duration-300 ease-out">$27.50</span>
             </div>
@@ -138,15 +143,15 @@ export function FeaturesSection() {
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             <div className="flex-1 w-full">
               <div className="flex items-center gap-3 mb-4 md:mb-6">
-                <IoPeopleOutline className="bento-icon w-8 h-8 md:w-10 md:h-10 text-primary" />
+                <IoPeopleOutline className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
                 <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">Smart Procurement</h3>
               </div>
               <p className="text-zinc-400 mb-6 text-sm md:text-lg leading-relaxed">
                 Connect with social network procurement groups. Unlock tiered pricing with collective buying tags.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="tag bg-zinc-800/50 border border-zinc-700/50 text-zinc-300 group-hover:bg-zinc-800 group-hover:border-zinc-600 transition-colors text-xs md:text-sm">Group Active</span>
-                <span className="tag bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary/20 transition-colors text-xs md:text-sm">Save 15%</span>
+                <span className="inline-flex items-center gap-1 px-[0.65rem] py-[0.2rem] rounded-full text-[0.65rem] font-bold tracking-[0.08em] uppercase bg-zinc-800/50 border border-zinc-700/50 text-zinc-300 group-hover:bg-zinc-800 group-hover:border-zinc-600 transition-colors text-xs md:text-sm">Group Active</span>
+                <span className="inline-flex items-center gap-1 px-[0.65rem] py-[0.2rem] rounded-full text-[0.65rem] font-bold tracking-[0.08em] uppercase bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary/20 transition-colors text-xs md:text-sm">Save 15%</span>
               </div>
             </div>
             <div className="flex-1 flex items-center justify-center pointer-events-none mt-4 md:mt-0 gap-4 md:gap-8 md:translate-y-6 -translate-y-2">
@@ -205,7 +210,7 @@ export function FeaturesSection() {
         >
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4 md:mb-6">
-              <IoCartOutline className="bento-icon w-8 h-8 md:w-10 md:h-10 text-primary" />
+              <IoCartOutline className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
               <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">Basket Engine</h3>
             </div>
             <p className="text-zinc-400 text-sm md:text-lg leading-relaxed max-w-sm">
@@ -272,7 +277,7 @@ export function FeaturesSection() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg md:text-xl font-bold font-sans text-zinc-100 flex items-center gap-2 group-hover:text-primary transition-colors duration-300">
-                  <TbApi className="bento-icon w-5 h-5 md:w-6 md:h-6" /> API Integration
+                  <TbApi className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-5 h-5 md:w-6 md:h-6" /> API Integration
                 </h3>
                 <p className="text-zinc-400 text-sm md:text-lg mt-1 font-sans leading-relaxed">seamless integration with your ecommerce</p>
               </div>

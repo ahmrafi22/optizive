@@ -24,7 +24,7 @@ export function MorphButton({
       disabled={isLoading}
       onMouseEnter={() => !isLoading && setIsHovered(true)}
       onMouseLeave={() => !isLoading && setIsHovered(false)}
-      className={`btn-press relative overflow-hidden flex items-center justify-center h-12 px-7 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto ${isLoading ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
+      className={`group active:scale-[0.97] transition-transform duration-150 relative overflow-hidden flex items-center justify-center h-12 px-7 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto ${isLoading ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
       style={{
         background: "var(--clr-yellow)",
         border: "1px solid var(--clr-yellow)",
