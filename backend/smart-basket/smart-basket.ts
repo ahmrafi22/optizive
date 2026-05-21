@@ -621,6 +621,10 @@ export async function createSmartBasket(payload: CreateSmartBasketPayload) {
   return { ok: true, id: created.id };
 }
 
+const DATASET_WEIGHT = 0.4;
+const USER_WEIGHT = 0.6;
+const MIN_USER_SALES_FOR_BLEND = 5;
+
 async function getScoredCandidates(productIds: string[]) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -644,8 +648,10 @@ async function getScoredCandidates(productIds: string[]) {
   });
   const saleIds = Array.from(new Set(saleItems.map((item) => item.saleId)));
 
-  const coPurchaseCounts = new Map<string, number>();
-  if (saleIds.length > 0) {
+  const userCoPurchaseCounts = new Map<string, number>();
+  const hasEnoughSales = saleIds.length >= MIN_USER_SALES_FOR_BLEND;
+
+  if (hasEnoughSales) {
     const grouped = await prisma.saleItem.groupBy({
       by: ["productId"],
       where: {
@@ -658,9 +664,21 @@ async function getScoredCandidates(productIds: string[]) {
     });
 
     grouped.forEach((row) => {
-      coPurchaseCounts.set(row.productId, row._count.productId);
+      userCoPurchaseCounts.set(row.productId, row._count.productId);
     });
   }
+
+  const datasetEdges = await prisma.coPurchaseEdge.findMany({
+    where: { productAId: { in: uniqueProductIds } },
+    orderBy: { score: "desc" },
+    take: 40,
+  });
+
+  const datasetCoPurchaseCounts = new Map<string, number>();
+  datasetEdges.forEach((edge) => {
+    const current = datasetCoPurchaseCounts.get(edge.productBId) ?? 0;
+    datasetCoPurchaseCounts.set(edge.productBId, current + edge.frequency);
+  });
 
   const bundleLinks = await prisma.bundleItem.findMany({
     where: { productId: { in: uniqueProductIds } },
@@ -683,13 +701,45 @@ async function getScoredCandidates(productIds: string[]) {
     });
   }
 
-  const candidateIds = new Set<string>([...coPurchaseCounts.keys(), ...bundleCounts.keys()]);
+  const allCandidateIds = new Set<string>([
+    ...userCoPurchaseCounts.keys(),
+    ...datasetCoPurchaseCounts.keys(),
+    ...bundleCounts.keys(),
+  ]);
+
+  const candidateIds = new Set<string>();
+
+  if (hasEnoughSales) {
+    for (const id of allCandidateIds) {
+      const userScore = userCoPurchaseCounts.get(id) ?? 0;
+      const datasetScore = datasetCoPurchaseCounts.get(id) ?? 0;
+      const blendedScore = userScore * USER_WEIGHT + datasetScore * DATASET_WEIGHT;
+      if (blendedScore > 0) {
+        candidateIds.add(id);
+      }
+    }
+  } else {
+    for (const id of allCandidateIds) {
+      const datasetScore = datasetCoPurchaseCounts.get(id) ?? 0;
+      if (datasetScore > 0) {
+        candidateIds.add(id);
+      }
+    }
+  }
 
   if (candidateIds.size < 12 && selectedCategories.size > 0) {
+    const affinities = await prisma.categoryAffinity.findMany({
+      where: { categoryA: { in: Array.from(selectedCategories) as Category[] } },
+      orderBy: { affinityScore: "desc" },
+      take: 5,
+    });
+
+    const relatedCategories = affinities.map((a) => a.categoryB);
+
     const fallback = await prisma.product.findMany({
       where: {
         ownerId: userId,
-        category: { in: Array.from(selectedCategories) as Category[] },
+        category: { in: relatedCategories.length > 0 ? relatedCategories : Array.from(selectedCategories) as Category[] },
         id: { notIn: uniqueProductIds },
         isActive: true,
       },
@@ -723,7 +773,11 @@ async function getScoredCandidates(productIds: string[]) {
   const maxPrice = summaries.reduce((max, item) => Math.max(max, item.sellingPrice), 0);
 
   const scoredBase = summaries.map((item) => {
-    const coPurchase = coPurchaseCounts.get(item.id) ?? 0;
+    const userCoPurchase = userCoPurchaseCounts.get(item.id) ?? 0;
+    const datasetCoPurchase = datasetCoPurchaseCounts.get(item.id) ?? 0;
+    const coPurchase = hasEnoughSales
+      ? userCoPurchase * USER_WEIGHT + datasetCoPurchase * DATASET_WEIGHT
+      : datasetCoPurchase;
     const bundleCount = bundleCounts.get(item.id) ?? 0;
     const sameCategory = item.category && selectedCategories.has(item.category) ? 1 : 0;
     const expiryPenalty = item.expiryDate && new Date(item.expiryDate) < new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
