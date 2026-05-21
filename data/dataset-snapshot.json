@@ -1,0 +1,4952 @@
+{
+  "coPurchaseEdges": [
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_002",
+      "frequency": 450,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_003",
+      "frequency": 380,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_004",
+      "frequency": 420,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_005",
+      "frequency": 390,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_006",
+      "frequency": 310,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_007",
+      "frequency": 280,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_008",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_009",
+      "frequency": 260,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_010",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_001",
+      "frequency": 270,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_002",
+      "frequency": 290,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_004",
+      "frequency": 240,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_005",
+      "frequency": 220,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_006",
+      "frequency": 200,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_007",
+      "frequency": 180,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_008",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_009",
+      "frequency": 170,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_010",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_001",
+      "frequency": 150,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_002",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_003",
+      "frequency": 130,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_012",
+      "frequency": 350,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_013",
+      "frequency": 320,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_014",
+      "frequency": 290,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_013",
+      "productBId": "dataset_groceries_015",
+      "frequency": 270,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_014",
+      "productBId": "dataset_groceries_011",
+      "frequency": 250,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_015",
+      "productBId": "dataset_groceries_012",
+      "frequency": 230,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_016",
+      "productBId": "dataset_groceries_017",
+      "frequency": 210,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_016",
+      "productBId": "dataset_groceries_018",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_017",
+      "productBId": "dataset_groceries_019",
+      "frequency": 180,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_018",
+      "productBId": "dataset_groceries_020",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_019",
+      "productBId": "dataset_groceries_016",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_020",
+      "productBId": "dataset_groceries_017",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_dairy_001",
+      "productBId": "dataset_dairy_002",
+      "frequency": 480,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_001",
+      "productBId": "dataset_dairy_003",
+      "frequency": 410,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_002",
+      "productBId": "dataset_dairy_004",
+      "frequency": 390,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_003",
+      "productBId": "dataset_dairy_005",
+      "frequency": 360,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_004",
+      "productBId": "dataset_dairy_001",
+      "frequency": 340,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_005",
+      "productBId": "dataset_dairy_002",
+      "frequency": 320,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_006",
+      "productBId": "dataset_dairy_007",
+      "frequency": 300,
+      "source": "COMBINED",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_006",
+      "productBId": "dataset_dairy_008",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_007",
+      "productBId": "dataset_dairy_009",
+      "frequency": 260,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_008",
+      "productBId": "dataset_dairy_010",
+      "frequency": 240,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_009",
+      "productBId": "dataset_dairy_006",
+      "frequency": 220,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_010",
+      "productBId": "dataset_dairy_007",
+      "frequency": 200,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_011",
+      "productBId": "dataset_dairy_012",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_011",
+      "productBId": "dataset_dairy_013",
+      "frequency": 180,
+      "source": "COMBINED",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_012",
+      "productBId": "dataset_dairy_014",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_013",
+      "productBId": "dataset_dairy_015",
+      "frequency": 160,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_014",
+      "productBId": "dataset_dairy_011",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_015",
+      "productBId": "dataset_dairy_012",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_fresh_produce_001",
+      "productBId": "dataset_fresh_produce_002",
+      "frequency": 460,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_001",
+      "productBId": "dataset_fresh_produce_003",
+      "frequency": 400,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_002",
+      "productBId": "dataset_fresh_produce_004",
+      "frequency": 370,
+      "source": "BUNDLEREC",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_003",
+      "productBId": "dataset_fresh_produce_005",
+      "frequency": 350,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_004",
+      "productBId": "dataset_fresh_produce_001",
+      "frequency": 330,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_005",
+      "productBId": "dataset_fresh_produce_002",
+      "frequency": 310,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_006",
+      "productBId": "dataset_fresh_produce_007",
+      "frequency": 290,
+      "source": "COMBINED",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_006",
+      "productBId": "dataset_fresh_produce_008",
+      "frequency": 270,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_007",
+      "productBId": "dataset_fresh_produce_009",
+      "frequency": 250,
+      "source": "BUNDLEREC",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_008",
+      "productBId": "dataset_fresh_produce_010",
+      "frequency": 230,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_009",
+      "productBId": "dataset_fresh_produce_006",
+      "frequency": 210,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_010",
+      "productBId": "dataset_fresh_produce_007",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_011",
+      "productBId": "dataset_fresh_produce_012",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_011",
+      "productBId": "dataset_fresh_produce_013",
+      "frequency": 170,
+      "source": "COMBINED",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_012",
+      "productBId": "dataset_fresh_produce_014",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_013",
+      "productBId": "dataset_fresh_produce_015",
+      "frequency": 150,
+      "source": "BUNDLEREC",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_014",
+      "productBId": "dataset_fresh_produce_011",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_015",
+      "productBId": "dataset_fresh_produce_012",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_meat_poultry_001",
+      "productBId": "dataset_meat_poultry_002",
+      "frequency": 440,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_001",
+      "productBId": "dataset_meat_poultry_003",
+      "frequency": 380,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_002",
+      "productBId": "dataset_meat_poultry_004",
+      "frequency": 360,
+      "source": "BUNDLEREC",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_003",
+      "productBId": "dataset_meat_poultry_005",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_004",
+      "productBId": "dataset_meat_poultry_001",
+      "frequency": 320,
+      "source": "AMAZON",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_005",
+      "productBId": "dataset_meat_poultry_002",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_006",
+      "productBId": "dataset_meat_poultry_007",
+      "frequency": 280,
+      "source": "COMBINED",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_006",
+      "productBId": "dataset_meat_poultry_008",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_007",
+      "productBId": "dataset_meat_poultry_009",
+      "frequency": 240,
+      "source": "BUNDLEREC",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_008",
+      "productBId": "dataset_meat_poultry_010",
+      "frequency": 220,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_009",
+      "productBId": "dataset_meat_poultry_006",
+      "frequency": 200,
+      "source": "AMAZON",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_010",
+      "productBId": "dataset_meat_poultry_007",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_011",
+      "productBId": "dataset_meat_poultry_012",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_011",
+      "productBId": "dataset_meat_poultry_013",
+      "frequency": 160,
+      "source": "COMBINED",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_012",
+      "productBId": "dataset_meat_poultry_014",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_013",
+      "productBId": "dataset_meat_poultry_015",
+      "frequency": 140,
+      "source": "BUNDLEREC",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_014",
+      "productBId": "dataset_meat_poultry_011",
+      "frequency": 130,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_015",
+      "productBId": "dataset_meat_poultry_012",
+      "frequency": 120,
+      "source": "AMAZON",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_fmcg_001",
+      "productBId": "dataset_fmcg_002",
+      "frequency": 430,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_001",
+      "productBId": "dataset_fmcg_003",
+      "frequency": 390,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_002",
+      "productBId": "dataset_fmcg_004",
+      "frequency": 370,
+      "source": "BUNDLEREC",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_003",
+      "productBId": "dataset_fmcg_005",
+      "frequency": 350,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_004",
+      "productBId": "dataset_fmcg_001",
+      "frequency": 330,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_005",
+      "productBId": "dataset_fmcg_002",
+      "frequency": 310,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_006",
+      "productBId": "dataset_fmcg_007",
+      "frequency": 290,
+      "source": "COMBINED",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_006",
+      "productBId": "dataset_fmcg_008",
+      "frequency": 270,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_007",
+      "productBId": "dataset_fmcg_009",
+      "frequency": 250,
+      "source": "BUNDLEREC",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_008",
+      "productBId": "dataset_fmcg_010",
+      "frequency": 230,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_009",
+      "productBId": "dataset_fmcg_006",
+      "frequency": 210,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_010",
+      "productBId": "dataset_fmcg_007",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_011",
+      "productBId": "dataset_fmcg_012",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_011",
+      "productBId": "dataset_fmcg_013",
+      "frequency": 170,
+      "source": "COMBINED",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_012",
+      "productBId": "dataset_fmcg_014",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_013",
+      "productBId": "dataset_fmcg_015",
+      "frequency": 150,
+      "source": "BUNDLEREC",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_014",
+      "productBId": "dataset_fmcg_011",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_015",
+      "productBId": "dataset_fmcg_012",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_electronics_001",
+      "productBId": "dataset_electronics_002",
+      "frequency": 320,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_001",
+      "productBId": "dataset_electronics_003",
+      "frequency": 290,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_002",
+      "productBId": "dataset_electronics_004",
+      "frequency": 270,
+      "source": "INSTACART",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_003",
+      "productBId": "dataset_electronics_005",
+      "frequency": 250,
+      "source": "COMBINED",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_004",
+      "productBId": "dataset_electronics_001",
+      "frequency": 230,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_005",
+      "productBId": "dataset_electronics_002",
+      "frequency": 210,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_006",
+      "productBId": "dataset_electronics_007",
+      "frequency": 190,
+      "source": "BUNDLEREC",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_006",
+      "productBId": "dataset_electronics_008",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_007",
+      "productBId": "dataset_electronics_009",
+      "frequency": 170,
+      "source": "COMBINED",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_008",
+      "productBId": "dataset_electronics_010",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_009",
+      "productBId": "dataset_electronics_006",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_010",
+      "productBId": "dataset_electronics_007",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_011",
+      "productBId": "dataset_electronics_012",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_011",
+      "productBId": "dataset_electronics_013",
+      "frequency": 120,
+      "source": "BUNDLEREC",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_012",
+      "productBId": "dataset_electronics_014",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_013",
+      "productBId": "dataset_electronics_015",
+      "frequency": 100,
+      "source": "COMBINED",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_014",
+      "productBId": "dataset_electronics_011",
+      "frequency": 90,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_015",
+      "productBId": "dataset_electronics_012",
+      "frequency": 80,
+      "source": "INSTACART",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_clothing_001",
+      "productBId": "dataset_clothing_002",
+      "frequency": 310,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_001",
+      "productBId": "dataset_clothing_003",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_002",
+      "productBId": "dataset_clothing_004",
+      "frequency": 260,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_003",
+      "productBId": "dataset_clothing_005",
+      "frequency": 240,
+      "source": "COMBINED",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_004",
+      "productBId": "dataset_clothing_001",
+      "frequency": 220,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_005",
+      "productBId": "dataset_clothing_002",
+      "frequency": 200,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_006",
+      "productBId": "dataset_clothing_007",
+      "frequency": 190,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_006",
+      "productBId": "dataset_clothing_008",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_007",
+      "productBId": "dataset_clothing_009",
+      "frequency": 170,
+      "source": "COMBINED",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_008",
+      "productBId": "dataset_clothing_010",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_009",
+      "productBId": "dataset_clothing_006",
+      "frequency": 150,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_010",
+      "productBId": "dataset_clothing_007",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_011",
+      "productBId": "dataset_clothing_012",
+      "frequency": 130,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_011",
+      "productBId": "dataset_clothing_013",
+      "frequency": 120,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_012",
+      "productBId": "dataset_clothing_014",
+      "frequency": 110,
+      "source": "COMBINED",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_013",
+      "productBId": "dataset_clothing_015",
+      "frequency": 100,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_014",
+      "productBId": "dataset_clothing_011",
+      "frequency": 90,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_015",
+      "productBId": "dataset_clothing_012",
+      "frequency": 80,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_001",
+      "productBId": "dataset_beauty_personal_care_002",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_001",
+      "productBId": "dataset_beauty_personal_care_003",
+      "frequency": 310,
+      "source": "AMAZON",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_002",
+      "productBId": "dataset_beauty_personal_care_004",
+      "frequency": 290,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_003",
+      "productBId": "dataset_beauty_personal_care_005",
+      "frequency": 270,
+      "source": "BUNDLEREC",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_004",
+      "productBId": "dataset_beauty_personal_care_001",
+      "frequency": 250,
+      "source": "AMAZON",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_005",
+      "productBId": "dataset_beauty_personal_care_002",
+      "frequency": 230,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_006",
+      "productBId": "dataset_beauty_personal_care_007",
+      "frequency": 210,
+      "source": "COMBINED",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_006",
+      "productBId": "dataset_beauty_personal_care_008",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_007",
+      "productBId": "dataset_beauty_personal_care_009",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_008",
+      "productBId": "dataset_beauty_personal_care_010",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_009",
+      "productBId": "dataset_beauty_personal_care_006",
+      "frequency": 160,
+      "source": "BUNDLEREC",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_010",
+      "productBId": "dataset_beauty_personal_care_007",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_011",
+      "productBId": "dataset_beauty_personal_care_012",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_011",
+      "productBId": "dataset_beauty_personal_care_013",
+      "frequency": 130,
+      "source": "COMBINED",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_012",
+      "productBId": "dataset_beauty_personal_care_014",
+      "frequency": 120,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_013",
+      "productBId": "dataset_beauty_personal_care_015",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_014",
+      "productBId": "dataset_beauty_personal_care_011",
+      "frequency": 100,
+      "source": "INSTACART",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_beauty_personal_care_015",
+      "productBId": "dataset_beauty_personal_care_012",
+      "frequency": 90,
+      "source": "BUNDLEREC",
+      "category": "BEAUTY_PERSONAL_CARE"
+    },
+    {
+      "productAId": "dataset_home_appliance_001",
+      "productBId": "dataset_home_appliance_002",
+      "frequency": 280,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_001",
+      "productBId": "dataset_home_appliance_003",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_002",
+      "productBId": "dataset_home_appliance_004",
+      "frequency": 240,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_003",
+      "productBId": "dataset_home_appliance_005",
+      "frequency": 220,
+      "source": "COMBINED",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_004",
+      "productBId": "dataset_home_appliance_001",
+      "frequency": 200,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_005",
+      "productBId": "dataset_home_appliance_002",
+      "frequency": 180,
+      "source": "BUNDLEREC",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_006",
+      "productBId": "dataset_home_appliance_007",
+      "frequency": 170,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_006",
+      "productBId": "dataset_home_appliance_008",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_007",
+      "productBId": "dataset_home_appliance_009",
+      "frequency": 150,
+      "source": "COMBINED",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_008",
+      "productBId": "dataset_home_appliance_010",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_009",
+      "productBId": "dataset_home_appliance_006",
+      "frequency": 130,
+      "source": "BUNDLEREC",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_010",
+      "productBId": "dataset_home_appliance_007",
+      "frequency": 120,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_011",
+      "productBId": "dataset_home_appliance_012",
+      "frequency": 110,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_011",
+      "productBId": "dataset_home_appliance_013",
+      "frequency": 100,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_012",
+      "productBId": "dataset_home_appliance_014",
+      "frequency": 90,
+      "source": "COMBINED",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_013",
+      "productBId": "dataset_home_appliance_015",
+      "frequency": 80,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_014",
+      "productBId": "dataset_home_appliance_011",
+      "frequency": 70,
+      "source": "BUNDLEREC",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_015",
+      "productBId": "dataset_home_appliance_012",
+      "frequency": 60,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_pharmacy_001",
+      "productBId": "dataset_pharmacy_002",
+      "frequency": 350,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_001",
+      "productBId": "dataset_pharmacy_003",
+      "frequency": 320,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_002",
+      "productBId": "dataset_pharmacy_004",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_003",
+      "productBId": "dataset_pharmacy_005",
+      "frequency": 280,
+      "source": "BUNDLEREC",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_004",
+      "productBId": "dataset_pharmacy_001",
+      "frequency": 260,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_005",
+      "productBId": "dataset_pharmacy_002",
+      "frequency": 240,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_006",
+      "productBId": "dataset_pharmacy_007",
+      "frequency": 220,
+      "source": "COMBINED",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_006",
+      "productBId": "dataset_pharmacy_008",
+      "frequency": 200,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_007",
+      "productBId": "dataset_pharmacy_009",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_008",
+      "productBId": "dataset_pharmacy_010",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_009",
+      "productBId": "dataset_pharmacy_006",
+      "frequency": 160,
+      "source": "BUNDLEREC",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_010",
+      "productBId": "dataset_pharmacy_007",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_011",
+      "productBId": "dataset_pharmacy_012",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_011",
+      "productBId": "dataset_pharmacy_013",
+      "frequency": 130,
+      "source": "COMBINED",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_012",
+      "productBId": "dataset_pharmacy_014",
+      "frequency": 120,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_013",
+      "productBId": "dataset_pharmacy_015",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_014",
+      "productBId": "dataset_pharmacy_011",
+      "frequency": 100,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_015",
+      "productBId": "dataset_pharmacy_012",
+      "frequency": 90,
+      "source": "BUNDLEREC",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_dairy_001",
+      "frequency": 420,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_dairy_002",
+      "frequency": 390,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_dairy_003",
+      "frequency": 360,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_dairy_004",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_dairy_005",
+      "frequency": 320,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_fresh_produce_001",
+      "frequency": 380,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_fresh_produce_002",
+      "frequency": 350,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_fresh_produce_003",
+      "frequency": 330,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_fresh_produce_004",
+      "frequency": 310,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_fresh_produce_005",
+      "frequency": 290,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_meat_poultry_001",
+      "frequency": 360,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_meat_poultry_002",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_meat_poultry_003",
+      "frequency": 320,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_meat_poultry_004",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_meat_poultry_005",
+      "frequency": 280,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_fresh_produce_001",
+      "productBId": "dataset_meat_poultry_001",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_002",
+      "productBId": "dataset_meat_poultry_002",
+      "frequency": 320,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_003",
+      "productBId": "dataset_meat_poultry_003",
+      "frequency": 300,
+      "source": "BUNDLEREC",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_004",
+      "productBId": "dataset_meat_poultry_004",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_005",
+      "productBId": "dataset_meat_poultry_005",
+      "frequency": 260,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_dairy_001",
+      "productBId": "dataset_groceries_001",
+      "frequency": 400,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_002",
+      "productBId": "dataset_groceries_002",
+      "frequency": 370,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_003",
+      "productBId": "dataset_groceries_003",
+      "frequency": 350,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_004",
+      "productBId": "dataset_groceries_004",
+      "frequency": 330,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_005",
+      "productBId": "dataset_groceries_005",
+      "frequency": 310,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_fmcg_001",
+      "productBId": "dataset_beauty_personal_care_001",
+      "frequency": 290,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_002",
+      "productBId": "dataset_beauty_personal_care_002",
+      "frequency": 270,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_003",
+      "productBId": "dataset_beauty_personal_care_003",
+      "frequency": 250,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_004",
+      "productBId": "dataset_beauty_personal_care_004",
+      "frequency": 230,
+      "source": "BUNDLEREC",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_005",
+      "productBId": "dataset_beauty_personal_care_005",
+      "frequency": 210,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_pharmacy_001",
+      "productBId": "dataset_beauty_personal_care_001",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_002",
+      "productBId": "dataset_beauty_personal_care_002",
+      "frequency": 240,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_003",
+      "productBId": "dataset_beauty_personal_care_003",
+      "frequency": 220,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_004",
+      "productBId": "dataset_beauty_personal_care_004",
+      "frequency": 200,
+      "source": "COMBINED",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_005",
+      "productBId": "dataset_beauty_personal_care_005",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_home_appliance_001",
+      "productBId": "dataset_electronics_001",
+      "frequency": 240,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_002",
+      "productBId": "dataset_electronics_002",
+      "frequency": 220,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_003",
+      "productBId": "dataset_electronics_003",
+      "frequency": 200,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_004",
+      "productBId": "dataset_electronics_004",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_005",
+      "productBId": "dataset_electronics_005",
+      "frequency": 160,
+      "source": "COMBINED",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_clothing_001",
+      "productBId": "dataset_beauty_personal_care_001",
+      "frequency": 210,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_002",
+      "productBId": "dataset_beauty_personal_care_002",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_003",
+      "productBId": "dataset_beauty_personal_care_003",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_004",
+      "productBId": "dataset_beauty_personal_care_004",
+      "frequency": 170,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_005",
+      "productBId": "dataset_beauty_personal_care_005",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_007",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_008",
+      "frequency": 240,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_009",
+      "frequency": 220,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_010",
+      "frequency": 200,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_011",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_012",
+      "frequency": 170,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_013",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_014",
+      "frequency": 150,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_013",
+      "productBId": "dataset_groceries_015",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_014",
+      "productBId": "dataset_groceries_016",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_015",
+      "productBId": "dataset_groceries_017",
+      "frequency": 120,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_016",
+      "productBId": "dataset_groceries_018",
+      "frequency": 110,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_017",
+      "productBId": "dataset_groceries_019",
+      "frequency": 100,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_018",
+      "productBId": "dataset_groceries_020",
+      "frequency": 90,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_dairy_001",
+      "productBId": "dataset_fresh_produce_001",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_002",
+      "productBId": "dataset_fresh_produce_002",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_003",
+      "productBId": "dataset_fresh_produce_003",
+      "frequency": 240,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_004",
+      "productBId": "dataset_fresh_produce_004",
+      "frequency": 220,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_005",
+      "productBId": "dataset_fresh_produce_005",
+      "frequency": 200,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_001",
+      "productBId": "dataset_groceries_001",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_002",
+      "productBId": "dataset_groceries_002",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_003",
+      "productBId": "dataset_groceries_003",
+      "frequency": 260,
+      "source": "AMAZON",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_004",
+      "productBId": "dataset_groceries_004",
+      "frequency": 240,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_005",
+      "productBId": "dataset_groceries_005",
+      "frequency": 220,
+      "source": "BUNDLEREC",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_fmcg_001",
+      "productBId": "dataset_pharmacy_001",
+      "frequency": 230,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_002",
+      "productBId": "dataset_pharmacy_002",
+      "frequency": 210,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_003",
+      "productBId": "dataset_pharmacy_003",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_004",
+      "productBId": "dataset_pharmacy_004",
+      "frequency": 180,
+      "source": "COMBINED",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_005",
+      "productBId": "dataset_pharmacy_005",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_electronics_001",
+      "productBId": "dataset_home_appliance_001",
+      "frequency": 200,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_002",
+      "productBId": "dataset_home_appliance_002",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_003",
+      "productBId": "dataset_home_appliance_003",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_004",
+      "productBId": "dataset_home_appliance_004",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_005",
+      "productBId": "dataset_home_appliance_005",
+      "frequency": 150,
+      "source": "COMBINED",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_clothing_001",
+      "productBId": "dataset_electronics_001",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_002",
+      "productBId": "dataset_electronics_002",
+      "frequency": 150,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_003",
+      "productBId": "dataset_electronics_003",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_004",
+      "productBId": "dataset_electronics_004",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_005",
+      "productBId": "dataset_electronics_005",
+      "frequency": 120,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_groceries_020",
+      "productBId": "dataset_dairy_015",
+      "frequency": 110,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_019",
+      "productBId": "dataset_fresh_produce_015",
+      "frequency": 100,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_018",
+      "productBId": "dataset_meat_poultry_015",
+      "frequency": 90,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_dairy_015",
+      "productBId": "dataset_groceries_020",
+      "frequency": 80,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_fresh_produce_015",
+      "productBId": "dataset_groceries_019",
+      "frequency": 70,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_meat_poultry_015",
+      "productBId": "dataset_groceries_018",
+      "frequency": 60,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_fmcg_015",
+      "productBId": "dataset_beauty_personal_care_015",
+      "frequency": 100,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_014",
+      "productBId": "dataset_beauty_personal_care_014",
+      "frequency": 90,
+      "source": "AMAZON",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_fmcg_013",
+      "productBId": "dataset_beauty_personal_care_013",
+      "frequency": 80,
+      "source": "INSTACART",
+      "category": "FMCG"
+    },
+    {
+      "productAId": "dataset_pharmacy_015",
+      "productBId": "dataset_beauty_personal_care_015",
+      "frequency": 90,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_014",
+      "productBId": "dataset_beauty_personal_care_014",
+      "frequency": 80,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_013",
+      "productBId": "dataset_beauty_personal_care_013",
+      "frequency": 70,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_home_appliance_015",
+      "productBId": "dataset_electronics_015",
+      "frequency": 80,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_014",
+      "productBId": "dataset_electronics_014",
+      "frequency": 70,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_013",
+      "productBId": "dataset_electronics_013",
+      "frequency": 60,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_clothing_015",
+      "productBId": "dataset_beauty_personal_care_015",
+      "frequency": 70,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_014",
+      "productBId": "dataset_beauty_personal_care_014",
+      "frequency": 60,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_013",
+      "productBId": "dataset_beauty_personal_care_013",
+      "frequency": 50,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_fmcg_001",
+      "frequency": 250,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_fmcg_002",
+      "frequency": 230,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_fmcg_003",
+      "frequency": 210,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_fmcg_004",
+      "frequency": 190,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_fmcg_005",
+      "frequency": 180,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_dairy_001",
+      "productBId": "dataset_pharmacy_001",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_002",
+      "productBId": "dataset_pharmacy_002",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_003",
+      "productBId": "dataset_pharmacy_003",
+      "frequency": 150,
+      "source": "BUNDLEREC",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_004",
+      "productBId": "dataset_pharmacy_004",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_dairy_005",
+      "productBId": "dataset_pharmacy_005",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "DAIRY"
+    },
+    {
+      "productAId": "dataset_fresh_produce_001",
+      "productBId": "dataset_pharmacy_001",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_002",
+      "productBId": "dataset_pharmacy_002",
+      "frequency": 140,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_003",
+      "productBId": "dataset_pharmacy_003",
+      "frequency": 130,
+      "source": "BUNDLEREC",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_004",
+      "productBId": "dataset_pharmacy_004",
+      "frequency": 120,
+      "source": "INSTACART",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_fresh_produce_005",
+      "productBId": "dataset_pharmacy_005",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "FRESH_PRODUCE"
+    },
+    {
+      "productAId": "dataset_meat_poultry_001",
+      "productBId": "dataset_fmcg_001",
+      "frequency": 160,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_002",
+      "productBId": "dataset_fmcg_002",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_003",
+      "productBId": "dataset_fmcg_003",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_004",
+      "productBId": "dataset_fmcg_004",
+      "frequency": 130,
+      "source": "INSTACART",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_meat_poultry_005",
+      "productBId": "dataset_fmcg_005",
+      "frequency": 120,
+      "source": "BUNDLEREC",
+      "category": "MEAT_POULTRY"
+    },
+    {
+      "productAId": "dataset_electronics_001",
+      "productBId": "dataset_clothing_001",
+      "frequency": 140,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_002",
+      "productBId": "dataset_clothing_002",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_003",
+      "productBId": "dataset_clothing_003",
+      "frequency": 120,
+      "source": "INSTACART",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_004",
+      "productBId": "dataset_clothing_004",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_electronics_005",
+      "productBId": "dataset_clothing_005",
+      "frequency": 100,
+      "source": "COMBINED",
+      "category": "ELECTRONICS"
+    },
+    {
+      "productAId": "dataset_home_appliance_001",
+      "productBId": "dataset_fmcg_001",
+      "frequency": 130,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_002",
+      "productBId": "dataset_fmcg_002",
+      "frequency": 120,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_003",
+      "productBId": "dataset_fmcg_003",
+      "frequency": 110,
+      "source": "INSTACART",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_004",
+      "productBId": "dataset_fmcg_004",
+      "frequency": 100,
+      "source": "AMAZON",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_home_appliance_005",
+      "productBId": "dataset_fmcg_005",
+      "frequency": 90,
+      "source": "COMBINED",
+      "category": "HOME_APPLIANCE"
+    },
+    {
+      "productAId": "dataset_pharmacy_001",
+      "productBId": "dataset_groceries_001",
+      "frequency": 180,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_002",
+      "productBId": "dataset_groceries_002",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_003",
+      "productBId": "dataset_groceries_003",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_004",
+      "productBId": "dataset_groceries_004",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_pharmacy_005",
+      "productBId": "dataset_groceries_005",
+      "frequency": 140,
+      "source": "BUNDLEREC",
+      "category": "PHARMACY"
+    },
+    {
+      "productAId": "dataset_clothing_001",
+      "productBId": "dataset_home_appliance_001",
+      "frequency": 110,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_002",
+      "productBId": "dataset_home_appliance_002",
+      "frequency": 100,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_003",
+      "productBId": "dataset_home_appliance_003",
+      "frequency": 90,
+      "source": "INSTACART",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_004",
+      "productBId": "dataset_home_appliance_004",
+      "frequency": 80,
+      "source": "AMAZON",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_clothing_005",
+      "productBId": "dataset_home_appliance_005",
+      "frequency": 70,
+      "source": "BUNDLEREC",
+      "category": "CLOTHING"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_005",
+      "frequency": 337,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_006",
+      "frequency": 22,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_007",
+      "frequency": 150,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_008",
+      "frequency": 124,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_009",
+      "frequency": 387,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_010",
+      "frequency": 356,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_011",
+      "frequency": 289,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_012",
+      "frequency": 312,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_013",
+      "frequency": 26,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_014",
+      "frequency": 57,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_015",
+      "frequency": 129,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_016",
+      "frequency": 318,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_017",
+      "frequency": 297,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_018",
+      "frequency": 376,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_019",
+      "frequency": 369,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_001",
+      "productBId": "dataset_groceries_020",
+      "frequency": 224,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_001",
+      "frequency": 239,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_003",
+      "frequency": 152,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_006",
+      "frequency": 398,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_007",
+      "frequency": 367,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_008",
+      "frequency": 184,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_009",
+      "frequency": 89,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_010",
+      "frequency": 400,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_011",
+      "frequency": 62,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_012",
+      "frequency": 204,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_013",
+      "frequency": 193,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_014",
+      "frequency": 319,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_015",
+      "frequency": 32,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_016",
+      "frequency": 245,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_017",
+      "frequency": 73,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_018",
+      "frequency": 50,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_019",
+      "frequency": 160,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_002",
+      "productBId": "dataset_groceries_020",
+      "frequency": 326,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_001",
+      "frequency": 305,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_002",
+      "frequency": 370,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_004",
+      "frequency": 33,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_007",
+      "frequency": 126,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_008",
+      "frequency": 158,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_009",
+      "frequency": 129,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_010",
+      "frequency": 204,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_011",
+      "frequency": 242,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_012",
+      "frequency": 196,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_013",
+      "frequency": 199,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_014",
+      "frequency": 117,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_015",
+      "frequency": 146,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_016",
+      "frequency": 359,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_017",
+      "frequency": 46,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_018",
+      "frequency": 335,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_019",
+      "frequency": 283,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_003",
+      "productBId": "dataset_groceries_020",
+      "frequency": 135,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_001",
+      "frequency": 246,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_002",
+      "frequency": 148,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_003",
+      "frequency": 362,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_005",
+      "frequency": 122,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_008",
+      "frequency": 176,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_009",
+      "frequency": 38,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_010",
+      "frequency": 26,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_011",
+      "frequency": 215,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_012",
+      "frequency": 43,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_013",
+      "frequency": 300,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_014",
+      "frequency": 171,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_015",
+      "frequency": 345,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_016",
+      "frequency": 212,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_017",
+      "frequency": 244,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_018",
+      "frequency": 145,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_019",
+      "frequency": 136,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_004",
+      "productBId": "dataset_groceries_020",
+      "frequency": 297,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_001",
+      "frequency": 144,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_002",
+      "frequency": 309,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_003",
+      "frequency": 308,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_004",
+      "frequency": 195,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_006",
+      "frequency": 80,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_009",
+      "frequency": 262,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_010",
+      "frequency": 396,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_011",
+      "frequency": 66,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_012",
+      "frequency": 331,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_013",
+      "frequency": 358,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_014",
+      "frequency": 315,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_015",
+      "frequency": 207,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_016",
+      "frequency": 315,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_017",
+      "frequency": 280,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_018",
+      "frequency": 293,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_019",
+      "frequency": 358,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_005",
+      "productBId": "dataset_groceries_020",
+      "frequency": 68,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_001",
+      "frequency": 284,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_002",
+      "frequency": 146,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_003",
+      "frequency": 338,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_004",
+      "frequency": 67,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_005",
+      "frequency": 232,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_010",
+      "frequency": 242,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_011",
+      "frequency": 379,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_012",
+      "frequency": 144,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_013",
+      "frequency": 400,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_014",
+      "frequency": 269,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_015",
+      "frequency": 330,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_016",
+      "frequency": 337,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_017",
+      "frequency": 321,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_018",
+      "frequency": 88,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_019",
+      "frequency": 400,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_006",
+      "productBId": "dataset_groceries_020",
+      "frequency": 286,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_001",
+      "frequency": 281,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_002",
+      "frequency": 316,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_003",
+      "frequency": 260,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_004",
+      "frequency": 67,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_005",
+      "frequency": 167,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_006",
+      "frequency": 39,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_008",
+      "frequency": 300,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_011",
+      "frequency": 53,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_012",
+      "frequency": 258,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_013",
+      "frequency": 399,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_014",
+      "frequency": 74,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_015",
+      "frequency": 347,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_016",
+      "frequency": 291,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_017",
+      "frequency": 145,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_018",
+      "frequency": 320,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_019",
+      "frequency": 118,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_007",
+      "productBId": "dataset_groceries_020",
+      "frequency": 396,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_002",
+      "frequency": 363,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_003",
+      "frequency": 375,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_004",
+      "frequency": 214,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_005",
+      "frequency": 342,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_006",
+      "frequency": 234,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_007",
+      "frequency": 241,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_009",
+      "frequency": 136,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_011",
+      "frequency": 42,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_012",
+      "frequency": 20,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_013",
+      "frequency": 293,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_014",
+      "frequency": 311,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_015",
+      "frequency": 13,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_016",
+      "frequency": 372,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_017",
+      "frequency": 40,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_018",
+      "frequency": 44,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_019",
+      "frequency": 179,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_008",
+      "productBId": "dataset_groceries_020",
+      "frequency": 273,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_003",
+      "frequency": 152,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_004",
+      "frequency": 258,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_005",
+      "frequency": 286,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_006",
+      "frequency": 380,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_007",
+      "frequency": 305,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_008",
+      "frequency": 134,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_010",
+      "frequency": 218,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_012",
+      "frequency": 58,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_013",
+      "frequency": 347,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_014",
+      "frequency": 191,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_015",
+      "frequency": 220,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_016",
+      "frequency": 383,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_017",
+      "frequency": 354,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_018",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_019",
+      "frequency": 41,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_009",
+      "productBId": "dataset_groceries_020",
+      "frequency": 382,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_001",
+      "frequency": 65,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_004",
+      "frequency": 108,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_005",
+      "frequency": 284,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_006",
+      "frequency": 81,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_007",
+      "frequency": 103,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_008",
+      "frequency": 246,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_009",
+      "frequency": 48,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_011",
+      "frequency": 291,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_013",
+      "frequency": 35,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_014",
+      "frequency": 286,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_015",
+      "frequency": 57,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_016",
+      "frequency": 131,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_017",
+      "frequency": 218,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_018",
+      "frequency": 256,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_019",
+      "frequency": 215,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_010",
+      "productBId": "dataset_groceries_020",
+      "frequency": 94,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_001",
+      "frequency": 11,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_002",
+      "frequency": 145,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_003",
+      "frequency": 156,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_004",
+      "frequency": 366,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_005",
+      "frequency": 294,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_006",
+      "frequency": 377,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_007",
+      "frequency": 89,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_008",
+      "frequency": 161,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_009",
+      "frequency": 39,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_010",
+      "frequency": 386,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_014",
+      "frequency": 41,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_015",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_016",
+      "frequency": 35,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_017",
+      "frequency": 254,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_018",
+      "frequency": 281,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_019",
+      "frequency": 39,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_011",
+      "productBId": "dataset_groceries_020",
+      "frequency": 51,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_001",
+      "frequency": 45,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_002",
+      "frequency": 44,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_003",
+      "frequency": 130,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_004",
+      "frequency": 71,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_005",
+      "frequency": 136,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_006",
+      "frequency": 314,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_007",
+      "frequency": 327,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_008",
+      "frequency": 224,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_009",
+      "frequency": 308,
+      "source": "AMAZON",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_010",
+      "frequency": 277,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_011",
+      "frequency": 143,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_013",
+      "frequency": 352,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_015",
+      "frequency": 170,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_016",
+      "frequency": 145,
+      "source": "BUNDLEREC",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_017",
+      "frequency": 77,
+      "source": "COMBINED",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_018",
+      "frequency": 340,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    },
+    {
+      "productAId": "dataset_groceries_012",
+      "productBId": "dataset_groceries_019",
+      "frequency": 244,
+      "source": "INSTACART",
+      "category": "GROCERIES"
+    }
+  ],
+  "categoryAffinities": [
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "DAIRY",
+      "affinityScore": 0.85
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "FRESH_PRODUCE",
+      "affinityScore": 0.82
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "MEAT_POULTRY",
+      "affinityScore": 0.78
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "FMCG",
+      "affinityScore": 0.65
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.45
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.35
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.25
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.15
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.12
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "FRESH_PRODUCE",
+      "affinityScore": 0.72
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "MEAT_POULTRY",
+      "affinityScore": 0.68
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "FMCG",
+      "affinityScore": 0.42
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.38
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.28
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.22
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.11
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.1
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "MEAT_POULTRY",
+      "affinityScore": 0.75
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "FMCG",
+      "affinityScore": 0.38
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.42
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.32
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.2
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.1
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.11
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "FMCG",
+      "affinityScore": 0.35
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.3
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.25
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.28
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.12
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.1
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.7
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.62
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.45
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.18
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.15
+    },
+    {
+      "categoryA": "BEAUTY_PERSONAL_CARE",
+      "categoryB": "PHARMACY",
+      "affinityScore": 0.68
+    },
+    {
+      "categoryA": "BEAUTY_PERSONAL_CARE",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.55
+    },
+    {
+      "categoryA": "BEAUTY_PERSONAL_CARE",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.32
+    },
+    {
+      "categoryA": "BEAUTY_PERSONAL_CARE",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.14
+    },
+    {
+      "categoryA": "PHARMACY",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.22
+    },
+    {
+      "categoryA": "PHARMACY",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.12
+    },
+    {
+      "categoryA": "PHARMACY",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.15
+    },
+    {
+      "categoryA": "HOME_APPLIANCE",
+      "categoryB": "ELECTRONICS",
+      "affinityScore": 0.8
+    },
+    {
+      "categoryA": "HOME_APPLIANCE",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.2
+    },
+    {
+      "categoryA": "ELECTRONICS",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.35
+    },
+    {
+      "categoryA": "GROCERIES",
+      "categoryB": "BEAUTY_PERSONAL_CARE",
+      "affinityScore": 0.3
+    },
+    {
+      "categoryA": "DAIRY",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.18
+    },
+    {
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.1
+    },
+    {
+      "categoryA": "MEAT_POULTRY",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.1
+    },
+    {
+      "categoryA": "FMCG",
+      "categoryB": "CLOTHING",
+      "affinityScore": 0.22
+    },
+    {
+      "categoryA": "BEAUTY_PERSONAL_CARE",
+      "categoryB": "HOME_APPLIANCE",
+      "affinityScore": 0.28
+    }
+  ],
+  "products": [
+    {
+      "id": "dataset_groceries_001",
+      "name": "Basmati Rice",
+      "category": "GROCERIES",
+      "price": 8.99
+    },
+    {
+      "id": "dataset_groceries_002",
+      "name": "Cooking Oil",
+      "category": "GROCERIES",
+      "price": 6.49
+    },
+    {
+      "id": "dataset_groceries_003",
+      "name": "White Bread",
+      "category": "GROCERIES",
+      "price": 3.29
+    },
+    {
+      "id": "dataset_groceries_004",
+      "name": "Pasta Spaghetti",
+      "category": "GROCERIES",
+      "price": 2.49
+    },
+    {
+      "id": "dataset_groceries_005",
+      "name": "Tomato Sauce",
+      "category": "GROCERIES",
+      "price": 2.99
+    },
+    {
+      "id": "dataset_groceries_006",
+      "name": "Breakfast Cereal",
+      "category": "GROCERIES",
+      "price": 4.99
+    },
+    {
+      "id": "dataset_groceries_007",
+      "name": "Green Tea Bags",
+      "category": "GROCERIES",
+      "price": 3.79
+    },
+    {
+      "id": "dataset_groceries_008",
+      "name": "White Sugar",
+      "category": "GROCERIES",
+      "price": 2.29
+    },
+    {
+      "id": "dataset_groceries_009",
+      "name": "All-Purpose Flour",
+      "category": "GROCERIES",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_groceries_010",
+      "name": "Table Salt",
+      "category": "GROCERIES",
+      "price": 1.29
+    },
+    {
+      "id": "dataset_groceries_011",
+      "name": "Black Pepper",
+      "category": "GROCERIES",
+      "price": 4.29
+    },
+    {
+      "id": "dataset_groceries_012",
+      "name": "Soy Sauce",
+      "category": "GROCERIES",
+      "price": 3.99
+    },
+    {
+      "id": "dataset_groceries_013",
+      "name": "Olive Oil",
+      "category": "GROCERIES",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_groceries_014",
+      "name": "Vinegar",
+      "category": "GROCERIES",
+      "price": 2.79
+    },
+    {
+      "id": "dataset_groceries_015",
+      "name": "Honey",
+      "category": "GROCERIES",
+      "price": 5.49
+    },
+    {
+      "id": "dataset_groceries_016",
+      "name": "Peanut Butter",
+      "category": "GROCERIES",
+      "price": 4.79
+    },
+    {
+      "id": "dataset_groceries_017",
+      "name": "Jelly",
+      "category": "GROCERIES",
+      "price": 3.29
+    },
+    {
+      "id": "dataset_groceries_018",
+      "name": "Oatmeal",
+      "category": "GROCERIES",
+      "price": 4.49
+    },
+    {
+      "id": "dataset_groceries_019",
+      "name": "Granola Bars",
+      "category": "GROCERIES",
+      "price": 5.99
+    },
+    {
+      "id": "dataset_groceries_020",
+      "name": "Crackers",
+      "category": "GROCERIES",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_dairy_001",
+      "name": "Whole Milk",
+      "category": "DAIRY",
+      "price": 3.99
+    },
+    {
+      "id": "dataset_dairy_002",
+      "name": "Cheddar Cheese",
+      "category": "DAIRY",
+      "price": 5.49
+    },
+    {
+      "id": "dataset_dairy_003",
+      "name": "Greek Yogurt",
+      "category": "DAIRY",
+      "price": 4.29
+    },
+    {
+      "id": "dataset_dairy_004",
+      "name": "Fresh Butter",
+      "category": "DAIRY",
+      "price": 4.79
+    },
+    {
+      "id": "dataset_dairy_005",
+      "name": "Large Eggs",
+      "category": "DAIRY",
+      "price": 3.29
+    },
+    {
+      "id": "dataset_dairy_006",
+      "name": "Cream Cheese",
+      "category": "DAIRY",
+      "price": 3.99
+    },
+    {
+      "id": "dataset_dairy_007",
+      "name": "Sour Cream",
+      "category": "DAIRY",
+      "price": 2.49
+    },
+    {
+      "id": "dataset_dairy_008",
+      "name": "Cottage Cheese",
+      "category": "DAIRY",
+      "price": 3.79
+    },
+    {
+      "id": "dataset_dairy_009",
+      "name": "Heavy Cream",
+      "category": "DAIRY",
+      "price": 4.29
+    },
+    {
+      "id": "dataset_dairy_010",
+      "name": "Mozzarella Cheese",
+      "category": "DAIRY",
+      "price": 5.99
+    },
+    {
+      "id": "dataset_dairy_011",
+      "name": "Skim Milk",
+      "category": "DAIRY",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_dairy_012",
+      "name": "Parmesan Cheese",
+      "category": "DAIRY",
+      "price": 6.99
+    },
+    {
+      "id": "dataset_dairy_013",
+      "name": "Buttermilk",
+      "category": "DAIRY",
+      "price": 2.99
+    },
+    {
+      "id": "dataset_dairy_014",
+      "name": "Whipped Cream",
+      "category": "DAIRY",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_dairy_015",
+      "name": "Provolone Cheese",
+      "category": "DAIRY",
+      "price": 5.29
+    },
+    {
+      "id": "dataset_fresh_produce_001",
+      "name": "Tomatoes",
+      "category": "FRESH_PRODUCE",
+      "price": 2.99
+    },
+    {
+      "id": "dataset_fresh_produce_002",
+      "name": "Yellow Onions",
+      "category": "FRESH_PRODUCE",
+      "price": 1.99
+    },
+    {
+      "id": "dataset_fresh_produce_003",
+      "name": "Red Apples",
+      "category": "FRESH_PRODUCE",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_fresh_produce_004",
+      "name": "Navel Oranges",
+      "category": "FRESH_PRODUCE",
+      "price": 4.29
+    },
+    {
+      "id": "dataset_fresh_produce_005",
+      "name": "Russet Potatoes",
+      "category": "FRESH_PRODUCE",
+      "price": 2.49
+    },
+    {
+      "id": "dataset_fresh_produce_006",
+      "name": "Carrots",
+      "category": "FRESH_PRODUCE",
+      "price": 1.79
+    },
+    {
+      "id": "dataset_fresh_produce_007",
+      "name": "Bananas",
+      "category": "FRESH_PRODUCE",
+      "price": 0.99
+    },
+    {
+      "id": "dataset_fresh_produce_008",
+      "name": "Broccoli",
+      "category": "FRESH_PRODUCE",
+      "price": 2.29
+    },
+    {
+      "id": "dataset_fresh_produce_009",
+      "name": "Spinach",
+      "category": "FRESH_PRODUCE",
+      "price": 2.99
+    },
+    {
+      "id": "dataset_fresh_produce_010",
+      "name": "Bell Peppers",
+      "category": "FRESH_PRODUCE",
+      "price": 1.49
+    },
+    {
+      "id": "dataset_fresh_produce_011",
+      "name": "Lemons",
+      "category": "FRESH_PRODUCE",
+      "price": 2.49
+    },
+    {
+      "id": "dataset_fresh_produce_012",
+      "name": "Garlic",
+      "category": "FRESH_PRODUCE",
+      "price": 1.29
+    },
+    {
+      "id": "dataset_fresh_produce_013",
+      "name": "Cucumbers",
+      "category": "FRESH_PRODUCE",
+      "price": 1.49
+    },
+    {
+      "id": "dataset_fresh_produce_014",
+      "name": "Celery",
+      "category": "FRESH_PRODUCE",
+      "price": 1.99
+    },
+    {
+      "id": "dataset_fresh_produce_015",
+      "name": "Lettuce",
+      "category": "FRESH_PRODUCE",
+      "price": 1.79
+    },
+    {
+      "id": "dataset_meat_poultry_001",
+      "name": "Chicken Breast",
+      "category": "MEAT_POULTRY",
+      "price": 7.99
+    },
+    {
+      "id": "dataset_meat_poultry_002",
+      "name": "Ground Beef",
+      "category": "MEAT_POULTRY",
+      "price": 8.49
+    },
+    {
+      "id": "dataset_meat_poultry_003",
+      "name": "Salmon Fillet",
+      "category": "MEAT_POULTRY",
+      "price": 12.99
+    },
+    {
+      "id": "dataset_meat_poultry_004",
+      "name": "Pork Chops",
+      "category": "MEAT_POULTRY",
+      "price": 9.49
+    },
+    {
+      "id": "dataset_meat_poultry_005",
+      "name": "Turkey Breast",
+      "category": "MEAT_POULTRY",
+      "price": 8.99
+    },
+    {
+      "id": "dataset_meat_poultry_006",
+      "name": "Chicken Thighs",
+      "category": "MEAT_POULTRY",
+      "price": 6.49
+    },
+    {
+      "id": "dataset_meat_poultry_007",
+      "name": "Beef Sirloin",
+      "category": "MEAT_POULTRY",
+      "price": 14.99
+    },
+    {
+      "id": "dataset_meat_poultry_008",
+      "name": "Shrimp",
+      "category": "MEAT_POULTRY",
+      "price": 11.99
+    },
+    {
+      "id": "dataset_meat_poultry_009",
+      "name": "Lamb Chops",
+      "category": "MEAT_POULTRY",
+      "price": 16.99
+    },
+    {
+      "id": "dataset_meat_poultry_010",
+      "name": "Bacon",
+      "category": "MEAT_POULTRY",
+      "price": 6.99
+    },
+    {
+      "id": "dataset_meat_poultry_011",
+      "name": "Chicken Wings",
+      "category": "MEAT_POULTRY",
+      "price": 5.99
+    },
+    {
+      "id": "dataset_meat_poultry_012",
+      "name": "Beef Stew Meat",
+      "category": "MEAT_POULTRY",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_meat_poultry_013",
+      "name": "Cod Fillet",
+      "category": "MEAT_POULTRY",
+      "price": 10.49
+    },
+    {
+      "id": "dataset_meat_poultry_014",
+      "name": "Sausage Links",
+      "category": "MEAT_POULTRY",
+      "price": 5.49
+    },
+    {
+      "id": "dataset_meat_poultry_015",
+      "name": "Duck Breast",
+      "category": "MEAT_POULTRY",
+      "price": 15.99
+    },
+    {
+      "id": "dataset_fmcg_001",
+      "name": "Body Soap",
+      "category": "FMCG",
+      "price": 4.99
+    },
+    {
+      "id": "dataset_fmcg_002",
+      "name": "Shampoo",
+      "category": "FMCG",
+      "price": 6.49
+    },
+    {
+      "id": "dataset_fmcg_003",
+      "name": "Toothpaste",
+      "category": "FMCG",
+      "price": 3.29
+    },
+    {
+      "id": "dataset_fmcg_004",
+      "name": "Toothbrush",
+      "category": "FMCG",
+      "price": 2.99
+    },
+    {
+      "id": "dataset_fmcg_005",
+      "name": "Laundry Detergent",
+      "category": "FMCG",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_fmcg_006",
+      "name": "Fabric Softener",
+      "category": "FMCG",
+      "price": 5.49
+    },
+    {
+      "id": "dataset_fmcg_007",
+      "name": "Dish Soap",
+      "category": "FMCG",
+      "price": 3.49
+    },
+    {
+      "id": "dataset_fmcg_008",
+      "name": "Paper Towels",
+      "category": "FMCG",
+      "price": 7.99
+    },
+    {
+      "id": "dataset_fmcg_009",
+      "name": "Toilet Paper",
+      "category": "FMCG",
+      "price": 8.49
+    },
+    {
+      "id": "dataset_fmcg_010",
+      "name": "Trash Bags",
+      "category": "FMCG",
+      "price": 6.99
+    },
+    {
+      "id": "dataset_fmcg_011",
+      "name": "Hand Sanitizer",
+      "category": "FMCG",
+      "price": 3.99
+    },
+    {
+      "id": "dataset_fmcg_012",
+      "name": "Deodorant",
+      "category": "FMCG",
+      "price": 4.79
+    },
+    {
+      "id": "dataset_fmcg_013",
+      "name": "Razor Blades",
+      "category": "FMCG",
+      "price": 8.99
+    },
+    {
+      "id": "dataset_fmcg_014",
+      "name": "Shaving Cream",
+      "category": "FMCG",
+      "price": 3.79
+    },
+    {
+      "id": "dataset_fmcg_015",
+      "name": "Hair Conditioner",
+      "category": "FMCG",
+      "price": 5.99
+    },
+    {
+      "id": "dataset_electronics_001",
+      "name": "Smartphone",
+      "category": "ELECTRONICS",
+      "price": 699.99
+    },
+    {
+      "id": "dataset_electronics_002",
+      "name": "USB Charger",
+      "category": "ELECTRONICS",
+      "price": 14.99
+    },
+    {
+      "id": "dataset_electronics_003",
+      "name": "Laptop",
+      "category": "ELECTRONICS",
+      "price": 999.99
+    },
+    {
+      "id": "dataset_electronics_004",
+      "name": "Wireless Mouse",
+      "category": "ELECTRONICS",
+      "price": 24.99
+    },
+    {
+      "id": "dataset_electronics_005",
+      "name": "Headphones",
+      "category": "ELECTRONICS",
+      "price": 79.99
+    },
+    {
+      "id": "dataset_electronics_006",
+      "name": "Phone Case",
+      "category": "ELECTRONICS",
+      "price": 19.99
+    },
+    {
+      "id": "dataset_electronics_007",
+      "name": "Screen Protector",
+      "category": "ELECTRONICS",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_electronics_008",
+      "name": "Bluetooth Speaker",
+      "category": "ELECTRONICS",
+      "price": 49.99
+    },
+    {
+      "id": "dataset_electronics_009",
+      "name": "Power Bank",
+      "category": "ELECTRONICS",
+      "price": 29.99
+    },
+    {
+      "id": "dataset_electronics_010",
+      "name": "HDMI Cable",
+      "category": "ELECTRONICS",
+      "price": 12.99
+    },
+    {
+      "id": "dataset_electronics_011",
+      "name": "Tablet",
+      "category": "ELECTRONICS",
+      "price": 399.99
+    },
+    {
+      "id": "dataset_electronics_012",
+      "name": "Stylus Pen",
+      "category": "ELECTRONICS",
+      "price": 34.99
+    },
+    {
+      "id": "dataset_electronics_013",
+      "name": "Webcam",
+      "category": "ELECTRONICS",
+      "price": 59.99
+    },
+    {
+      "id": "dataset_electronics_014",
+      "name": "Keyboard",
+      "category": "ELECTRONICS",
+      "price": 44.99
+    },
+    {
+      "id": "dataset_electronics_015",
+      "name": "USB Hub",
+      "category": "ELECTRONICS",
+      "price": 19.99
+    },
+    {
+      "id": "dataset_clothing_001",
+      "name": "Cotton Shirt",
+      "category": "CLOTHING",
+      "price": 29.99
+    },
+    {
+      "id": "dataset_clothing_002",
+      "name": "Denim Pants",
+      "category": "CLOTHING",
+      "price": 49.99
+    },
+    {
+      "id": "dataset_clothing_003",
+      "name": "Running Shoes",
+      "category": "CLOTHING",
+      "price": 89.99
+    },
+    {
+      "id": "dataset_clothing_004",
+      "name": "Cotton Socks",
+      "category": "CLOTHING",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_clothing_005",
+      "name": "Winter Jacket",
+      "category": "CLOTHING",
+      "price": 129.99
+    },
+    {
+      "id": "dataset_clothing_006",
+      "name": "Wool Scarf",
+      "category": "CLOTHING",
+      "price": 24.99
+    },
+    {
+      "id": "dataset_clothing_007",
+      "name": "Leather Belt",
+      "category": "CLOTHING",
+      "price": 34.99
+    },
+    {
+      "id": "dataset_clothing_008",
+      "name": "Baseball Cap",
+      "category": "CLOTHING",
+      "price": 19.99
+    },
+    {
+      "id": "dataset_clothing_009",
+      "name": "Sunglasses",
+      "category": "CLOTHING",
+      "price": 59.99
+    },
+    {
+      "id": "dataset_clothing_010",
+      "name": "Wrist Watch",
+      "category": "CLOTHING",
+      "price": 149.99
+    },
+    {
+      "id": "dataset_clothing_011",
+      "name": "Polo Shirt",
+      "category": "CLOTHING",
+      "price": 34.99
+    },
+    {
+      "id": "dataset_clothing_012",
+      "name": "Chino Pants",
+      "category": "CLOTHING",
+      "price": 44.99
+    },
+    {
+      "id": "dataset_clothing_013",
+      "name": "Sneakers",
+      "category": "CLOTHING",
+      "price": 79.99
+    },
+    {
+      "id": "dataset_clothing_014",
+      "name": "Hoodie",
+      "category": "CLOTHING",
+      "price": 54.99
+    },
+    {
+      "id": "dataset_clothing_015",
+      "name": "Beanie Hat",
+      "category": "CLOTHING",
+      "price": 14.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_001",
+      "name": "Face Moisturizer",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 18.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_002",
+      "name": "Facial Cleanser",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 12.49
+    },
+    {
+      "id": "dataset_beauty_personal_care_003",
+      "name": "Sunscreen SPF50",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 14.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_004",
+      "name": "Body Lotion",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_005",
+      "name": "Lip Balm",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 3.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_006",
+      "name": "Eye Cream",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 24.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_007",
+      "name": "Serum",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 29.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_008",
+      "name": "Face Mask",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 8.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_009",
+      "name": "Nail Polish",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 6.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_010",
+      "name": "Makeup Remover",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 7.49
+    },
+    {
+      "id": "dataset_beauty_personal_care_011",
+      "name": "Hair Oil",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 11.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_012",
+      "name": "Body Scrub",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 13.49
+    },
+    {
+      "id": "dataset_beauty_personal_care_013",
+      "name": "Perfume",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 49.99
+    },
+    {
+      "id": "dataset_beauty_personal_care_014",
+      "name": "Hand Cream",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 8.49
+    },
+    {
+      "id": "dataset_beauty_personal_care_015",
+      "name": "Foot Cream",
+      "category": "BEAUTY_PERSONAL_CARE",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_home_appliance_001",
+      "name": "Blender",
+      "category": "HOME_APPLIANCE",
+      "price": 49.99
+    },
+    {
+      "id": "dataset_home_appliance_002",
+      "name": "Storage Jars",
+      "category": "HOME_APPLIANCE",
+      "price": 19.99
+    },
+    {
+      "id": "dataset_home_appliance_003",
+      "name": "Clothes Iron",
+      "category": "HOME_APPLIANCE",
+      "price": 34.99
+    },
+    {
+      "id": "dataset_home_appliance_004",
+      "name": "Ironing Board",
+      "category": "HOME_APPLIANCE",
+      "price": 29.99
+    },
+    {
+      "id": "dataset_home_appliance_005",
+      "name": "Toaster",
+      "category": "HOME_APPLIANCE",
+      "price": 39.99
+    },
+    {
+      "id": "dataset_home_appliance_006",
+      "name": "Coffee Maker",
+      "category": "HOME_APPLIANCE",
+      "price": 79.99
+    },
+    {
+      "id": "dataset_home_appliance_007",
+      "name": "Electric Kettle",
+      "category": "HOME_APPLIANCE",
+      "price": 34.99
+    },
+    {
+      "id": "dataset_home_appliance_008",
+      "name": "Microwave Oven",
+      "category": "HOME_APPLIANCE",
+      "price": 129.99
+    },
+    {
+      "id": "dataset_home_appliance_009",
+      "name": "Air Fryer",
+      "category": "HOME_APPLIANCE",
+      "price": 89.99
+    },
+    {
+      "id": "dataset_home_appliance_010",
+      "name": "Food Processor",
+      "category": "HOME_APPLIANCE",
+      "price": 69.99
+    },
+    {
+      "id": "dataset_home_appliance_011",
+      "name": "Vacuum Cleaner",
+      "category": "HOME_APPLIANCE",
+      "price": 149.99
+    },
+    {
+      "id": "dataset_home_appliance_012",
+      "name": "Dishwasher",
+      "category": "HOME_APPLIANCE",
+      "price": 499.99
+    },
+    {
+      "id": "dataset_home_appliance_013",
+      "name": "Rice Cooker",
+      "category": "HOME_APPLIANCE",
+      "price": 44.99
+    },
+    {
+      "id": "dataset_home_appliance_014",
+      "name": "Slow Cooker",
+      "category": "HOME_APPLIANCE",
+      "price": 54.99
+    },
+    {
+      "id": "dataset_home_appliance_015",
+      "name": "Juicer",
+      "category": "HOME_APPLIANCE",
+      "price": 59.99
+    },
+    {
+      "id": "dataset_pharmacy_001",
+      "name": "Painkiller Tablets",
+      "category": "PHARMACY",
+      "price": 8.99
+    },
+    {
+      "id": "dataset_pharmacy_002",
+      "name": "Adhesive Bandages",
+      "category": "PHARMACY",
+      "price": 4.49
+    },
+    {
+      "id": "dataset_pharmacy_003",
+      "name": "Multivitamins",
+      "category": "PHARMACY",
+      "price": 14.99
+    },
+    {
+      "id": "dataset_pharmacy_004",
+      "name": "Mineral Supplements",
+      "category": "PHARMACY",
+      "price": 12.49
+    },
+    {
+      "id": "dataset_pharmacy_005",
+      "name": "Cough Syrup",
+      "category": "PHARMACY",
+      "price": 9.99
+    },
+    {
+      "id": "dataset_pharmacy_006",
+      "name": "Antiseptic Cream",
+      "category": "PHARMACY",
+      "price": 6.49
+    },
+    {
+      "id": "dataset_pharmacy_007",
+      "name": "Allergy Tablets",
+      "category": "PHARMACY",
+      "price": 11.99
+    },
+    {
+      "id": "dataset_pharmacy_008",
+      "name": "Digestive Aid",
+      "category": "PHARMACY",
+      "price": 8.49
+    },
+    {
+      "id": "dataset_pharmacy_009",
+      "name": "Eye Drops",
+      "category": "PHARMACY",
+      "price": 7.99
+    },
+    {
+      "id": "dataset_pharmacy_010",
+      "name": "Thermometer",
+      "category": "PHARMACY",
+      "price": 12.99
+    },
+    {
+      "id": "dataset_pharmacy_011",
+      "name": "First Aid Kit",
+      "category": "PHARMACY",
+      "price": 19.99
+    },
+    {
+      "id": "dataset_pharmacy_012",
+      "name": "Vitamin C Tablets",
+      "category": "PHARMACY",
+      "price": 9.49
+    },
+    {
+      "id": "dataset_pharmacy_013",
+      "name": "Omega-3 Capsules",
+      "category": "PHARMACY",
+      "price": 16.99
+    },
+    {
+      "id": "dataset_pharmacy_014",
+      "name": "Probiotics",
+      "category": "PHARMACY",
+      "price": 22.99
+    },
+    {
+      "id": "dataset_pharmacy_015",
+      "name": "Zinc Supplements",
+      "category": "PHARMACY",
+      "price": 10.99
+    }
+  ]
+}

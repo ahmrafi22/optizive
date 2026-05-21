@@ -11,7 +11,8 @@
     "lint": "eslint",
     "prisma:generate": "prisma generate",
     "prisma:db:push": "prisma db push",
-    "prisma:migrate:dev": "prisma migrate dev --name init"
+    "prisma:migrate:dev": "prisma migrate dev --name init",
+    "seed:datasets": "tsx prisma/seed-datasets.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
