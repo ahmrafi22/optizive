@@ -185,17 +185,57 @@ function safeJsonParse(text: string) {
   try {
     return JSON.parse(text) as any;
   } catch {
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
-    if (start >= 0 && end > start) {
+    const repaired = repairTruncatedJson(text);
+    if (repaired) {
       try {
-        return JSON.parse(text.slice(start, end + 1)) as any;
+        return JSON.parse(repaired) as any;
       } catch {
         return null;
       }
     }
     return null;
   }
+}
+
+function repairTruncatedJson(text: string): string | null {
+  const braceStart = text.indexOf("{");
+  const bracketStart = text.indexOf("[");
+  let start = -1;
+  if (braceStart !== -1 && bracketStart !== -1) {
+    start = Math.min(braceStart, bracketStart);
+  } else {
+    start = Math.max(braceStart, bracketStart);
+  }
+  if (start === -1) return null;
+
+  let slice = text.slice(start);
+  const stack: Array<"{" | "["> = [];
+  let inString = false;
+  let escaping = false;
+  for (const ch of slice) {
+    if (inString) {
+      if (escaping) { escaping = false; continue; }
+      if (ch === "\\") { escaping = true; continue; }
+      if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') { inString = true; continue; }
+    if (ch === "{") stack.push("{");
+    if (ch === "[") stack.push("[");
+    if (ch === "}") {
+      if (stack[stack.length - 1] === "{") stack.pop();
+    }
+    if (ch === "]") {
+      if (stack[stack.length - 1] === "[") stack.pop();
+    }
+  }
+  if (inString) slice += '"';
+  while (stack.length > 0) {
+    const last = stack.pop();
+    slice += last === "{" ? "}" : "]";
+  }
+  slice = slice.replace(/,(\s*[}\]])/g, "$1");
+  return slice;
 }
 
 function extractOpenRouterContent(message: any): string {
@@ -208,10 +248,15 @@ function extractOpenRouterContent(message: any): string {
       .map((part) => {
         if (typeof part === "string") return part;
         if (typeof part?.text === "string") return part.text;
+        if (typeof part?.text?.value === "string") return part.text.value;
+        if (typeof part?.content === "string") return part.content;
         return "";
       })
       .join("")
       .trim();
+  }
+  if (typeof content === "object") {
+    return JSON.stringify(content);
   }
   return "";
 }
@@ -263,6 +308,85 @@ function extractJsonObject(text: string): string | null {
   return null;
 }
 
+function extractJsonArray(text: string): string | null {
+  if (!text) return null;
+  const start = text.indexOf("[");
+  if (start === -1) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escaping = false;
+
+  for (let i = start; i < text.length; i += 1) {
+    const ch = text[i];
+
+    if (inString) {
+      if (escaping) {
+        escaping = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaping = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (ch === "[") {
+      depth += 1;
+    }
+
+    if (ch === "]") {
+      depth -= 1;
+      if (depth === 0) {
+        return text.slice(start, i + 1);
+      }
+    }
+  }
+
+  return null;
+}
+
+function extractJsonSnippet(text: string): string | null {
+  if (!text) return null;
+
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced?.[1]) return fenced[1].trim();
+
+  const object = extractJsonObject(text);
+  if (object) return object;
+
+  const array = extractJsonArray(text);
+  if (array) return array;
+
+  const braceIndex = text.indexOf("{");
+  const bracketIndex = text.indexOf("[");
+  let start = -1;
+  if (braceIndex !== -1 && bracketIndex !== -1) {
+    start = Math.min(braceIndex, bracketIndex);
+  } else {
+    start = Math.max(braceIndex, bracketIndex);
+  }
+
+  return start === -1 ? null : text.slice(start);
+}
+
+function coercePickList(parsed: any): Array<{ id?: string; reason?: string; matchScore?: number }> | null {
+  if (!parsed) return null;
+  if (Array.isArray(parsed)) return parsed;
+  if (Array.isArray(parsed.picks)) return parsed.picks;
+  if (Array.isArray(parsed?.data?.picks)) return parsed.data.picks;
+  return null;
+}
+
 async function rankWithOpenRouter(
   selected: SmartBasketProductSummary[],
   candidates: SmartBasketSuggestionItem[],
@@ -310,7 +434,7 @@ async function rankWithOpenRouter(
     body: JSON.stringify({
       model,
       temperature: 0.1,
-      max_tokens: 180,
+      max_tokens: 2000,
       response_format: { type: "json_object" },
       messages: [
         {
@@ -347,24 +471,37 @@ async function rankWithOpenRouter(
   const content = extractOpenRouterContent(message);
   console.log("[SmartBasket AI] Response", content);
 
-  if (!content) {
-    console.warn("[SmartBasket AI] Empty content", JSON.stringify(data?.choices?.[0] ?? data));
-    return [];
-  }
-  const extractedJson = extractJsonObject(content) ?? content;
-  console.log("[SmartBasket AI] JSON", extractedJson);
-  const parsed = safeJsonParse(extractedJson);
+  const fallbackText = typeof message?.reasoning === "string" ? message.reasoning : "";
 
-  if (!parsed || !Array.isArray(parsed.picks)) return [];
+  if (!content) {
+    if (!fallbackText) {
+      console.warn("[SmartBasket AI] Empty content", JSON.stringify(data?.choices?.[0] ?? data));
+      return [];
+    }
+  }
+  const extractedJson = extractJsonSnippet(content) ?? content;
+  console.log("[SmartBasket AI] JSON", extractedJson);
+
+  const parsed = safeJsonParse(extractedJson);
+  let picks = coercePickList(parsed);
+
+  if (!picks && fallbackText) {
+    const fallbackJson = extractJsonSnippet(fallbackText) ?? fallbackText;
+    const fallbackParsed = safeJsonParse(fallbackJson);
+    picks = coercePickList(fallbackParsed);
+  }
+
+  if (!picks) return [];
 
   const byId = new Map(candidates.map((item) => [item.id, item]));
   const aiResults: SmartBasketSuggestionItem[] = [];
 
-  parsed.picks.forEach((pick: { id?: string; reason?: string; matchScore?: number }) => {
+  picks.forEach((pick: { id?: string; reason?: string; matchScore?: number }) => {
     if (!pick?.id) return;
     const match = byId.get(pick.id);
     if (!match) return;
-    const aiScore = typeof pick.matchScore === "number" ? clamp(Math.round(pick.matchScore), 0, 100) : null;
+    const rawScore = typeof pick.matchScore === "number" ? pick.matchScore : Number(pick.matchScore);
+    const aiScore = Number.isFinite(rawScore) ? clamp(Math.round(rawScore), 0, 100) : null;
     aiResults.push({
       ...match,
       reason: typeof pick.reason === "string" && pick.reason.trim() ? pick.reason.trim() : match.reason,
