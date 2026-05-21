@@ -19,13 +19,13 @@
 
 ## Overview
 
-Smart Basket is a **product bundling and recommendation system** designed for store owners and suppliers. It helps users create curated product baskets by combining:
+Smart Basket is a **hybrid product bundling and recommendation system** for store owners and suppliers. It combines three intelligence layers:
 
-- **Rule-based scoring** — derived from co-purchase patterns, bundle history, margins, stock levels, and user preferences
-- **Dataset-backed intelligence** — pre-computed co-purchase knowledge from 3 external retail datasets (Instacart, BundleRec, Amazon SNAP)
-- **AI ranking** — optional OpenRouter-powered re-ranking for smarter, category-aware suggestions
+1. **Rule-based scoring** — co-purchase frequency (user sales + dataset), bundle co-occurrence, margin, stock, expiry, and category similarity
+2. **Dataset-backed knowledge** — pre-computed co-purchase patterns from 2 real retail datasets (Instacart + BundleRec, 45K edges, 32 cross-category affinities)
+3. **AI re-ranking** — optional OpenRouter layer that takes top 20 rule candidates and re-ranks them with category-aware prompts
 
-The system solves the **cold-start problem**: new users with zero sales history still get meaningful recommendations because the dataset knowledge base is always available.
+**Cold-start solved:** New users with zero sales get meaningful recommendations immediately from the dataset knowledge base.
 
 ---
 
@@ -35,63 +35,70 @@ The system solves the **cold-start problem**: new users with zero sales history 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         EXTERNAL DATASETS                           │
 │                                                                     │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐   │
-│  │   Instacart      │  │   BundleRec      │  │  Amazon SNAP     │   │
-│  │  3M+ orders      │  │  Electronics     │  │  548K products   │   │
-│  │  200K users      │  │  Clothing, Food  │  │  1.7M edges      │   │
-│  │  Weight: 50%     │  │  Weight: 30%     │  │  Weight: 20%     │   │
-│  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘   │
-│           │                     │                     │              │
-│           └─────────────────────┼─────────────────────┘              │
-│                                 ▼                                    │
-│                    ┌────────────────────────┐                        │
-│                    │   seed-datasets.ts      │                        │
-│                    │   (one-time pipeline)   │                        │
-│                    │                         │                        │
-│                    │   1. Parse raw files    │                        │
-│                    │   2. Map categories     │                        │
-│                    │   3. Aggregate scores   │                        │
-│                    │   4. Write JSON cache   │                        │
-│                    │   5. Upsert to DB       │                        │
-│                    └────────────┬────────────┘                        │
-│                                 │                                     │
-│                                 ▼                                     │
-│                    ┌────────────────────────┐                        │
-│                    │   Pre-computed Tables   │                        │
-│                    │                         │                        │
-│                    │  CoPurchaseEdge         │                        │
-│                    │  CategoryAffinity       │                        │
-│                    └────────────┬────────────┘                        │
-│                                 │                                     │
-└─────────────────────────────────┼─────────────────────────────────────┘
-                                  │
-┌─────────────────────────────────┼─────────────────────────────────────┐
-│                          YOUR SYSTEM                                  │
-│                                                                       │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐    │
-│  │   Product     │  │   Sale /     │  │   getScoredCandidates()  │    │
-│  │   (inventory) │  │   SaleItem   │  │                          │    │
-│  │               │  │   (history)  │  │   Blends:                │    │
-│  │  - name       │  │              │  │   datasetScore * 0.4     │    │
-│  │  - price      │  │  Co-purchase │  │   + userScore * 0.6      │    │
-│  │  - category   │  │  patterns    │  │                          │    │
-│  │  - quantity   │  │  from sales  │  │   (or 100% dataset if    │    │
-│  │  - margin     │  │              │  │    user has < 5 sales)   │    │
-│  └───────┬───────┘  └───────┬──────┘  └───────────┬──────────────┘    │
-│          │                  │                      │                   │
-│          └──────────────────┼──────────────────────┘                   │
-│                             ▼                                          │
-│              ┌──────────────────────────────┐                          │
-│              │   Smart Basket UI             │                          │
-│              │                               │                          │
-│              │  ┌─────────┐  ┌────────────┐ │                          │
-│              │  │Rule Picks│  │  AI Picks  │ │                          │
-│              │  │(10 items)│  │ (10 items) │ │                          │
-│              │  └─────────┘  └────────────┘ │                          │
-│              │                               │                          │
-│              │  User selects → saves basket  │                          │
-│              └───────────────────────────────┘                          │
-└─────────────────────────────────────────────────────────────────────────┘
+│  ┌──────────────────────┐  ┌────────────────────────────────────┐   │
+│  │   Instacart           │  │   BundleRec                       │   │
+│  │   data/raw/INSTACART/ │  │   data/raw/BUNDLEREC/dataset/     │   │
+│  │                       │  │   ├── food/    → GROCERIES        │   │
+│  │   products.csv        │  │   ├── clothing/→ CLOTHING          │   │
+│  │   aisles.csv          │  │   └── electronic/→ ELECTRONICS     │   │
+│  │   departments.csv     │  │                                    │   │
+│  │   order_products__prior│  │   bundle_item.csv  (co-purchase)  │   │
+│  │     (577 MB, streamed)│  │   session_item.csv (co-occurrence)│   │
+│  │   Weight: 50%         │  │   item_categories.csv             │   │
+│  │   15K edges           │  │   item_titles.csv  (real names)   │   │
+│  └──────────┬────────────┘  │   Weight: 30%+20% (3 domains)     │   │
+│             │               │   30K edges (10K/domain)           │   │
+│             └───────────────┼────────────────────────────────────┘   │
+│                             ▼                                       │
+│                ┌──────────────────────────┐                         │
+│                │   seed-datasets.ts        │                         │
+│                │   (one-time pipeline)      │                        │
+│                │                            │                        │
+│                │ 1. Stream INSTACART orders │                        │
+│                │    (readline, not in mem)  │                        │
+│                │ 2. Parse BUNDLEREC files   │                        │
+│                │ 3. Map dept → Category     │                        │
+│                │ 4. Aggregate × weights     │                        │
+│                │ 5. Compute cross-cat       │                        │
+│                │    affinities (catA vs     │                        │
+│                │    catB per edge)          │                        │
+│                │ 6. Write JSON snapshot     │                        │
+│                │ 7. Upsert to DB            │                        │
+│                └─────────────┬──────────────┘                        │
+│                              │                                       │
+│                              ▼                                       │
+│                ┌──────────────────────────┐                         │
+│                │   Pre-computed Tables     │                         │
+│                │                          │                         │
+│                │  CoPurchaseEdge (45K)    │                         │
+│                │  CategoryAffinity (32)   │                         │
+│                └─────────────┬────────────┘                          │
+│                              │                                       │
+└──────────────────────────────┼───────────────────────────────────────┘
+                               │
+┌──────────────────────────────┼───────────────────────────────────────┐
+│                       YOUR SYSTEM                                    │
+│                                                                      │
+│ ┌──────────────┐  ┌──────────────┐  ┌───────────────────────────┐    │
+│ │   Product     │  │   Sale /     │  │   getScoredCandidates()   │    │
+│ │   (inventory) │  │   SaleItem   │  │                           │    │
+│ │               │  │   (history)  │  │   Blends:                 │    │
+│ │  50K products │  │              │  │   userScore × 0.6         │    │
+│ │  from dataset │  │  Co-purchase │  │   + datasetScore × 0.4    │    │
+│ │  61K names    │  │  patterns    │  │   (or 100% dataset if     │    │
+│ └───────┬───────┘  └───────┬──────┘  │   user has <5 sales)      │    │
+│         │                  │         └───────────┬───────────────┘    │
+│         └──────────────────┼─────────────────────┘                    │
+│                            ▼                                         │
+│             ┌──────────────────────────────┐                         │
+│             │   Smart Basket UI            │                         │
+│             │                              │                         │
+│             │  ┌──────────┐ ┌───────────┐  │                         │
+│             │  │Rule Picks│ │ AI Picks  │  │                         │
+│             │  │(10 items)│ │(10 items) │  │                         │
+│             │  └──────────┘ └───────────┘  │                         │
+│             └──────────────────────────────┘                         │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -101,173 +108,134 @@ The system solves the **cold-start problem**: new users with zero sales history 
 ### Core Models (Your System)
 
 #### Product
-```
-id          String   (UUID)
-ownerId     String   (store owner / supplier)
-name        String
-category    Category (GROCERIES, DAIRY, ELECTRONICS, etc.)
-sellingPrice Float
-costPrice   Float
-quantity    Float
-unit        StockUnit (PCS, KG, LITER, etc.)
-imageLink   String?
-expiryDate  DateTime?
-isActive    Boolean
-```
+- `id` (UUID), `ownerId`, `name`, `category` (Category enum, 25 values)
+- `sellingPrice`, `costPrice`, `quantity`, `unit` (StockUnit)
+- `imageLink`, `expiryDate`, `isActive`
 
 #### Sale + SaleItem
-```
-Sale:
-  id          String
-  ownerId     String
-  totalAmount Float
-  items       SaleItem[]
-
-SaleItem:
-  productId   String  → Product
-  quantity    Float
-  unitPrice   Float
-  totalPrice  Float
-```
+- Sale: `id`, `ownerId`, `totalAmount`, `items[]`
+- SaleItem: `productId` → Product, `quantity`, `unitPrice`, `totalPrice`
 
 #### SmartBasket + SmartBasketItem
-```
-SmartBasket:
-  id            String
-  ownerId       String
-  title         String
-  isPublic      Boolean
-  baseTotal     Float
-  customTotal   Float?
-  sourceCategory Category?
-  bundleId      String?
-  items         SmartBasketItem[]
-
-SmartBasketItem:
-  productId   String  → Product
-  quantity    Float
-  position    Int
-  role        SEED | ADDED
-  source      RULE | AI
-  reason      String?
-```
+- SmartBasket: `id`, `ownerId`, `title`, `isPublic`, `baseTotal`, `customTotal`, `sourceCategory`, `bundleId`
+- SmartBasketItem: `productId` → Product, `quantity`, `position`, `role` (SEED|ADDED), `source` (RULE|AI), `reason`
 
 ### Dataset Models (Pre-computed Knowledge Base)
 
 #### CoPurchaseEdge
 ```
-id          String   (UUID)
-productAId  String   (dataset product identifier)
-productBId  String   (dataset product identifier)
-score       Float    (0-1 aggregated co-purchase strength)
-frequency   Int      (raw co-occurrence count across all datasets)
-source      String   (INSTACART | BUNDLEREC | AMAZON | COMBINED)
-category    Category (primary category this edge belongs to)
+id          String  (UUID)
+productAId  String  (dataset product identifier, e.g. "instacart_13176")
+productBId  String  (dataset product identifier)
+score       Float   (0-1 aggregated co-purchase strength)
+frequency   Int     (raw co-occurrence count)
+source      String  (INSTACART | BUNDLEREC | COMBINED)
+category    String  (primary category for the pair)
+categoryA   String  (product A's category)
+categoryB   String  (product B's category)
 ```
 
-**Why no foreign key to Product?**
-Dataset product IDs (`dataset_groceries_001`, `dataset_dairy_002`, etc.) don't exist in your `Product` table. They represent **generic retail patterns**, not specific inventory items. The system matches them to your products by **category and context**, not by ID.
+**Why no FK to Product?** Dataset IDs don't match user inventory. The system matches by **category and context**, not by ID. The per-product categories (`categoryA`/`categoryB`) enable **cross-category affinity computation**.
 
 #### CategoryAffinity
 ```
-id            String   (UUID)
+id            String  (UUID)
 categoryA     Category
 categoryB     Category
-affinityScore Float    (0-1 cross-category pairing strength)
+affinityScore Float   (0-1, computed as frequency / sqrt(totalA × totalB))
 ```
 
-**Purpose:** When a user's inventory is sparse, this table tells the system which categories are naturally complementary. Example: `GROCERIES ↔ DAIRY = 0.85` means grocery items often pair with dairy items.
+**Example real affinities from data:**
+| Pair | Score | Meaning |
+|------|-------|---------|
+| ELECTRONICS ↔ ELECTRONICS | 0.500 | Tight within-category bundling |
+| DAIRY ↔ FRESH_PRODUCE | 0.312 | Milk & eggs with produce (grocery reality) |
+| FRESH_PRODUCE ↔ GROCERIES | 0.273 | Produce with pantry staples |
+| FRESH_PRODUCE ↔ MEAT_POULTRY | 0.174 | Meat with vegetables (meal patterns) |
+| CLOTHING ↔ STATIONERY | 0.015 | Weak cross-domain (apparel + office) |
+| BEAUTY ↔ HOME_APPLIANCE | 0.002 | Very weak cross-category |
 
 ---
 
 ## Dataset Integration
 
-### Three External Datasets
+### Two Real Datasets (No Synthetic Data)
 
-| Dataset | What It Contains | Weight | Why It Matters |
-|---------|-----------------|--------|----------------|
-| **Instacart Market Basket** | 3M+ grocery orders from 200K users. Each order contains 1-50+ products bought together. | 50% | Real-world co-purchase patterns for groceries, dairy, produce, meat, FMCG. This is the strongest signal. |
-| **BundleRec** | Curated bundle data across Electronics, Clothing, and Food domains. Each bundle has explicit intent labels. | 30% | Covers non-grocery categories. Provides explicit "these items go together" data rather than inferred co-purchases. |
-| **Amazon Co-Purchasing (SNAP)** | 548K products with 1.7M "also bought" edges. Covers books, music, DVDs, and general merchandise. | 20% | Broad general merchandise patterns. Fills gaps for electronics, stationery, and other categories. |
+| Dataset | Source Files | Records | Edges | Weight | Domain |
+|---------|-------------|---------|-------|--------|--------|
+| **Instacart** | `data/raw/INSTACART/` — `products.csv`, `aisles.csv`, `departments.csv`, `order_products__prior.csv` | 50K products, 200K orders sampled | 15K (top by frequency) | 50% | Grocery (all food + household) |
+| **BundleRec** | `data/raw/BUNDLEREC/dataset/{food,clothing,electronic}/` — `bundle_item.csv`, `session_item.csv`, `item_categories.csv`, `item_titles.csv` | 1,784/1,910/1,750 bundles per domain | 10K/domain = 30K total | 50% (30% bundles + 20% sessions) | Food, Clothing, Electronics |
 
-### How Datasets Are Processed
+### How Each Dataset Is Processed
 
-```
-Raw Dataset Files
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│  seed-datasets.ts                           │
-│                                             │
-│  Step 1: Check for cached snapshot          │
-│  └─ If data/dataset-snapshot.json exists    │
-│     → Load it (fast, < 1 second)            │
-│  └─ If not → process raw files              │
-│                                             │
-│  Step 2: Parse each dataset                 │
-│  └─ Instacart: group by order_id → count    │
-│     product pairs within each order          │
-│  └─ BundleRec: group by bundle_id → count   │
-│     item co-occurrences                      │
-│  └─ Amazon SNAP: parse "similar" field →    │
-│     count co-purchase edges                  │
-│                                             │
-│  Step 3: Map categories                     │
-│  └─ "dairy eggs" → DAIRY                    │
-│  └─ "produce" → FRESH_PRODUCE               │
-│  └─ "electronics" → ELECTRONICS             │
-│  └─ etc. (30+ mappings)                     │
-│                                             │
-│  Step 4: Aggregate scores                   │
-│  └─ combinedScore =                         │
-│     instacartFreq * 0.5 +                   │
-│     bundlerecFreq * 0.3 +                   │
-│     amazonFreq * 0.2                        │
-│                                             │
-│  Step 5: Write JSON snapshot                │
-│  └─ data/dataset-snapshot.json              │
-│     (cached for future runs)                │
-│                                             │
-│  Step 6: Upsert to database                 │
-│  └─ CoPurchaseEdge.upsert()                 │
-│  └─ CategoryAffinity.upsert()               │
-└─────────────────────────────────────────────┘
-```
+#### Instacart
+1. **Parse `departments.csv`** (21 depts) + **`aisles.csv`** (134 aisles) → build dept→Category mapping
+2. **Parse `products.csv`** (50K rows) → map each product to `{name, category, dept, aisle}` via its `department_id`
+3. **Stream `order_products__prior.csv`** (577 MB) using Node.js `readline` — does NOT load entire file into memory
+   - Groups by `order_id`, collects up to 200K unique orders
+   - For each order, counts every product pair as a co-purchase occurrence
+4. Sort all pairs by frequency, take top 15K edges
+5. Each edge stores `categoryA` (product A's dept→Category) and `categoryB` (product B's dept→Category)
+
+#### BundleRec
+For each domain (food, clothing, electronic):
+1. Parse `item_categories.csv` — extract top-level Amazon category (e.g., "Grocery & Gourmet Food" → GROCERIES)
+2. Parse `item_titles.csv` — real product names (e.g., "Chocolate Sandwich Cookies")
+3. Parse `bundle_item.csv` — items grouped into bundles (explicit "these go together" signal), co-occurrence weighted ×3
+4. Parse `session_item.csv` — items viewed/purchased in same session, co-occurrence weighted ×1
+5. Combine bundle + session pairs, sort, take top 10K edges
 
 ### Category Mapping
 
-Raw dataset categories are mapped to your app's `Category` enum:
-
-| Raw Category (Instacart) | App Category |
-|--------------------------|--------------|
-| dairy, eggs | DAIRY |
-| produce, fruits, vegetables | FRESH_PRODUCE |
-| meat, seafood | MEAT_POULTRY, FISHERY_SEAFOOD |
-| frozen, pantry, bakery, beverages | GROCERIES |
+Instacart department → Category:
+| Department | Category |
+|------------|----------|
+| dairy eggs | DAIRY |
+| produce | FRESH_PRODUCE |
+| meat seafood | MEAT_POULTRY |
+| frozen, bakery, beverages, pantry, dry goods pasta, canned goods, breakfast, alcohol | GROCERIES |
 | snacks | FMCG |
 | personal care | BEAUTY_PERSONAL_CARE |
 | household | HOME_APPLIANCE |
+| babies, pets, other, missing | OTHER |
 
-| Raw Domain (BundleRec) | App Category |
-|------------------------|--------------|
-| electronics | ELECTRONICS |
-| clothing | CLOTHING |
-| food | GROCERIES |
-
-| Raw Group (Amazon SNAP) | App Category |
-|-------------------------|--------------|
-| Books | STATIONERY |
+BundleRec Amazon categories → Category:
+| Amazon Top-Level | App Category |
+|-----------------|-------------|
+| Grocery & Gourmet Food | GROCERIES |
+| Clothing, Shoes & Jewelry | CLOTHING |
 | Electronics | ELECTRONICS |
-| Music, DVD, Video | OTHER |
+| Home & Kitchen | HOME_APPLIANCE |
+| Beauty & Personal Care | BEAUTY_PERSONAL_CARE |
+| Automotive | AUTO_PARTS |
+| Tools & Home Improvement | HARDWARE |
+| Office Products | OFFICE_SUPPLIES |
+| Books | STATIONERY |
 
-### Pre-computed Snapshot
+### Snapshot Caching
 
-The file `data/dataset-snapshot.json` contains:
-- **537 co-purchase edges** — product pairs with frequency, source, and category
-- **51 category affinities** — cross-category pairing strengths
-- **155 dataset products** — generic product templates (15 per category)
+Generated snapshot (`data/dataset-snapshot.json`, 13.68 MB):
+- **45,000** co-purchase edges
+- **32** category affinities (including cross-category pairs)
+- **61,442** real product names from the datasets
 
-This snapshot is **git-tracked** so every developer and deployment gets the same baseline data without needing to download raw datasets.
+On re-run, loads from snapshot in <1 second. Delete snapshot to force re-processing.
+
+### Streaming Architecture for Large Files
+
+```typescript
+// Instead of readFileSync (would crash on 577 MB):
+const rl = createInterface({
+  input: createReadStream(INSTACART_ORDERS),
+  crlfDelay: Infinity,
+});
+
+for await (const line of rl) {
+  // process one line at a time
+  // group by order_id (max 200K orders)
+  // memory: O(orders × avg_items_per_order)
+}
+```
 
 ---
 
@@ -275,7 +243,7 @@ This snapshot is **git-tracked** so every developer and deployment gets the same
 
 ### The Core Function: `getScoredCandidates(productIds)`
 
-This is the heart of the system. It takes 1-3 seed product IDs and returns scored candidate products that would complement them.
+Takes 1-3 seed product IDs → returns scored candidates with match percentages.
 
 #### Step-by-Step Flow
 
@@ -283,221 +251,157 @@ This is the heart of the system. It takes 1-3 seed product IDs and returns score
 Input: ["user_product_abc", "user_product_def"]
   │
   ▼
-┌─────────────────────────────────────────────┐
-│  1. Fetch selected products                 │
-│     └─ Verify they belong to this user      │
-│     └─ Convert to summaries (price, margin) │
-│     └─ Extract selected categories          │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  2. Get user's co-purchase data             │
-│     └─ Query SaleItem for orders containing │
-│        seed products                         │
-│     └─ Group by productId → count           │
-│     └─ Only if user has >= 5 sales          │
-│        (otherwise skip — not enough data)   │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  3. Get dataset co-purchase edges           │
-│     └─ Query CoPurchaseEdge where           │
-│        productAId matches seed products      │
-│     └─ Order by score DESC, take top 40     │
-│     └─ ALWAYS available (pre-computed)      │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  4. Get user's bundle data                  │
-│     └─ Query BundleItem for bundles         │
-│        containing seed products              │
-│     └─ Count co-occurrences                 │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  5. Build candidate pool                    │
-│     └─ Merge user + dataset candidate IDs   │
-│     └─ If user has >= 5 sales:              │
-│        blendedScore = userScore * 0.6       │
-│                     + datasetScore * 0.4    │
-│     └─ If user has < 5 sales:               │
-│        blendedScore = datasetScore * 1.0    │
-│     └─ Only keep candidates with score > 0  │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  6. Expand if pool is small (< 12)          │
-│     └─ Query CategoryAffinity for related   │
-│        categories                           │
-│     └─ Fetch products from those categories │
-│     └─ Add to candidate pool                │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  7. Filter to user's inventory              │
-│     └─ Only products owned by this user     │
-│     └─ Must be active, in-stock, non-expired│
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  8. Score each candidate                    │
-│     └─ coPurchase * 3                       │
-│     └─ bundleCount * 2                      │
-│     └─ sameCategory * 1.2                   │
-│     └─ normalizeMargin * 1.1                │
-│     └─ normalizeStock * 0.7                 │
-│     └─ pricePreferenceScore                 │
-│     └─ expiryPenalty (if near expiry)       │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│  9. Normalize scores to 0-100%              │
-│     └─ matchPercent = (score / maxScore)    │
-│        * 100                                │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-Output: {
-  scored: [
-    { id, name, category, sellingPrice, score, matchPercent, reason, source },
-    ...
-  ],
-  selectedSummaries: [...]
-}
+1. Fetch selected products
+   └─ Verify ownership, extract categories
+  │
+  ▼
+2. Get user's co-purchase data (if ≥5 sales)
+   └─ Query SaleItem for orders containing seed products
+   └─ Group by productId → frequency count
+  │
+  ▼
+3. Get dataset co-purchase edges (ALWAYS available)
+   └─ Query CoPurchaseEdge WHERE productAId IN (seed IDs)
+   └─ ORDER BY score DESC, LIMIT 40
+   └─ These come from Instacart + BundleRec
+  │
+  ▼
+4. Get user's bundle co-occurrence
+   └─ Query BundleItem for bundles containing seed products
+  │
+  ▼
+5. Build candidate pool with blended scoring:
+   └─ If user has ≥5 sales:
+      blendedScore = userCoPurchase × 0.6 + datasetCoPurchase × 0.4
+   └─ If user has <5 sales:
+      blendedScore = datasetCoPurchase × 1.0
+  │
+  ▼
+6. Expand if pool <12 candidates
+   └─ Query CategoryAffinity WHERE categoryA IN (selected categories)
+   └─ Fetch user's products from related categories
+   └─ Example: Selected GROCERIES → fetch DAIRY, FRESH_PRODUCE products
+  │
+  ▼
+7. Filter to user's active, in-stock, non-expired inventory
+  │
+  ▼
+8. Compute composite score per candidate
+  │
+  ▼
+9. Normalize to 0-100% match
+  │
+  ▼
+Output: scored candidates with matchPercent, reason, source
 ```
 
 ---
 
 ## Scoring Algorithm
 
-### Score Components
+### Composite Score Formula
 
-Each candidate product receives a composite score from 6 factors:
-
-| Factor | Weight | Formula | Purpose |
-|--------|--------|---------|---------|
-| **Co-purchase frequency** | ×3 | `userCoPurchase * 0.6 + datasetCoPurchase * 0.4` | Products bought together historically |
-| **Bundle co-occurrence** | ×2 | `bundleCount` | Products frequently bundled together |
-| **Same category** | ×1.2 | `1 if same category, 0 otherwise` | Category similarity bonus |
-| **Margin strength** | ×1.1 | `clamp((sellingPrice - costPrice) / sellingPrice, 0, 1)` | Higher margin products score better |
-| **Stock level** | ×0.7 | `clamp(quantity / 20, 0, 1)` | Well-stocked products score better |
-| **Price preference** | varies | Based on user's `buyingPriority` | Aligns with user's buying style |
-| **Expiry penalty** | -0.6 | Applied if expiring within 7 days | Discourages near-expiry items |
-
-### Blending Logic
-
-```typescript
-// If user has 5+ sales in their history
-const blendedScore = userCoPurchase * 0.6 + datasetCoPurchase * 0.4;
-
-// If user has fewer than 5 sales (cold start)
-const blendedScore = datasetCoPurchase * 1.0;
+```
+finalScore =
+    coPurchaseScore  × 3.0
+  + bundleScore      × 2.0
+  + sameCategory     × 1.2
+  + marginStrength   × 1.1
+  + stockLevel       × 0.7
+  + pricePreference  (varies by buyingPriority)
+  + expiryPenalty    (−0.6 if expiring ≤7 days)
 ```
 
-**Why 0.6 / 0.4?**
-User data is weighted higher because it reflects **their specific customers' behavior**. Dataset data provides a **general retail baseline**. The blend ensures:
-- Active users get personalized recommendations
-- New users still get meaningful suggestions
-- The system improves as the user accumulates sales data
+### Score Components Detail
+
+| Factor | Weight | Formula | Rationale |
+|--------|--------|---------|-----------|
+| **Co-purchase frequency** | ×3 | `(userFreq × 0.6 + datasetFreq × 0.4)` for ≥5 sales; `datasetFreq` otherwise | Primary signal: items bought together |
+| **Bundle co-occurrence** | ×2 | `bundleCount` from BundleItem | Explicit "goes together" signal |
+| **Same category** | ×1.2 | `1` if candidate category matches any seed category, else `0` | Within-category bonus |
+| **Margin strength** | ×1.1 | `clamp((sellPrice - costPrice) / sellPrice, 0, 1)` | Higher margins = better for seller |
+| **Stock level** | ×0.7 | `clamp(quantity / 20, 0, 1)` | Well-stocked items preferred |
+| **Price preference** | varies | Based on `User.buyingPriority` (CHEAP → lower prices score higher; QUALITY → higher prices) | Aligns with buyer style |
+| **Expiry penalty** | −0.6 | Applied if `expiryDate ≤ now + 7 days` | Avoids near-expiry suggestions |
+
+### Blending Weights
+
+| Condition | User Weight | Dataset Weight |
+|-----------|------------|----------------|
+| User has ≥5 sales | 0.6 | 0.4 |
+| User has <5 sales | 0.0 | 1.0 |
+
+The 60/40 split prioritizes user-specific patterns while retaining general retail knowledge.
 
 ### Category Affinity Fallback
 
 When the candidate pool has fewer than 12 products:
 
 ```typescript
-// Query related categories
 const affinities = await prisma.categoryAffinity.findMany({
   where: { categoryA: { in: selectedCategories } },
   orderBy: { affinityScore: "desc" },
   take: 5,
 });
-
-// Fetch products from those categories
-const relatedProducts = await prisma.product.findMany({
-  where: {
-    ownerId: userId,
-    category: { in: affinities.map(a => a.categoryB) },
-    isActive: true,
-  },
-  take: 20,
-});
+// Fetch products from the top related categories
 ```
 
-**Example:** If a user selects a `GROCERIES` product and has few candidates, the system looks up affinities:
-- `GROCERIES ↔ DAIRY = 0.85` → fetch dairy products
-- `GROCERIES ↔ FRESH_PRODUCE = 0.82` → fetch produce products
-- `GROCERIES ↔ MEAT_POULTRY = 0.78` → fetch meat products
+Example: User selects a GROCERIES product but has few GROCERIES in inventory:
+- `GROCERIES ↔ DAIRY = 0.057` → fetch user's dairy products
+- `GROCERIES ↔ HOME_APPLIANCE = 0.032` → fetch household items
+- `GROCERIES ↔ MEAT_POULTRY = 0.024` → fetch meat products
 
-This ensures the recommendation engine always has enough candidates to work with.
+This ensures recommendations never return empty.
 
 ---
 
 ## AI Ranking Layer
 
-### How It Works
-
-After the rule-based engine scores candidates, the top 20 are sent to OpenRouter AI for re-ranking:
+### Architecture
 
 ```
-Rule Candidates (top 20 by score)
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│  rankWithOpenRouter()                       │
-│                                             │
-│  1. Build prompt with:                      │
-│     - Selected products (name, category,    │
-│       price)                                │
-│     - Candidate products (id, name,         │
-│       category, price, matchPercent)        │
-│     - Category-specific hint (e.g.,         │
-│       "Focus on pantry staples")            │
-│     - Output schema (JSON only)             │
-│                                             │
-│  2. Send to OpenRouter API                  │
-│     - model: OPENROUTER_MODEL (default:     │
-│       "openrouter/free")                    │
-│     - temperature: 0.1 (deterministic)      │
-│     - max_tokens: 180                       │
-│     - response_format: json_object          │
-│                                             │
-│  3. Parse response                          │
-│     - Extract JSON from text (handles       │
-│       markdown, escaped strings)            │
-│     - Map AI picks back to candidates       │
-│     - Apply AI matchScore (0-100)           │
-│                                             │
-│  4. Return top 10 AI-ranked suggestions     │
-└─────────────────────────────────────────────┘
+Rule Candidates (top 20 by composite score)
+        │
+        ▼
+rankWithOpenRouter()
+   │
+   ├─ 1. Build prompt with:
+   │     • Selected products (name, category, price)
+   │     • Candidates (name, category, price, matchPercent)
+   │     • Category-specific hint
+   │     • JSON output schema
+   │
+   ├─ 2. POST to OpenRouter API
+   │     • model: OPENROUTER_MODEL ("openrouter/free")
+   │     • temperature: 0.1
+   │     • max_tokens: 180
+   │     • response_format: { type: "json_object" }
+   │
+   ├─ 3. Parse JSON response
+   │     • Extract AI picks (id, reason, matchScore)
+   │     • Map back to candidate data
+   │
+   └─ 4. Return top 10 AI-ranked suggestions
 ```
 
 ### Category-Aware Prompts
-
-The AI receives a different hint for each category:
 
 | Category | AI Hint |
 |----------|---------|
 | GROCERIES | "Focus on pantry staples used together." |
 | FRESH_PRODUCE | "Focus on meal pairings and freshness." |
 | ELECTRONICS | "Focus on compatible accessories and protection." |
-| BEAUTY_PERSONAL_CARE | "Focus on routine bundles and refills." |
+| CLOTHING | "Focus on outfit coordination and style." |
 | DAIRY | "Focus on breakfast pairings and staples." |
-| PHARMACY | "Avoid medical claims; focus on care bundles." |
-| ... | (25+ categories covered) |
+| BEAUTY_PERSONAL_CARE | "Focus on routine bundles and refills." |
+| HOME_APPLIANCE | "Focus on complementary household items." |
 
 ### Fallback Behavior
 
-- If `OPENROUTER_API_KEY` is not set → AI returns empty array, UI shows only rule picks
-- If AI response is truncated or invalid → returns empty array, UI shows only rule picks
-- If AI returns fewer than 10 picks → returns whatever it got (no padding)
+- `OPENROUTER_API_KEY` not set → AI returns `[]`, UI shows only rule picks
+- Network error or timeout → same fallback
+- Invalid JSON response → same fallback
+- Partial response (<10 items) → returns whatever was parsed
 
 ---
 
@@ -509,155 +413,85 @@ The AI receives a different hint for each category:
 1. User navigates to /smart-basket/create
    │
    ▼
-2. User selects 1-3 products from their inventory
-   └─ Uses ProductPickerDialog (search by name, SKU, barcode)
-   └─ Products appear as cards with image, name, price
+2. User selects 1-3 products via ProductPickerDialog
+   (search by name, SKU, barcode — debounced 280ms)
    │
    ▼
-3. System automatically fetches recommendations
-   └─ 320ms debounce after selection change
-   └─ Parallel calls: rule + AI recommendations
-   └─ Loading spinners shown during fetch
+3. System auto-fetches recommendations (320ms debounce)
+   Parallel: getSmartBasketRuleRecommendations()
+            + getSmartBasketAiRecommendations()
+   Loading spinners shown during fetch
    │
    ▼
-4. Suggestions appear in two columns
+4. Two-column suggestions:
    ┌─────────────────┐  ┌─────────────────┐
    │   Rule Picks    │  │    AI Picks     │
    │   (10 items)    │  │   (10 items)    │
    │                 │  │                 │
-   │  Each card:     │  │  Each card:     │
    │  - Image        │  │  - Image        │
    │  - Name         │  │  - Name         │
-   │  - Category     │  │  - Category     │
-   │  - Price        │  │  - Price        │
    │  - Match %      │  │  - Match %      │
    │  - Reason       │  │  - Reason       │
    │  - "Add" button │  │  - "Add" button │
    └─────────────────┘  └─────────────────┘
    │
    ▼
-5. User clicks "Add" on suggestions
-   └─ Suggested product added to selected slots
-   └─ Suggestions pause when 3 products selected
+5. User clicks "Add" → product added to basket
+   Suggestions pause at 3/3 products
    │
    ▼
-6. User sets basket details
-   └─ Title (default: "Great Value Basket")
-   └─ Description (optional)
-   └─ Public toggle (shows on public list)
-   └─ Save as Bundle toggle (creates Bundle too)
-   └─ Custom total (optional price override)
+6. User sets: Title, Description, Public toggle,
+   "Save as Bundle" toggle, Custom total price
    │
    ▼
-7. User clicks "Save smart basket"
-   └─ Creates SmartBasket + SmartBasketItems
-   └─ If "Save as Bundle" checked → also creates Bundle
-   └─ Redirects to /smart-basket list
+7. "Save smart basket" → creates SmartBasket
+   + optionally creates Bundle
+   Redirects to /smart-basket list
 ```
 
 ### Viewing Baskets
 
-- **My Baskets** (`/smart-basket`) — lists user's own baskets, sorted by creation date
-- **Public Baskets** (`/smart-basket/public`) — lists other users' public baskets with owner info
-- **Basket Detail** (`/smart-basket/:id`) — shows basket items, totals, and metadata
+- **My Baskets** (`/smart-basket`) — user's own baskets, sorted by date
+- **Public Baskets** (`/smart-basket/public`) — all public baskets from other users
 
 ---
 
 ## API Reference
 
-All functions are **Next.js Server Actions** (`"use server"`). They run on the server and are called directly from client components.
+All functions are **Next.js Server Actions** (`"use server"` in `backend/smart-basket/smart-basket.ts`).
 
-### Product Functions
-
-#### `listRecentProducts(limit?: number)`
-Returns the user's most recently updated active products.
+### Product Queries
 
 ```typescript
-const products = await listRecentProducts(10);
-// Returns: SmartBasketProductSummary[] | null
+listRecentProducts(limit?: number): SmartBasketProductSummary[] | null
+searchProducts(search: string, category?: Category | "ALL", limit?: number, offset?: number):
+  { items: SmartBasketProductSummary[], totalCount: number } | null
+getProductById(productId: string): SmartBasketProductSummary | null
 ```
 
-#### `searchProducts(search: string, category?: Category | "ALL", limit?: number, offset?: number)`
-Searches products by name, description, SKU, or barcode.
+### Basket CRUD
 
 ```typescript
-const result = await searchProducts("rice", "GROCERIES", 20, 0);
-// Returns: { items: SmartBasketProductSummary[], totalCount: number } | null
+listSmartBaskets(): SmartBasketListItem[] | null
+listPublicSmartBaskets(): PublicSmartBasketListItem[] | null
+getSmartBasket(basketId: string): SmartBasketListItem | null
+createSmartBasket(payload: {
+  title: string;
+  description?: string;
+  productIds: string[];
+  isPublic?: boolean;
+  customTotal?: number;
+  saveAsBundle?: boolean;
+}): { ok: boolean; id?: string; message?: string }
 ```
 
-#### `getProductById(productId: string)`
-Fetches a single product by ID.
+### Recommendations
 
 ```typescript
-const product = await getProductById("uuid-here");
-// Returns: SmartBasketProductSummary | null
-```
-
-### Basket Functions
-
-#### `listSmartBaskets()`
-Lists the user's own smart baskets (up to 20).
-
-```typescript
-const baskets = await listSmartBaskets();
-// Returns: SmartBasketListItem[] | null
-```
-
-#### `listPublicSmartBaskets()`
-Lists other users' public smart baskets.
-
-```typescript
-const baskets = await listPublicSmartBaskets();
-// Returns: PublicSmartBasketListItem[] | null
-```
-
-#### `getSmartBasket(basketId: string)`
-Fetches a specific basket by ID.
-
-```typescript
-const basket = await getSmartBasket("uuid-here");
-// Returns: SmartBasketListItem | null
-```
-
-#### `createSmartBasket(payload: CreateSmartBasketPayload)`
-Creates a new smart basket.
-
-```typescript
-const result = await createSmartBasket({
-  title: "Summer Bundle",
-  description: "Great deals for summer",
-  productIds: ["id1", "id2"],
-  isPublic: true,
-  customTotal: 99.99,
-  saveAsBundle: true,
-});
-// Returns: { ok: boolean, id?: string, message?: string }
-```
-
-### Recommendation Functions
-
-#### `getSmartBasketRuleRecommendations(productIds: string[])`
-Returns rule-based recommendations only.
-
-```typescript
-const picks = await getSmartBasketRuleRecommendations(["id1", "id2"]);
-// Returns: SmartBasketSuggestionItem[]
-```
-
-#### `getSmartBasketAiRecommendations(productIds: string[])`
-Returns AI-ranked recommendations only.
-
-```typescript
-const picks = await getSmartBasketAiRecommendations(["id1", "id2"]);
-// Returns: SmartBasketSuggestionItem[]
-```
-
-#### `getSmartBasketRecommendations(productIds: string[])`
-Returns both rule and AI recommendations.
-
-```typescript
-const result = await getSmartBasketRecommendations(["id1", "id2"]);
-// Returns: { rule: SmartBasketSuggestionItem[], ai: SmartBasketSuggestionItem[] } | null
+getSmartBasketRuleRecommendations(productIds: string[]): SmartBasketSuggestionItem[]
+getSmartBasketAiRecommendations(productIds: string[]): SmartBasketSuggestionItem[]
+getSmartBasketRecommendations(productIds: string[]):
+  { rule: SmartBasketSuggestionItem[], ai: SmartBasketSuggestionItem[] } | null
 ```
 
 ---
@@ -668,27 +502,26 @@ const result = await getSmartBasketRecommendations(["id1", "id2"]);
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `OPENROUTER_API_KEY` | No | — | API key for OpenRouter AI ranking. If not set, AI recommendations are skipped. |
-| `OPENROUTER_MODEL` | No | `openrouter/free` | Model identifier for OpenRouter API. |
+| `OPENROUTER_API_KEY` | No | — | Enables AI re-ranking. If absent, only rule picks show. |
+| `OPENROUTER_MODEL` | No | `openrouter/free` | Model identifier for AI reranking. |
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string (Neon). |
 
-### Constants
+### Code Constants
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `MAX_SEED_ITEMS` | 3 | Maximum products a user can select as basket seeds |
-| `DEFAULT_PRODUCT_LIMIT` | 10 | Default limit for product list queries |
+| `MAX_SEED_ITEMS` | 3 | Max products user can select as basket seeds |
 | `RECOMMENDATION_LIMIT` | 10 | Number of rule/AI picks returned |
-| `AI_CANDIDATE_LIMIT` | 20 | Number of candidates sent to AI for ranking |
+| `AI_CANDIDATE_LIMIT` | 20 | Candidates sent to AI for reranking |
 | `DATASET_WEIGHT` | 0.4 | Weight for dataset scores in blended scoring |
-| `USER_WEIGHT` | 0.6 | Weight for user sales scores in blended scoring |
-| `MIN_USER_SALES_FOR_BLEND` | 5 | Minimum sales count before user data is used |
+| `USER_WEIGHT` | 0.6 | Weight for user sales scores |
+| `MIN_USER_SALES_FOR_BLEND` | 5 | Minimum sales before user data is blended in |
 
 ---
 
 ## Seed Pipeline
 
-### Running the Seed
+### Running
 
 ```bash
 npm run seed:datasets
@@ -696,33 +529,44 @@ npm run seed:datasets
 
 ### What Happens
 
-1. **Check for snapshot** — if `data/dataset-snapshot.json` exists, load it (fast path)
-2. **If no snapshot** — process raw dataset files from `data/raw/`:
-   - `products.csv` + `order_products__prior.csv` (Instacart)
-   - `bundle_item.txt` (BundleRec)
-   - `amazon-meta.txt` (Amazon SNAP)
-3. **Aggregate** — combine edges with weighted scores
-4. **Write snapshot** — save to `data/dataset-snapshot.json`
-5. **Upsert to DB** — insert/update `CoPurchaseEdge` and `CategoryAffinity` records
+1. **Check snapshot** — if `data/dataset-snapshot.json` exists, load it (fast path, <1s)
+2. **If no snapshot** — process raw files:
+   - **INSTACART**: stream `order_products__prior.csv` (577 MB, readline), parse `products.csv` + `aisles.csv` + `departments.csv` for categorization
+   - **BUNDLEREC**: parse `bundle_item.csv` + `session_item.csv` + `item_categories.csv` + `item_titles.csv` for food, clothing, electronic domains
+3. **Aggregate** — combine edges with weighted scores (Instacart 50%, BundleRec 30% food + 10% clothing + 10% electronic)
+4. **Compute affinities** — cross-category frequency / sqrt(totalA × totalB)
+5. **Write snapshot** — `data/dataset-snapshot.json` (13.68 MB, 45K edges, 32 affinities, 61K product names)
+6. **Upsert DB** — batch upsert CoPurchaseEdge (batch 500) + CategoryAffinity (batch 100)
 
-### Adding New Dataset Files
-
-Place raw files in `data/raw/`:
+### Raw File Layout
 
 ```
 data/
 ├── raw/
-│   ├── products.csv              # Instacart products
-│   ├── order_products__prior.csv # Instacart orders
-│   ├── bundle_item.txt           # BundleRec bundle data
-│   └── amazon-meta.txt           # Amazon SNAP metadata
-├── dataset-snapshot.json         # Cached aggregated snapshot
+│   ├── INSTACART/
+│   │   ├── products.csv              (50K rows)
+│   │   ├── aisles.csv                (134 rows)
+│   │   ├── departments.csv           (21 rows)
+│   │   ├── orders.csv                (108 MB, metadata only)
+│   │   ├── order_products__prior.csv (577 MB, streamed)
+│   │   └── order_products__train.csv (24 MB)
+│   └── BUNDLEREC/
+│       └── dataset/
+│           ├── food/
+│           │   ├── bundle_item.csv    (6.4K rows)
+│           │   ├── session_item.csv   (6.5K rows)
+│           │   ├── item_categories.csv (3.8K rows)
+│           │   └── item_titles.csv    (3.8K rows)
+│           ├── clothing/ (same structure)
+│           └── electronic/ (same structure)
+└── dataset-snapshot.json              (cached output, 13.68 MB)
 ```
 
-Then run:
+### Re-processing
+
 ```bash
-# Delete snapshot to force re-processing
-rm data/dataset-snapshot.json
+# Delete snapshot to force re-process from raw files
+Remove-Item data/dataset-snapshot.json
 npm run seed:datasets
 ```
 
@@ -732,21 +576,25 @@ npm run seed:datasets
 {
   "coPurchaseEdges": [
     {
-      "productAId": "dataset_groceries_001",
-      "productBId": "dataset_groceries_002",
-      "frequency": 450,
+      "productAId": "instacart_13176",
+      "productBId": "instacart_47209",
+      "frequency": 3842,
       "source": "INSTACART",
-      "category": "GROCERIES"
+      "category": "FRESH_PRODUCE",
+      "categoryA": "FRESH_PRODUCE",
+      "categoryB": "FRESH_PRODUCE"
     }
   ],
   "categoryAffinities": [
     {
-      "categoryA": "GROCERIES",
-      "categoryB": "DAIRY",
-      "affinityScore": 0.85
+      "categoryA": "DAIRY",
+      "categoryB": "FRESH_PRODUCE",
+      "affinityScore": 0.312
     }
   ],
-  "products": []
+  "products": [
+    { "id": "instacart_1", "name": "Chocolate Sandwich Cookies", "category": "FMCG" }
+  ]
 }
 ```
 
@@ -754,59 +602,27 @@ npm run seed:datasets
 
 ## Edge Cases & Safeguards
 
-### Cold Start (New User, Zero Sales)
-- **Behavior:** 100% dataset-backed recommendations
-- **Why:** `saleIds.length < MIN_USER_SALES_FOR_BLEND` → user co-purchase map is empty, dataset edges are used exclusively
-- **Result:** User still gets meaningful suggestions based on general retail patterns
-
-### Sparse Inventory (< 12 Candidates)
-- **Behavior:** CategoryAffinity expands candidate pool from related categories
-- **Why:** Prevents empty recommendation lists for users with limited inventory
-- **Result:** System suggests products from complementary categories
-
-### Max Products Selected (3/3)
-- **Behavior:** Recommendations pause, UI shows "Suggestions paused for full basket"
-- **Why:** Prevents overwhelming the user; basket is considered complete
-- **Result:** User must remove a product to see new suggestions
-
-### AI Failure
-- **Behavior:** Rule picks still display, AI section shows "AI picks will appear when available"
-- **Why:** AI is optional; rule engine is always available
-- **Result:** System degrades gracefully
-
-### Near-Expiry Products
-- **Behavior:** -0.6 penalty applied to score
-- **Why:** Discourages recommending products expiring within 7 days
-- **Result:** Fresh products rank higher
-
-### Duplicate Product Selection
-- **Behavior:** Silently ignored — product not added if already selected
-- **Why:** Prevents duplicate entries in basket
-- **Result:** Clean basket with unique products
-
-### Missing Products in createSmartBasket
-- **Behavior:** Returns `{ ok: false, message: "One or more products are missing" }`
-- **Why:** Validates that all requested products belong to the user
-- **Result:** Prevents cross-user product access
-
-### Empty AI Response
-- **Behavior:** Returns empty array, UI falls back to rule picks
-- **Why:** AI may fail due to API limits, network issues, or invalid responses
-- **Result:** System continues to function without AI
+| Scenario | Behavior | Why |
+|----------|----------|-----|
+| **New user, 0 sales, no inventory** | Dataset suggests products by category affinity only | Cold-start: no user data available |
+| **New user, 0 sales, has inventory** | Dataset edges scored against user's inventory | CoPurchaseEdge × category filter |
+| **Existing user with sales** | Blended: 60% user + 40% dataset | Best of both signals |
+| **Sparse inventory (<12 candidates)** | CategoryAffinity expands pool from related categories | Prevents empty results |
+| **3 products selected (max)** | Recommendations pause, UI shows message | Basket considered complete |
+| **AI fails / no API key** | Rule picks still display, AI column shows placeholder | AI is optional; rule engine always works |
+| **Near-expiry product** | −0.6 penalty applied to score | Promotes fresh inventory |
+| **Duplicate selection** | Silently ignored | Prevents dupes in basket |
+| **Missing products on save** | Returns error `{ ok: false, message }` | Validates ownership |
+| **577 MB order file** | Streamed via readline, never fully in memory | Prevents OOM crash |
 
 ---
 
 ## Summary
 
-Smart Basket is a **hybrid recommendation system** that combines:
+Smart Basket is a **hybrid recommendation system** combining:
 
-1. **Your data** — user's sales history, inventory, bundle patterns, and buying preferences
-2. **External knowledge** — pre-computed co-purchase patterns from 3 retail datasets
-3. **AI intelligence** — optional OpenRouter re-ranking with category-aware prompts
+1. **Your data** — sales history, inventory, bundles, buying preferences (60% weight when available)
+2. **External knowledge** — 45K co-purchase edges from 2 real retail datasets (always available, 40% weight or 100% cold-start)
+3. **AI intelligence** — optional OpenRouter reranking of top 20 rule candidates with category-aware prompts
 
-The system works for **both new and active users**:
-- **New users** get dataset-backed recommendations immediately (no cold-start problem)
-- **Active users** get personalized recommendations that improve as their sales data grows
-- **All users** benefit from the general retail knowledge encoded in the dataset
-
-The entire pipeline is **self-contained** — no external API calls during recommendation (except optional AI ranking). The dataset is pre-computed, cached, and stored in your database, making recommendations fast and reliable.
+Every user gets meaningful recommendations from day one. The dataset pipeline is self-contained, cached, and requires no external API calls during recommendation serving (except optional AI).
