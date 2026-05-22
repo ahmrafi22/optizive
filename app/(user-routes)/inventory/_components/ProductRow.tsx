@@ -13,7 +13,7 @@ export function ProductRow({ product }: { product: InventoryProduct }) {
   const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
 
   return (
-    <Link href={`/inventory/${product.id}`} className="bento-card noise-overlay block">
+    <Link href={`/inventory/${product.id}`} className="bento-card noise-overlay block !cursor-pointer">
       <div className="p-4 md:p-5 grid grid-cols-1 md:grid-cols-[auto_2fr_1fr_1fr_1fr] gap-4 items-center">
         <div className="h-12 w-12 rounded-2xl border border-(--clr-border) relative overflow-hidden">
           <img
