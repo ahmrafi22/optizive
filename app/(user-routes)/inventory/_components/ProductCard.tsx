@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { StockBadge } from "./StockBadge";
+import { MiniSalesChart } from "./MiniSalesChart";
 import {
   CATEGORY_PALETTES,
   formatCategory,
   formatCurrency,
-  formatDate,
   type InventoryProduct,
   type ViewMode,
 } from "./types";
@@ -16,7 +16,7 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
   return (
     <Link
       href={`/inventory/${product.id}`}
-      className={`bento-card noise-overlay flex flex-col ${view === "large" ? "min-h-[380px]" : "min-h-[340px]"}`}
+      className={`bento-card noise-overlay flex flex-col cursor-pointer! ${view === "large" ? "min-h-[380px]" : "min-h-[340px]"}`}
     >
       {/* Square polaroid-style image */}
       <div className="w-full aspect-square border-b border-(--clr-border) relative p-4">
@@ -85,6 +85,14 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
               Min {product.minStock ?? "-"} &bull; Value {formatCurrency(product.value)}
             </div>
           </div>
+        </div>
+
+        {/* Sales Trend Chart */}
+        <div className="mt-2 pt-3 border-t border-(--clr-border)">
+          <div className="text-[9px] uppercase tracking-widest text-(--clr-fg-muted) mb-1">
+            Sales Trend (1 Month)
+          </div>
+          <MiniSalesChart productId={product.id} />
         </div>
       </div>
     </Link>

@@ -12,13 +12,17 @@
     "prisma:generate": "prisma generate",
     "prisma:db:push": "prisma db push",
     "prisma:migrate:dev": "prisma migrate dev --name init",
-    "seed:datasets": "tsx prisma/seed-datasets.ts"
+    "seed:datasets": "tsx prisma/seed-datasets.ts",
+    "seed:products": "tsx scripts/seed-grocery-products.ts",
+    "seed:sales": "tsx scripts/seed-sales-data.ts",
+    "seed:all": "tsx scripts/seed-grocery-products.ts && tsx scripts/seed-sales-data.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^2.4.3",
+    "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",
     "lucide-react": "^1.8.0",
     "motion": "^12.38.0",
@@ -29,7 +33,8 @@
     "puppeteer-core": "^24.42.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-icons": "^5.6.0"
+    "react-icons": "^5.6.0",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

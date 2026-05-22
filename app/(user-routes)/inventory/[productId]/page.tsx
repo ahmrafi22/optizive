@@ -8,6 +8,8 @@ import { getProductById } from "@/backend/inventory/inventory";
 
 import { ProductEditDialog } from "../_components/ProductEditDialog";
 import { StockBadge } from "../_components/StockBadge";
+import { SalesHistoryChart } from "../_components/SalesHistoryChart";
+import { MonthlyComparisonChart } from "../_components/MonthlyComparisonChart";
 import {
   CATEGORY_PALETTES,
   formatCategory,
@@ -272,6 +274,12 @@ export default function ProductDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Sales History Chart */}
+      <SalesHistoryChart productId={product.id} productName={product.name} />
+
+      {/* Monthly Comparison Chart */}
+      <MonthlyComparisonChart productId={product.id} />
 
       <ProductEditDialog
         product={product}

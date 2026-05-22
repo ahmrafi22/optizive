@@ -322,6 +322,183 @@ export async function getProductById(productId: string): Promise<InventoryProduc
   };
 }
 
+export interface ProductSalesData {
+  date: string;
+  sales: number;
+  revenue: number;
+}
+
+export interface MonthlyComparisonData {
+  month: string;
+  current: number;
+  previous: number;
+}
+
+export async function getProductSalesHistory(
+  productId: string,
+  days: number = 30
+): Promise<ProductSalesData[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+
+  // Verify product ownership
+  const product = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+    select: { id: true },
+  });
+
+  if (!product) return [];
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  // Fetch sales data grouped by date
+  const salesData = await prisma.$queryRaw<Array<{
+    date: Date;
+    totalQuantity: number;
+    totalRevenue: number;
+  }>>`
+    SELECT 
+      DATE("Sale"."createdAt") as date,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity",
+      COALESCE(SUM("SaleItem"."totalPrice"), 0) as "totalRevenue"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${startDate}
+    GROUP BY DATE("Sale"."createdAt")
+    ORDER BY date ASC
+  `;
+
+  // Create a map of existing data
+  const dataMap = new Map<string, { sales: number; revenue: number }>();
+  salesData.forEach((row) => {
+    const dateStr = row.date.toISOString().split('T')[0];
+    dataMap.set(dateStr, {
+      sales: Number(row.totalQuantity),
+      revenue: Number(row.totalRevenue),
+    });
+  });
+
+  // Fill in missing dates with zero values
+  const result: ProductSalesData[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    const data = dataMap.get(dateStr) || { sales: 0, revenue: 0 };
+    
+    result.push({
+      date: dateStr,
+      sales: data.sales,
+      revenue: data.revenue,
+    });
+  }
+
+  return result;
+}
+
+export async function getProductMonthlyComparison(
+  productId: string,
+  months: number = 6
+): Promise<MonthlyComparisonData[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+
+  // Verify product ownership
+  const product = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+    select: { id: true },
+  });
+
+  if (!product) return [];
+
+  const now = new Date();
+  const currentYearStart = new Date(now);
+  currentYearStart.setMonth(now.getMonth() - months + 1);
+  currentYearStart.setDate(1);
+  currentYearStart.setHours(0, 0, 0, 0);
+
+  const previousYearStart = new Date(currentYearStart);
+  previousYearStart.setFullYear(previousYearStart.getFullYear() - 1);
+
+  const previousYearEnd = new Date(now);
+  previousYearEnd.setFullYear(previousYearEnd.getFullYear() - 1);
+
+  // Fetch current year data
+  const currentYearData = await prisma.$queryRaw<Array<{
+    month: number;
+    year: number;
+    totalQuantity: number;
+  }>>`
+    SELECT 
+      EXTRACT(MONTH FROM "Sale"."createdAt")::int as month,
+      EXTRACT(YEAR FROM "Sale"."createdAt")::int as year,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${currentYearStart}
+      AND "Sale"."createdAt" <= ${now}
+    GROUP BY EXTRACT(MONTH FROM "Sale"."createdAt"), EXTRACT(YEAR FROM "Sale"."createdAt")
+    ORDER BY year, month
+  `;
+
+  // Fetch previous year data
+  const previousYearData = await prisma.$queryRaw<Array<{
+    month: number;
+    year: number;
+    totalQuantity: number;
+  }>>`
+    SELECT 
+      EXTRACT(MONTH FROM "Sale"."createdAt")::int as month,
+      EXTRACT(YEAR FROM "Sale"."createdAt")::int as year,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${previousYearStart}
+      AND "Sale"."createdAt" <= ${previousYearEnd}
+    GROUP BY EXTRACT(MONTH FROM "Sale"."createdAt"), EXTRACT(YEAR FROM "Sale"."createdAt")
+    ORDER BY year, month
+  `;
+
+  // Create maps for easy lookup
+  const currentMap = new Map<number, number>();
+  currentYearData.forEach((row) => {
+    currentMap.set(row.month, Number(row.totalQuantity));
+  });
+
+  const previousMap = new Map<number, number>();
+  previousYearData.forEach((row) => {
+    previousMap.set(row.month, Number(row.totalQuantity));
+  });
+
+  // Generate result for the last N months
+  const result: MonthlyComparisonData[] = [];
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const date = new Date(now);
+    date.setMonth(date.getMonth() - i);
+    const monthNum = date.getMonth() + 1; // 1-12
+    const monthName = monthNames[date.getMonth()];
+
+    result.push({
+      month: monthName,
+      current: currentMap.get(monthNum) || 0,
+      previous: previousMap.get(monthNum) || 0,
+    });
+  }
+
+  return result;
+}
+
 export async function updateProduct(
   productId: string,
   data: UpdateProductPayload,
