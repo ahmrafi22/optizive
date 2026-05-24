@@ -73,14 +73,14 @@ export default async function DashboardPage() {
             data={dashboardData.dailySales}
             title="Daily Sales (Last 30 Days)"
             showRevenue={true}
-            delay={0.85}
-            chartAnimationDelay={1650}
+            delay={0.24}
+            chartAnimationDelay={650}
           />
         </div>
 
         {/* Top Products - Takes 1 column */}
         <div className="xl:col-span-1">
-          <TopProducts products={dashboardData.topProducts} delay={0.95} />
+          <TopProducts products={dashboardData.topProducts} delay={0.32} />
         </div>
       </div>
 
@@ -92,28 +92,28 @@ export default async function DashboardPage() {
             data={dashboardData.monthlySales}
             title="Monthly Sales Overview"
             showRevenue={true}
-            delay={1.1}
-            chartAnimationDelay={2100}
+            delay={0.4}
+            chartAnimationDelay={850}
             chartHeight={205}
           />
         ) : (
           <CategoryChart
             data={dashboardData.categorySales}
-            delay={1.1}
-            chartAnimationDelay={2100}
+            delay={0.4}
+            chartAnimationDelay={850}
           />
         )}
 
         {/* Recent Sales */}
-        <RecentSales sales={dashboardData.recentSales} delay={1.2} />
+        <RecentSales sales={dashboardData.recentSales} delay={0.48} />
       </div>
 
       {/* Category Sales Chart */}
       {dashboardData.monthlySales.length > 0 && (
         <CategoryChart
           data={dashboardData.categorySales}
-          delay={1.35}
-          chartAnimationDelay={2450}
+          delay={0.56}
+          chartAnimationDelay={1000}
         />
       )}
     </main>

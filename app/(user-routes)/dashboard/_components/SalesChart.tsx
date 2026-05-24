@@ -1,7 +1,8 @@
 "use client";
 
-import { useId } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { motion } from "motion/react";
+import NumberFlow, { continuous, type Format } from "@number-flow/react";
 import {
   Area,
   AreaChart,
@@ -31,14 +32,85 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const integerFormat: Format = {
+  maximumFractionDigits: 0,
+};
+const currencyFormat: Format = {
+  style: "currency",
+  currency: "BDT",
+  maximumFractionDigits: 0,
+};
+const numberTiming = {
+  duration: 900,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+const numberOpacityTiming = {
+  duration: 720,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+
+function MetricValue({
+  value,
+  format,
+  delayMs,
+}: {
+  value: number;
+  format?: Format;
+  delayMs: number;
+}) {
+  const [ready, setReady] = useState(false);
+  const [flowValue, setFlowValue] = useState(0);
+  const hasAnimatedRef = useRef(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [delayMs]);
+
+  useEffect(() => {
+    if (!ready) {
+      setFlowValue(0);
+      hasAnimatedRef.current = false;
+      return;
+    }
+
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      const frame = window.requestAnimationFrame(() => {
+        setFlowValue(value);
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    setFlowValue(value);
+  }, [ready, value]);
+
+  return (
+    <NumberFlow
+      willChange
+      plugins={[continuous]}
+      value={flowValue}
+      format={format ?? integerFormat}
+      locales="en-US"
+      animated={ready}
+      transformTiming={numberTiming}
+      spinTiming={numberTiming}
+      opacityTiming={numberOpacityTiming}
+    />
+  );
+}
+
 export function SalesChart({
   data,
   title,
   showRevenue = true,
-  delay = 0.85,
-  chartAnimationDelay = 1200,
+  delay = 0.24,
+  chartAnimationDelay = 650,
   chartHeight = 280,
 }: SalesChartProps) {
+  const numberDelayMs = Math.round((delay + 0.24) * 1000);
   const chartId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const salesGradientId = `salesGradientDash-${chartId}`;
   const revenueGradientId = `revenueGradientDash-${chartId}`;
@@ -59,71 +131,47 @@ export function SalesChart({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.68,
-        delay,
-        ease: [0.23, 1, 0.32, 1],
-      }}
+      transition={{ duration: 0.56, delay, ease: EASE_OUT }}
       className="relative space-y-4 overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)] sm:p-6"
     >
       <div className="noise-overlay absolute inset-0" />
       <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-primary/5 blur-3xl" />
 
       <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <motion.h2
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: delay + 0.12 }}
-          className="max-w-60 text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)"
-        >
+        <h2 className="max-w-60 text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
           {title}
-        </motion.h2>
+        </h2>
 
         <div className="flex flex-wrap items-start gap-4 sm:justify-end sm:text-right">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: delay + 0.2 }}
-            className="min-w-24"
-          >
+          <div className="min-w-24">
             <p className="text-2xl font-bold leading-tight text-(--clr-fg)">
-              {totalSales}
+              <MetricValue value={totalSales} delayMs={numberDelayMs} />
             </p>
             <p className="mt-0.5 text-xs leading-tight text-(--clr-fg-muted)">
               Total Sales
             </p>
-          </motion.div>
+          </div>
 
           {showRevenue && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: delay + 0.28 }}
-              className="min-w-32"
-            >
+            <div className="min-w-32">
               <p className="text-2xl font-bold leading-tight text-(--clr-fg)">
-                {formatCurrency(totalRevenue)}
+                <MetricValue
+                  value={totalRevenue}
+                  format={currencyFormat}
+                  delayMs={numberDelayMs}
+                />
               </p>
               <p className="mt-0.5 text-xs leading-tight text-(--clr-fg-muted)">
                 Total Revenue
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.55,
-          delay: delay + 0.42,
-          ease: [0.23, 1, 0.32, 1],
-        }}
-        className="relative z-10 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/35 px-2 pb-1 pt-2"
-      >
+      <div className="relative z-10 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/35 px-2 pb-1 pt-2">
         <ChartContainer initialDimension={{ width: 800, height: chartHeight }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -203,8 +251,8 @@ export function SalesChart({
                 name="Sales"
                 isAnimationActive={true}
                 animationBegin={chartAnimationDelay}
-                animationDuration={2100}
-                animationEasing="ease-in-out"
+                animationDuration={1500}
+                animationEasing="ease-out"
               />
 
               {showRevenue && (
@@ -217,14 +265,14 @@ export function SalesChart({
                   name="Revenue"
                   isAnimationActive={true}
                   animationBegin={chartAnimationDelay + 260}
-                  animationDuration={2100}
-                  animationEasing="ease-in-out"
+                  animationDuration={1500}
+                  animationEasing="ease-out"
                 />
               )}
             </AreaChart>
           </ResponsiveContainer>
         </ChartContainer>
-      </motion.div>
+      </div>
 
       <div className="relative z-10 flex items-center gap-6">
         <div className="flex items-center gap-2">

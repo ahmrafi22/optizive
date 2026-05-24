@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "motion/react";
 
 import { InventoryFilters } from "./_components/InventoryFilters";
 import { InventoryStats } from "./_components/InventoryStats";
 import { ProductList } from "./_components/ProductList";
 import { useInventory } from "./_components/useInventory";
 import { SORT_OPTIONS, type SortOption, type StatusFilter, type ViewMode } from "./_components/types";
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
@@ -40,13 +43,28 @@ export default function InventoryPage() {
       <div className="absolute inset-0 pointer-events-none" />
 
       <div className="relative mx-auto w-full max-w-6xl space-y-8">
-        <header>
+        <motion.header
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE_OUT }}
+        >
           <h1 className="mt-3 text-3xl md:text-4xl font-naston text-(--clr-fg)">Inventory</h1>
-        </header>
+        </motion.header>
 
-        <InventoryStats stats={stats} />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.06, ease: EASE_OUT }}
+        >
+          <InventoryStats stats={stats} />
+        </motion.div>
 
-        <InventoryFilters
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.12, ease: EASE_OUT }}
+        >
+          <InventoryFilters
           search={search}
           onSearchChange={setSearch}
           category={category}
@@ -76,9 +94,15 @@ export default function InventoryPage() {
           onRefresh={() => setRefreshKey((prev) => prev + 1)}
           isFetching={isFetching}
           error={error}
-        />
+          />
+        </motion.div>
 
-        <ProductList
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.18, ease: EASE_OUT }}
+        >
+          <ProductList
           products={products}
           view={view}
           isLoading={isLoading}
@@ -89,7 +113,8 @@ export default function InventoryPage() {
           totalCount={totalCount}
           overallCount={overallCount}
           onLoadMore={loadMore}
-        />
+          />
+        </motion.div>
       </div>
     </div>
   );

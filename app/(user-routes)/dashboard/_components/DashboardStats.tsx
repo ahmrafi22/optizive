@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
+import NumberFlow, { continuous, type Format } from "@number-flow/react";
 import {
   LuTrendingUp,
   LuTrendingDown,
@@ -15,19 +17,84 @@ interface DashboardStatsProps {
   stats: Stats;
 }
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(value);
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const compactFormat: Format = {
+  notation: "compact",
+  compactDisplay: "short",
+  roundingMode: "trunc",
+};
+const currencyFormat: Format = {
+  style: "currency",
+  currency: "BDT",
+  maximumFractionDigits: 0,
+};
+const numberTiming = {
+  duration: 900,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+const numberOpacityTiming = {
+  duration: 720,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+
+function StatValue({
+  value,
+  format,
+  delayMs,
+}: {
+  value: number;
+  format?: Format;
+  delayMs: number;
+}) {
+  const [ready, setReady] = useState(false);
+  const [flowValue, setFlowValue] = useState(0);
+  const hasAnimatedRef = useRef(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [delayMs]);
+
+  useEffect(() => {
+    if (!ready) {
+      setFlowValue(0);
+      hasAnimatedRef.current = false;
+      return;
+    }
+
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      const frame = window.requestAnimationFrame(() => {
+        setFlowValue(value);
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    setFlowValue(value);
+  }, [ready, value]);
+
+  return (
+    <NumberFlow
+      willChange
+      plugins={[continuous]}
+      value={flowValue}
+      format={format ?? compactFormat}
+      locales="en-US"
+      animated={ready}
+      transformTiming={numberTiming}
+      spinTiming={numberTiming}
+      opacityTiming={numberOpacityTiming}
+    />
+  );
 }
 
 export function DashboardStats({ stats }: DashboardStatsProps) {
   const statCards = [
     {
       title: "Total Revenue",
-      value: formatCurrency(stats.totalRevenue),
+      value: stats.totalRevenue,
+      format: currencyFormat,
       change: stats.revenueChange,
       icon: LuDollarSign,
       color: "from-emerald-400 to-teal-500",
@@ -36,7 +103,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     },
     {
       title: "Total Sales",
-      value: stats.totalSales.toString(),
+      value: stats.totalSales,
       change: stats.salesChange,
       icon: LuShoppingCart,
       color: "from-blue-400 to-cyan-500",
@@ -45,7 +112,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     },
     {
       title: "Total Products",
-      value: stats.totalProducts.toString(),
+      value: stats.totalProducts,
       change: null,
       icon: LuPackage,
       color: "from-purple-400 to-pink-500",
@@ -54,7 +121,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     },
     {
       title: "Low Stock Items",
-      value: stats.lowStockProducts.toString(),
+      value: stats.lowStockProducts,
       change: null,
       icon: LuTriangleAlert,
       color: "from-amber-400 to-orange-500",
@@ -69,17 +136,18 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       {statCards.map((card, index) => {
         const Icon = card.icon;
         const isPositive = card.change !== null && card.change >= 0;
-        const delay = index * 0.12;
+        const delay = index * 0.08;
+        const numberDelayMs = Math.round((delay + 0.56) * 1000);
 
         return (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
-              duration: 0.58,
+              duration: 0.56,
               delay,
-              ease: [0.23, 1, 0.32, 1],
+              ease: EASE_OUT,
             }}
             className="group relative overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_12px_40px_rgba(0,0,0,0.04)] transition-colors duration-300 hover:border-(--clr-border-hover) dark:shadow-[0_16px_50px_rgba(0,0,0,0.18)]"
           >
@@ -94,26 +162,13 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             {/* Content */}
             <div className="relative z-10">
               <div className="mb-4 flex items-center justify-between">
-                <motion.div
-                  initial={{ scale: 0, rotate: -12 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{
-                    duration: 0.48,
-                    delay: delay + 0.18,
-                    ease: [0.34, 1.56, 0.64, 1],
-                  }}
+                <div
                   className={`rounded-2xl border border-white/10 p-2.5 shadow-inner ${card.bgColor}`}
                 >
                   <Icon className={`h-5 w-5 ${card.textColor}`} />
-                </motion.div>
+                </div>
                 {card.change !== null && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: delay + 0.28,
-                    }}
+                  <div
                     className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
                       isPositive
                         ? "bg-emerald-400/10 text-emerald-600 dark:text-emerald-400"
@@ -126,24 +181,20 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                       <LuTrendingDown className="h-3 w-3" />
                     )}
                     {Math.abs(card.change).toFixed(1)}%
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.44,
-                  delay: delay + 0.38,
-                }}
-                className="space-y-1 leading-tight"
-              >
+              <div className="space-y-1 leading-tight">
                 <p className="text-xs uppercase leading-tight tracking-[0.18em] text-(--clr-fg-muted)">
                   {card.title}
                 </p>
                 <p className="text-3xl font-bold leading-tight tracking-tight text-(--clr-fg)">
-                  {card.value}
+                  <StatValue
+                    value={card.value}
+                    format={card.format}
+                    delayMs={numberDelayMs}
+                  />
                 </p>
                 {card.change !== null && (
                   <p className="text-[10px] leading-tight text-(--clr-fg-muted)">
@@ -155,7 +206,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                     Requires attention
                   </p>
                 )}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         );

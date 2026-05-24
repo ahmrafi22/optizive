@@ -16,7 +16,7 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
   return (
     <Link
       href={`/inventory/${product.id}`}
-      className={`bento-card noise-overlay flex flex-col cursor-pointer! ${view === "large" ? "min-h-[380px]" : "min-h-[340px]"}`}
+      className={`bento-card noise-overlay flex flex-col cursor-pointer! ${view === "large" ? "min-h-95" : "min-h-85"}`}
     >
       {/* Square polaroid-style image */}
       <div className="w-full aspect-square border-b border-(--clr-border) relative p-4">
@@ -92,7 +92,7 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
           <div className="text-[9px] uppercase tracking-widest text-(--clr-fg-muted) mb-1">
             Sales Trend (1 Month)
           </div>
-          <MiniSalesChart productId={product.id} />
+          <MiniSalesChart productId={product.id} data={product.salesHistory} />
         </div>
       </div>
     </Link>

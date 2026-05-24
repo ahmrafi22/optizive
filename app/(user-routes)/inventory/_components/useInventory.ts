@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { listInventoryProducts } from "@/backend/inventory/inventory";
+import { getInventoryStats, listInventoryProducts } from "@/backend/inventory/inventory";
 import { Category } from "@/prisma/generated/prisma/client";
 
 import type {
@@ -92,7 +92,6 @@ export function useInventory(
         setCategories(result.categories ?? []);
         setTotalCount(result.totalCount ?? 0);
         setOverallCount(result.overallCount ?? 0);
-        setStats(result.stats ?? DEFAULT_STATS);
         offsetRef.current = 20;
       } else {
         setProducts(prev => [...prev, ...(result.items ?? [])]);
@@ -108,6 +107,19 @@ export function useInventory(
       setIsFetchingMore(false);
     }
   }, [search, category, status, sort, minPrice, maxPrice, activeOnly]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const result = await getInventoryStats();
+      if (result === null) {
+        throw new Error("Unauthorized - please sign in again.");
+      }
+      setStats(result ?? DEFAULT_STATS);
+    } catch (err) {
+      console.error("Failed to load inventory stats", err);
+      setStats(DEFAULT_STATS);
+    }
+  }, []);
 
   useEffect(() => {
     const isRefresh = prevRefreshKeyRef.current !== refreshKey;
@@ -148,6 +160,10 @@ export function useInventory(
       window.clearTimeout(handler);
     };
   }, [search, category, status, sort, minPrice, maxPrice, activeOnly, refreshKey, fetchProducts]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats, refreshKey]);
 
   const loadMoreRef = useRef<(() => void) | null>(null);
 

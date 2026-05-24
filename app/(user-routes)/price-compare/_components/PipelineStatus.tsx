@@ -31,7 +31,7 @@ export function PipelineStatus({
   const activeSources = links.length > 0 ? links : searchLinks;
 
   return (
-    <div className="bento-card noise-overlay p-6 md:p-7">
+    <div className="bento-card bento-card-no-hover noise-overlay p-6 md:p-7">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">

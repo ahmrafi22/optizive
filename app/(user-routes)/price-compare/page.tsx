@@ -313,7 +313,7 @@ export default function PriceComparePage() {
           />
 
           {emptyState && (
-            <div className="bento-card noise-overlay p-6 text-sm text-(--clr-fg-muted) border border-(--clr-border)">
+            <div className="bento-card bento-card-no-hover noise-overlay p-6 text-sm text-(--clr-fg-muted) border border-(--clr-border)">
               Enter a product, pick a category, and compare to see results.
             </div>
           )}
