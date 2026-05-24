@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   const displayName = dashboardData.userName || "there";
 
   return (
-    <main className="relative w-full space-y-6 overflow-hidden pb-12">
+    <main className="relative w-full space-y-6 pb-12">
       {/* Header */}
       <div className="relative isolate overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) px-6 py-6 shadow-[0_16px_45px_rgba(0,0,0,0.04)] dark:shadow-[0_18px_55px_rgba(0,0,0,0.16)] sm:px-7">
         <div className="noise-overlay absolute inset-0" />
