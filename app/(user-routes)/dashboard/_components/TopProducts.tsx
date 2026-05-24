@@ -8,6 +8,7 @@ import { CATEGORY_PALETTES } from "@/app/(user-routes)/inventory/_components/typ
 
 interface TopProductsProps {
   products: TopProduct[];
+  delay?: number;
 }
 
 function formatCurrency(value: number) {
@@ -27,19 +28,19 @@ function formatCategory(value: string | null) {
     .join(" ");
 }
 
-export function TopProducts({ products }: TopProductsProps) {
+export function TopProducts({ products, delay = 0.95 }: TopProductsProps) {
   if (products.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="bento-card bento-card-no-hover noise-overlay p-6"
+        transition={{ duration: 0.6, delay }}
+        className="relative overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
       >
-        <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted) mb-4">
+        <h2 className="mb-4 text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
           Top Selling Products
         </h2>
-        <div className="flex items-center justify-center h-64 text-sm text-(--clr-fg-muted)">
+        <div className="flex h-56 items-center justify-center text-sm text-(--clr-fg-muted)">
           No sales data available yet
         </div>
       </motion.div>
@@ -50,23 +51,28 @@ export function TopProducts({ products }: TopProductsProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.5 }}
-      className="bento-card bento-card-no-hover noise-overlay p-6 space-y-4"
+      transition={{ duration: 0.68, delay, ease: [0.23, 1, 0.32, 1] }}
+      className="relative space-y-4 overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
     >
-      <div className="flex items-center justify-between">
-        <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted)">
+      <div className="noise-overlay absolute inset-0" />
+      <div className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full bg-primary/5 blur-3xl" />
+
+      <div className="relative z-10 flex items-center justify-between">
+        <h2 className="text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
           Top Selling Products
         </h2>
-        <div className="flex items-center gap-1 text-xs text-(--clr-fg-muted)">
+        <div className="flex items-center gap-1 text-xs leading-none text-(--clr-fg-muted)">
           <LuTrendingUp className="w-3 h-3" />
           Last 30 days
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="relative z-10 space-y-2.5">
         {products.map((product, index) => {
-          const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
-          
+          const palette =
+            CATEGORY_PALETTES[product.category ?? "OTHER"] ??
+            CATEGORY_PALETTES.OTHER;
+
           return (
             <motion.div
               key={product.id}
@@ -74,30 +80,32 @@ export function TopProducts({ products }: TopProductsProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{
                 duration: 0.4,
-                delay: 0.6 + index * 0.1,
+                delay: delay + 0.18 + index * 0.08,
                 ease: [0.23, 1, 0.32, 1],
               }}
             >
               <Link
                 href={`/inventory/${product.id}`}
-                className="flex items-center gap-4 p-3 rounded-xl border border-(--clr-border) hover:border-(--clr-border-hover) transition-all duration-200 hover:shadow-md group"
+                className="group flex items-center gap-3 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/30 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-(--clr-border-hover) hover:bg-(--clr-surface2)/65 hover:shadow-md"
               >
                 {/* Rank */}
-                <div className="shrink-0 w-8 h-8 rounded-full bg-(--clr-surface2) flex items-center justify-center">
-                  <span className="text-sm font-bold text-(--clr-fg-muted)">#{index + 1}</span>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface)">
+                  <span className="text-sm font-bold text-(--clr-fg-muted)">
+                    #{index + 1}
+                  </span>
                 </div>
 
                 {/* Product Image */}
-                <div className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-(--clr-border)">
+                <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-(--clr-border) shadow-sm">
                   {product.imageLink ? (
                     <img
                       src={product.imageLink}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   ) : (
                     <div
-                      className="w-full h-full"
+                      className="h-full w-full"
                       style={{
                         background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
                       }}
@@ -106,21 +114,21 @@ export function TopProducts({ products }: TopProductsProps) {
                 </div>
 
                 {/* Product Info */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-(--clr-fg) truncate group-hover:text-primary transition-colors">
+                <div className="min-w-0 flex-1 leading-tight">
+                  <h3 className="truncate text-sm font-semibold leading-tight text-(--clr-fg) transition-colors group-hover:text-primary">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-(--clr-fg-muted)">
+                  <p className="mt-0.5 text-xs leading-tight text-(--clr-fg-muted)">
                     {formatCategory(product.category)}
                   </p>
                 </div>
 
                 {/* Sales Stats */}
-                <div className="shrink-0 text-right">
-                  <p className="text-sm font-bold text-(--clr-fg)">
+                <div className="shrink-0 text-right leading-tight">
+                  <p className="text-sm font-bold leading-tight text-(--clr-fg)">
                     {product.totalSales} units
                   </p>
-                  <p className="text-xs text-(--clr-fg-muted)">
+                  <p className="mt-0.5 text-xs leading-tight text-(--clr-fg-muted)">
                     {formatCurrency(product.totalRevenue)}
                   </p>
                 </div>

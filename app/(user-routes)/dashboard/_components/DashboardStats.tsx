@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
-import { LuTrendingUp, LuTrendingDown, LuDollarSign, LuShoppingCart, LuPackage, LuTriangleAlert } from "react-icons/lu";
+import {
+  LuTrendingUp,
+  LuTrendingDown,
+  LuDollarSign,
+  LuShoppingCart,
+  LuPackage,
+  LuTriangleAlert,
+} from "react-icons/lu";
 import type { DashboardStats as Stats } from "@/backend/dashboard/dashboard";
 
 interface DashboardStatsProps {
@@ -58,42 +65,47 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {statCards.map((card, index) => {
         const Icon = card.icon;
         const isPositive = card.change !== null && card.change >= 0;
-        
+        const delay = index * 0.12;
+
         return (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            whileHover={{ y: -4, scale: 1.01 }}
             transition={{
-              duration: 0.5,
-              delay: index * 0.1,
+              duration: 0.58,
+              delay,
               ease: [0.23, 1, 0.32, 1],
             }}
-            className="bento-card bento-card-no-hover noise-overlay p-5 relative overflow-hidden"
+            className="group relative overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_12px_40px_rgba(0,0,0,0.04)] transition-colors duration-300 hover:border-(--clr-border-hover) dark:shadow-[0_16px_50px_rgba(0,0,0,0.18)]"
           >
-            {/* Background gradient icon */}
-            <div className="absolute -right-4 -top-4 opacity-5">
-              <Icon className="w-32 h-32" />
+            <div className="noise-overlay absolute inset-0" />
+            <div
+              className={`absolute -right-10 -top-10 h-28 w-28 rounded-full bg-linear-to-br ${card.color} opacity-8 blur-2xl transition-opacity duration-500 group-hover:opacity-15`}
+            />
+            <div className="absolute -right-5 -top-5 opacity-[0.04] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+              <Icon className="h-32 w-32" />
             </div>
 
             {/* Content */}
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
+              <div className="mb-4 flex items-center justify-between">
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
+                  initial={{ scale: 0, rotate: -12 }}
+                  animate={{ scale: 1, rotate: 0 }}
                   transition={{
-                    duration: 0.4,
-                    delay: index * 0.1 + 0.2,
+                    duration: 0.48,
+                    delay: delay + 0.18,
                     ease: [0.34, 1.56, 0.64, 1],
                   }}
-                  className={`p-2.5 rounded-xl ${card.bgColor}`}
+                  className={`rounded-2xl border border-white/10 p-2.5 shadow-inner ${card.bgColor}`}
                 >
-                  <Icon className={`w-5 h-5 ${card.textColor}`} />
+                  <Icon className={`h-5 w-5 ${card.textColor}`} />
                 </motion.div>
                 {card.change !== null && (
                   <motion.div
@@ -101,18 +113,18 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
                       duration: 0.4,
-                      delay: index * 0.1 + 0.3,
+                      delay: delay + 0.28,
                     }}
-                    className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
+                    className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
                       isPositive
                         ? "bg-emerald-400/10 text-emerald-600 dark:text-emerald-400"
                         : "bg-rose-400/10 text-rose-600 dark:text-rose-400"
                     }`}
                   >
                     {isPositive ? (
-                      <LuTrendingUp className="w-3 h-3" />
+                      <LuTrendingUp className="h-3 w-3" />
                     ) : (
-                      <LuTrendingDown className="w-3 h-3" />
+                      <LuTrendingDown className="h-3 w-3" />
                     )}
                     {Math.abs(card.change).toFixed(1)}%
                   </motion.div>
@@ -120,25 +132,27 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
               </div>
 
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  duration: 0.4,
-                  delay: index * 0.1 + 0.4,
+                  duration: 0.44,
+                  delay: delay + 0.38,
                 }}
-                className="space-y-1"
+                className="space-y-1 leading-tight"
               >
-                <p className="text-xs uppercase tracking-widest text-(--clr-fg-muted)">
+                <p className="text-xs uppercase leading-tight tracking-[0.18em] text-(--clr-fg-muted)">
                   {card.title}
                 </p>
-                <p className="text-2xl font-bold text-(--clr-fg)">{card.value}</p>
+                <p className="text-3xl font-bold leading-tight tracking-tight text-(--clr-fg)">
+                  {card.value}
+                </p>
                 {card.change !== null && (
-                  <p className="text-[10px] text-(--clr-fg-muted)">
+                  <p className="text-[10px] leading-tight text-(--clr-fg-muted)">
                     vs previous 30 days
                   </p>
                 )}
                 {card.alert && (
-                  <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                  <p className="text-[10px] font-medium leading-tight text-amber-600 dark:text-amber-400">
                     Requires attention
                   </p>
                 )}
