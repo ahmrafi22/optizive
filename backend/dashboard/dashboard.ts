@@ -43,6 +43,7 @@ export interface DailySales {
 }
 
 export interface DashboardData {
+  userName: string | null;
   stats: DashboardStats;
   topProducts: TopProduct[];
   recentSales: RecentSale[];
@@ -54,6 +55,8 @@ export interface DashboardData {
 export async function getDashboardData(): Promise<DashboardData | null> {
   const session = await auth();
   const userId = session?.user?.id;
+  const userName =
+    session?.user?.name || session?.user?.email?.split("@")[0] || null;
   if (!userId) return null;
 
   const now = new Date();
@@ -64,11 +67,13 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   sixtyDaysAgo.setDate(now.getDate() - 60);
 
   // Fetch current period stats (last 30 days)
-  const [currentStats] = await prisma.$queryRaw<Array<{
-    totalRevenue: number;
-    totalSales: number;
-  }>>`
-    SELECT 
+  const [currentStats] = await prisma.$queryRaw<
+    Array<{
+      totalRevenue: number;
+      totalSales: number;
+    }>
+  >`
+    SELECT
       COALESCE(SUM("finalAmount"), 0) as "totalRevenue",
       COUNT(*) as "totalSales"
     FROM "Sale"
@@ -77,11 +82,13 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   `;
 
   // Fetch previous period stats (30-60 days ago)
-  const [previousStats] = await prisma.$queryRaw<Array<{
-    totalRevenue: number;
-    totalSales: number;
-  }>>`
-    SELECT 
+  const [previousStats] = await prisma.$queryRaw<
+    Array<{
+      totalRevenue: number;
+      totalSales: number;
+    }>
+  >`
+    SELECT
       COALESCE(SUM("finalAmount"), 0) as "totalRevenue",
       COUNT(*) as "totalSales"
     FROM "Sale"
@@ -91,20 +98,30 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   `;
 
   // Calculate percentage changes
-  const revenueChange = previousStats?.totalRevenue > 0
-    ? ((Number(currentStats?.totalRevenue || 0) - Number(previousStats.totalRevenue)) / Number(previousStats.totalRevenue)) * 100
-    : 0;
+  const revenueChange =
+    previousStats?.totalRevenue > 0
+      ? ((Number(currentStats?.totalRevenue || 0) -
+          Number(previousStats.totalRevenue)) /
+          Number(previousStats.totalRevenue)) *
+        100
+      : 0;
 
-  const salesChange = previousStats?.totalSales > 0
-    ? ((Number(currentStats?.totalSales || 0) - Number(previousStats.totalSales)) / Number(previousStats.totalSales)) * 100
-    : 0;
+  const salesChange =
+    previousStats?.totalSales > 0
+      ? ((Number(currentStats?.totalSales || 0) -
+          Number(previousStats.totalSales)) /
+          Number(previousStats.totalSales)) *
+        100
+      : 0;
 
   // Fetch product stats
-  const [productStats] = await prisma.$queryRaw<Array<{
-    totalProducts: number;
-    lowStockProducts: number;
-  }>>`
-    SELECT 
+  const [productStats] = await prisma.$queryRaw<
+    Array<{
+      totalProducts: number;
+      lowStockProducts: number;
+    }>
+  >`
+    SELECT
       COUNT(*) as "totalProducts",
       COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStockProducts"
     FROM "Product"
@@ -112,15 +129,17 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   `;
 
   // Fetch top products (last 30 days)
-  const topProducts = await prisma.$queryRaw<Array<{
-    id: string;
-    name: string;
-    imageLink: string | null;
-    category: string | null;
-    totalSales: number;
-    totalRevenue: number;
-  }>>`
-    SELECT 
+  const topProducts = await prisma.$queryRaw<
+    Array<{
+      id: string;
+      name: string;
+      imageLink: string | null;
+      category: string | null;
+      totalSales: number;
+      totalRevenue: number;
+    }>
+  >`
+    SELECT
       p.id,
       p.name,
       p."imageLink",
@@ -150,12 +169,14 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   });
 
   // Fetch category sales (last 30 days)
-  const categorySales = await prisma.$queryRaw<Array<{
-    category: string | null;
-    sales: number;
-    revenue: number;
-  }>>`
-    SELECT 
+  const categorySales = await prisma.$queryRaw<
+    Array<{
+      category: string | null;
+      sales: number;
+      revenue: number;
+    }>
+  >`
+    SELECT
       p.category,
       COALESCE(SUM(si.quantity), 0) as sales,
       COALESCE(SUM(si."totalPrice"), 0) as revenue
@@ -169,12 +190,14 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   `;
 
   // Fetch daily sales (last 30 days)
-  const dailySales = await prisma.$queryRaw<Array<{
-    date: Date;
-    sales: number;
-    revenue: number;
-  }>>`
-    SELECT 
+  const dailySales = await prisma.$queryRaw<
+    Array<{
+      date: Date;
+      sales: number;
+      revenue: number;
+    }>
+  >`
+    SELECT
       DATE(s."createdAt") as date,
       COUNT(*) as sales,
       COALESCE(SUM(s."finalAmount"), 0) as revenue
@@ -189,13 +212,15 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   const sixMonthsAgo = new Date(now);
   sixMonthsAgo.setMonth(now.getMonth() - 6);
 
-  const monthlySales = await prisma.$queryRaw<Array<{
-    month: number;
-    year: number;
-    sales: number;
-    revenue: number;
-  }>>`
-    SELECT 
+  const monthlySales = await prisma.$queryRaw<
+    Array<{
+      month: number;
+      year: number;
+      sales: number;
+      revenue: number;
+    }>
+  >`
+    SELECT
       EXTRACT(MONTH FROM s."createdAt")::int as month,
       EXTRACT(YEAR FROM s."createdAt")::int as year,
       COUNT(*) as sales,
@@ -210,7 +235,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   // Format daily sales with missing dates filled
   const dailySalesMap = new Map<string, { sales: number; revenue: number }>();
   dailySales.forEach((row) => {
-    const dateStr = row.date.toISOString().split('T')[0];
+    const dateStr = row.date.toISOString().split("T")[0];
     dailySalesMap.set(dateStr, {
       sales: Number(row.sales),
       revenue: Number(row.revenue),
@@ -221,9 +246,9 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   for (let i = 29; i >= 0; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split("T")[0];
     const data = dailySalesMap.get(dateStr) || { sales: 0, revenue: 0 };
-    
+
     formattedDailySales.push({
       date: dateStr,
       sales: data.sales,
@@ -232,7 +257,20 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   }
 
   // Format monthly sales
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const formattedMonthlySales: DailySales[] = monthlySales.map((row) => ({
     date: `${monthNames[row.month - 1]} ${row.year}`,
     sales: Number(row.sales),
@@ -240,6 +278,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   }));
 
   return {
+    userName,
     stats: {
       totalRevenue: Number(currentStats?.totalRevenue || 0),
       totalSales: Number(currentStats?.totalSales || 0),
