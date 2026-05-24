@@ -46,7 +46,6 @@ export default function SmartBasketPublicPage() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-naston text-(--clr-fg)">Public baskets</h1>
-          <p className="mt-2 text-sm text-(--clr-fg-muted)">Explore what others are bundling.</p>
         </div>
         <Link
           href="/smart-basket"
@@ -70,7 +69,7 @@ export default function SmartBasketPublicPage() {
           ))}
         </div>
       ) : baskets.length === 0 ? (
-        <div className="bento-card noise-overlay p-6 text-center text-sm text-(--clr-fg-muted)">
+        <div className="bento-card bento-card-no-hover noise-overlay p-6 text-center text-sm text-(--clr-fg-muted)">
           No public baskets yet.
         </div>
       ) : (
