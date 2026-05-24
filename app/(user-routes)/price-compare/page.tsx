@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { motion } from "motion/react";
 
 import {
   runStreamingCompare,
@@ -15,6 +16,20 @@ import { PipelineStatus } from "./_components/PipelineStatus";
 import { PriceSummaryCards } from "./_components/PriceSummaryCards";
 import { MarketOverview } from "./_components/MarketOverview";
 import { ProductResults } from "./_components/ProductResults";
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
+function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.56, ease: EASE_OUT }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function PriceComparePage() {
   const [form, setForm] = useState({
@@ -260,62 +275,76 @@ export default function PriceComparePage() {
     <div className="relative pb-10">
       <div className="flex flex-col xl:flex-row gap-6 items-start">
         <div className="xl:sticky xl:top-24 xl:w-90 shrink-0 space-y-6 z-10">
-          <header className="relative">
-            <h1 className="font-naston text-3xl md:text-5xl text-(--clr-fg)">
-              Price Compare
-            </h1>
-          </header>
-        <CompareForm
-          form={form}
-          streaming={streaming}
-          isLoading={isLoading}
-          error={error}
-          onFormChange={handleFormChange}
-          onStreamingChange={setStreaming}
-          onSubmit={handleSubmit}
-          onAbort={handleAbort}
-          onClear={handleClear}
-        />
+          <FadeUp delay={0}>
+            <header className="relative">
+              <h1 className="font-naston text-3xl md:text-5xl text-(--clr-fg)">
+                Price Compare
+              </h1>
+            </header>
+          </FadeUp>
+        <FadeUp delay={0.04}>
+          <CompareForm
+            form={form}
+            streaming={streaming}
+            isLoading={isLoading}
+            error={error}
+            onFormChange={handleFormChange}
+            onStreamingChange={setStreaming}
+            onSubmit={handleSubmit}
+            onAbort={handleAbort}
+            onClear={handleClear}
+          />
+        </FadeUp>
         </div>
 
         <section className="flex-1 min-w-0 space-y-6 w-full">
-          <PipelineStatus
-            statusStage={statusStage}
-            statusMessage={statusMessage}
-            isLoading={isLoading}
-            progress={progress}
-            progressPercent={progressPercent}
-            links={links}
-            searchLinks={searchLinks}
-            searchQueries={searchQueries}
-            totalFound={totalFound}
-            productName={form.productName}
-          />
+          <FadeUp delay={0}>
+            <PipelineStatus
+              statusStage={statusStage}
+              statusMessage={statusMessage}
+              isLoading={isLoading}
+              progress={progress}
+              progressPercent={progressPercent}
+              links={links}
+              searchLinks={searchLinks}
+              searchQueries={searchQueries}
+              totalFound={totalFound}
+              productName={form.productName}
+            />
+          </FadeUp>
 
-          <PriceSummaryCards
-            bestPrice={bestPrice}
-            sellerPrice={sellerPrice}
-            totalFound={totalFound}
-            timestamp={timestamp}
-            isLoading={isLoading}
-          />
+          <FadeUp delay={0.08}>
+            <PriceSummaryCards
+              bestPrice={bestPrice}
+              sellerPrice={sellerPrice}
+              totalFound={totalFound}
+              timestamp={timestamp}
+              isLoading={isLoading}
+            />
+          </FadeUp>
 
-          <MarketOverview
-            summary={summary}
-            sellerSummary={sellerSummary}
-            isLoading={isLoading}
-          />
+          <FadeUp delay={0.16}>
+            <MarketOverview
+              summary={summary}
+              sellerSummary={sellerSummary}
+              isLoading={isLoading}
+            />
+          </FadeUp>
 
-          <ProductResults
-            exactMatches={exactMatches}
-            relatedProducts={relatedProducts}
-            isLoading={isLoading}
-          />
+          <FadeUp delay={0.24}>
+            <ProductResults
+              exactMatches={exactMatches}
+              relatedProducts={relatedProducts}
+              isLoading={isLoading}
+            />
+          </FadeUp>
 
           {emptyState && (
-            <div className="bento-card bento-card-no-hover noise-overlay p-6 text-sm text-(--clr-fg-muted) border border-(--clr-border)">
-              Enter a product, pick a category, and compare to see results.
-            </div>
+            <FadeUp delay={0.08}>
+              <div className="bento-card bento-card-no-hover noise-overlay p-6 text-sm text-(--clr-fg-muted) border border-(--clr-border)">
+                Enter a product, pick a category, and compare to see results.
+              </div>
+            </FadeUp>
           )}
         </section>
       </div>

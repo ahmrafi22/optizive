@@ -44,10 +44,10 @@ export function ProfileStats({ user }: { user: SerializedUser }) {
 
       {/* Visual bars row */}
       <div className="sm:col-span-2 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bento-card p-5 flex flex-col justify-center">
+        <div className="bento-card bento-card-no-hover p-5 flex flex-col justify-center">
           <ProgressBar label="Rating Score" value={user.avgRating} max={5} color="#4ade80" />
         </div>
-        <div className="bento-card p-5 flex flex-col justify-center">
+        <div className="bento-card bento-card-no-hover p-5 flex flex-col justify-center">
           <ProgressBar
             label="Business Maturity"
             value={user.yearsInBusiness ?? 0}
