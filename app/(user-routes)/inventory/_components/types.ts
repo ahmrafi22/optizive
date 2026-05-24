@@ -25,6 +25,13 @@ export type InventoryProduct = {
   stockStatus: InventoryStockStatus;
   margin: number;
   value: number;
+  salesHistory?: ProductSalesData[];
+};
+
+export type ProductSalesData = {
+  date: string;
+  sales: number;
+  revenue: number;
 };
 
 export type InventoryCategoryOption = {

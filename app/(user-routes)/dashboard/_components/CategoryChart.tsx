@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
+import NumberFlow, { continuous, type Format } from "@number-flow/react";
 import {
   Bar,
   BarChart,
@@ -35,17 +37,114 @@ function formatCategory(value: string) {
     .join(" ");
 }
 
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const currencyFormat: Format = {
+  style: "currency",
+  currency: "BDT",
+  maximumFractionDigits: 0,
+};
+const numberTiming = {
+  duration: 900,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+const numberOpacityTiming = {
+  duration: 720,
+  easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+};
+
+function MetricValue({
+  value,
+  format,
+  delayMs,
+  active,
+}: {
+  value: number;
+  format?: Format;
+  delayMs: number;
+  active: boolean;
+}) {
+  const [ready, setReady] = useState(false);
+  const [flowValue, setFlowValue] = useState(0);
+  const hasAnimatedRef = useRef(false);
+
+  useEffect(() => {
+    if (!active) {
+      setReady(false);
+      setFlowValue(0);
+      hasAnimatedRef.current = false;
+      return;
+    }
+
+    const timer = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [active, delayMs]);
+
+  useEffect(() => {
+    if (!ready) {
+      return;
+    }
+
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      const frame = window.requestAnimationFrame(() => {
+        setFlowValue(value);
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    setFlowValue(value);
+  }, [ready, value]);
+
+  return (
+    <NumberFlow
+      willChange
+      plugins={[continuous]}
+      value={flowValue}
+      format={format ?? currencyFormat}
+      locales="en-US"
+      animated={ready}
+      transformTiming={numberTiming}
+      spinTiming={numberTiming}
+      opacityTiming={numberOpacityTiming}
+    />
+  );
+}
+
 export function CategoryChart({
   data,
-  delay = 1.1,
-  chartAnimationDelay = 1500,
+  delay = 0.4,
+  chartAnimationDelay = 850,
 }: CategoryChartProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   if (data.length === 0) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay }}
+        transition={{ duration: 0.56, delay, ease: EASE_OUT }}
         className="relative overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
       >
         <h2 className="mb-4 text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
@@ -64,58 +163,52 @@ export function CategoryChart({
     sales: item.sales,
     revenue: item.revenue,
   }));
+  const animatedData = isInView
+    ? chartData
+    : chartData.map((item) => ({
+        ...item,
+        revenue: 0,
+      }));
 
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+  const numberDelayMs = Math.round((delay + 0.24) * 1000);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      ref={containerRef}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.68, delay, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: 0.56, delay, ease: EASE_OUT }}
       className="relative space-y-5 overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-6 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
     >
       <div className="noise-overlay absolute inset-0" />
       <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
 
       <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <motion.h2
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: delay + 0.12 }}
-          className="text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)"
-        >
+        <h2 className="text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
           Sales by Category
-        </motion.h2>
+        </h2>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: delay + 0.2 }}
-          className="sm:text-right"
-        >
+        <div className="sm:text-right">
           <p className="text-2xl font-bold leading-tight text-(--clr-fg)">
-            {formatCurrency(totalRevenue)}
+            <MetricValue
+              value={totalRevenue}
+              format={currencyFormat}
+              delayMs={numberDelayMs}
+              active={isInView}
+            />
           </p>
           <p className="mt-0.5 text-xs leading-tight text-(--clr-fg-muted)">
             Total Revenue (Last 30 Days)
           </p>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          duration: 0.55,
-          delay: delay + 0.42,
-          ease: [0.23, 1, 0.32, 1],
-        }}
-        className="relative z-10 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/35 px-2 pb-1 pt-2"
-      >
+      <div className="relative z-10 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/35 px-2 pb-1 pt-2">
         <ChartContainer initialDimension={{ width: 600, height: 460 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={chartData}
+              data={animatedData}
               margin={{ top: 22, right: 18, left: -2, bottom: 6 }}
             >
               <CartesianGrid
@@ -172,15 +265,15 @@ export function CategoryChart({
                 radius={[12, 12, 3, 3]}
                 barSize={74}
                 name="Revenue"
-                isAnimationActive={true}
-                animationBegin={chartAnimationDelay}
-                animationDuration={1900}
-                animationEasing="ease-in-out"
+                isAnimationActive={isInView}
+                animationBegin={isInView ? chartAnimationDelay : 0}
+                animationDuration={1400}
+                animationEasing="ease-out"
               />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
-      </motion.div>
+      </div>
 
       <div className="relative z-10 flex items-center gap-2">
         <div className="h-2 w-2 rounded-sm bg-primary" />

@@ -2,10 +2,16 @@
 
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
-import { Category, StockUnit } from "@/prisma/generated/prisma/client";
+import { Category, StockUnit, Prisma } from "@/prisma/generated/prisma/client";
 import { uploadImage, deleteImageByUrl } from "@/lib/cloudinary";
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
+
+export interface ProductSalesData {
+  date: string;
+  sales: number;
+  revenue: number;
+}
 
 export interface InventoryQuery {
   search?: string;
@@ -39,6 +45,7 @@ export interface InventoryProduct {
   stockStatus: InventoryStockStatus;
   margin: number;
   value: number;
+  salesHistory?: ProductSalesData[];
 }
 
 export interface InventoryCategoryOption {
@@ -74,7 +81,7 @@ export interface InventoryResponse {
   totalCount: number;
   overallCount: number;
   categories: InventoryCategoryOption[];
-  stats: InventoryStats;
+  stats?: InventoryStats;
 }
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -134,6 +141,108 @@ function buildSearchWhere(search: string) {
       { sku: { contains: search, mode: "insensitive" as const } },
       { barcode: { contains: search, mode: "insensitive" as const } },
     ],
+  };
+}
+
+async function getSalesHistoryForProducts(
+  productIds: string[],
+  userId: string,
+  days: number,
+): Promise<Map<string, ProductSalesData[]>> {
+  const historyMap = new Map<string, ProductSalesData[]>();
+  if (productIds.length === 0) return historyMap;
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const salesRows = await prisma.$queryRaw<Array<{
+    productId: string;
+    date: Date;
+    totalQuantity: number;
+    totalRevenue: number;
+  }>>(
+    Prisma.sql`
+      SELECT
+        "SaleItem"."productId" as "productId",
+        DATE("Sale"."createdAt") as "date",
+        COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity",
+        COALESCE(SUM("SaleItem"."totalPrice"), 0) as "totalRevenue"
+      FROM "SaleItem"
+      INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+      WHERE "SaleItem"."productId" IN (${Prisma.join(productIds)})
+        AND "Sale"."ownerId" = ${userId}
+        AND "Sale"."createdAt" >= ${startDate}
+      GROUP BY "SaleItem"."productId", DATE("Sale"."createdAt")
+      ORDER BY "SaleItem"."productId", date ASC
+    `,
+  );
+
+  const grouped = new Map<string, Map<string, { sales: number; revenue: number }>>();
+  salesRows.forEach((row) => {
+    const dateStr = row.date.toISOString().split("T")[0];
+    const productMap = grouped.get(row.productId) ?? new Map();
+    productMap.set(dateStr, {
+      sales: Number(row.totalQuantity),
+      revenue: Number(row.totalRevenue),
+    });
+    grouped.set(row.productId, productMap);
+  });
+
+  productIds.forEach((productId) => {
+    const dataMap = grouped.get(productId) ?? new Map();
+    const series: ProductSalesData[] = [];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      const data = dataMap.get(dateStr) || { sales: 0, revenue: 0 };
+
+      series.push({
+        date: dateStr,
+        sales: data.sales,
+        revenue: data.revenue,
+      });
+    }
+
+    historyMap.set(productId, series);
+  });
+
+  return historyMap;
+}
+
+export async function getInventoryStats(): Promise<InventoryStats | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const statsResult = await prisma.$queryRaw<Array<{
+    totalValue: number;
+    totalProducts: number;
+    lowStock: number;
+    outOfStock: number;
+    inactive: number;
+  }>>(
+    Prisma.sql`
+      SELECT
+        COALESCE(SUM("sellingPrice" * "quantity"), 0) as "totalValue",
+        COUNT(*) as "totalProducts",
+        COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock"
+      FROM "Product"
+      WHERE "ownerId" = ${userId}
+    `,
+  );
+
+  const serverStats = Array.isArray(statsResult) ? statsResult[0] : statsResult;
+
+  return {
+    totalValue: Number(serverStats?.totalValue) || 0,
+    totalProducts: Number(serverStats?.totalProducts) || 0,
+    lowStock: Number(serverStats?.lowStock) || 0,
+    outOfStock: Number(serverStats?.outOfStock) || 0,
+    inactive: Number(serverStats?.inactive) || 0,
   };
 }
 
@@ -197,7 +306,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       ? { quantity: order }
       : { updatedAt: order };
 
-  const [items, rawCount, overallCount, statsResult] = await Promise.all([
+  const [items, rawCount, overallCount] = await Promise.all([
     prisma.product.findMany({
       where,
       orderBy,
@@ -206,23 +315,6 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     }),
     prisma.product.count({ where }),
     prisma.product.count({ where: { ownerId: userId } }),
-    prisma.$queryRawUnsafe<Array<{
-      totalValue: number;
-      totalProducts: number;
-      lowStock: number;
-      outOfStock: number;
-      inactive: number;
-    }>>(
-      `SELECT
-        COALESCE(SUM("sellingPrice" * "quantity"), 0) as "totalValue",
-        COUNT(*) as "totalProducts",
-        COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
-        COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
-        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock"
-      FROM "Product"
-      WHERE "ownerId" = $1`,
-      userId,
-    ),
   ]);
 
   const filteredItems =
@@ -231,6 +323,12 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       : items;
 
   const totalCount = status === "LOW_STOCK" ? filteredItems.length : rawCount;
+
+  const salesHistoryByProduct = await getSalesHistoryForProducts(
+    filteredItems.map((item) => item.id),
+    userId,
+    30,
+  );
 
   const products = filteredItems.map((product) => {
     const stockStatus = getStockStatus({
@@ -260,23 +358,15 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       stockStatus,
       margin,
       value,
+      salesHistory: salesHistoryByProduct.get(product.id) ?? [],
     } satisfies InventoryProduct;
   });
-
-  const serverStats = Array.isArray(statsResult) ? statsResult[0] : statsResult;
 
   return {
     items: products,
     totalCount,
     overallCount,
     categories: getCategoryOptions(),
-    stats: {
-      totalValue: Number(serverStats?.totalValue) || 0,
-      totalProducts: Number(serverStats?.totalProducts) || 0,
-      lowStock: Number(serverStats?.lowStock) || 0,
-      outOfStock: Number(serverStats?.outOfStock) || 0,
-      inactive: Number(serverStats?.inactive) || 0,
-    },
   };
 }
 
@@ -320,12 +410,6 @@ export async function getProductById(productId: string): Promise<InventoryProduc
     margin,
     value,
   };
-}
-
-export interface ProductSalesData {
-  date: string;
-  sales: number;
-  revenue: number;
 }
 
 export interface MonthlyComparisonData {

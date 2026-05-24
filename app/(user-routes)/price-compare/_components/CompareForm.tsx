@@ -145,7 +145,7 @@ export function CompareForm({
             className={inputBase}
             value={form.productName}
             onChange={(e) => onFormChange("productName", e.target.value)}
-            placeholder="e.g. iPhone 15 Pro"
+            placeholder="Any product name"
             required
           />
         </div>
@@ -173,20 +173,19 @@ export function CompareForm({
 
         {/* Variant info */}
         <div>
-          <label className={labelBase}>Variant info</label>
+          <label className={labelBase}>Product Info (Optional)</label>
           <input
             className={inputBase}
             value={form.info}
             onChange={(e) => onFormChange("info", e.target.value)}
             placeholder="e.g. 256GB Blue"
           />
-          <p className="mt-1.5 text-[11px] text-(--clr-fg-muted)">Optional — size, color, or bundle variant.</p>
         </div>
 
         {/* City + Country — two column layout */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={labelBase}>City</label>
+            <label className={labelBase}>City (Optional)</label>
             <input
               className={inputBase}
               value={form.city}

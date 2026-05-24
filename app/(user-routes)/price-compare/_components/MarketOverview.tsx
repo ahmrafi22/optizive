@@ -8,7 +8,7 @@ interface MarketOverviewProps {
 
 export function MarketOverview({ summary, sellerSummary, isLoading }: MarketOverviewProps) {
   return (
-    <div className="bento-card noise-overlay p-6 md:p-7">
+    <div className="bento-card bento-card-no-hover noise-overlay p-6 md:p-7">
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
         <div className="h-10 w-10 rounded-full bg-amber-400/10 dark:bg-primary/10 border border-amber-400/20 dark:border-primary/20 flex items-center justify-center shrink-0">

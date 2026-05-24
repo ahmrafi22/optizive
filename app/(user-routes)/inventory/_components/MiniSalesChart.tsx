@@ -2,33 +2,48 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
-import { getProductSalesHistory, type ProductSalesData } from "@/backend/inventory/inventory";
+import { getProductSalesHistory } from "@/backend/inventory/inventory";
+import type { ProductSalesData } from "./types";
 
 interface MiniSalesChartProps {
   productId: string;
   className?: string;
+  data?: ProductSalesData[];
 }
 
-export function MiniSalesChart({ productId, className }: MiniSalesChartProps) {
-  const [salesData, setSalesData] = useState<ProductSalesData[]>([]);
-  const [loading, setLoading] = useState(true);
+export function MiniSalesChart({ productId, className, data }: MiniSalesChartProps) {
+  const hasInitialData = data !== undefined;
+  const [salesData, setSalesData] = useState<ProductSalesData[]>(data ?? []);
+  const [loading, setLoading] = useState(!hasInitialData);
 
   useEffect(() => {
+    if (data !== undefined) {
+      setSalesData(data);
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+
     async function fetchData() {
       try {
         setLoading(true);
-        const data = await getProductSalesHistory(productId, 30); // 1 month = 30 days
-        setSalesData(data);
+        const result = await getProductSalesHistory(productId, 30); // 1 month = 30 days
+        if (isMounted) setSalesData(result);
       } catch (error) {
         console.error("Failed to fetch sales data:", error);
-        setSalesData([]);
+        if (isMounted) setSalesData([]);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
     fetchData();
-  }, [productId]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [productId, data]);
 
   // Calculate trend (positive or negative)
   const trend = useMemo(() => {

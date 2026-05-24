@@ -28,13 +28,15 @@ function formatCategory(value: string | null) {
     .join(" ");
 }
 
-export function TopProducts({ products, delay = 0.95 }: TopProductsProps) {
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
+export function TopProducts({ products, delay = 0.32 }: TopProductsProps) {
   if (products.length === 0) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay }}
+        transition={{ duration: 0.56, delay, ease: EASE_OUT }}
         className="relative overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
       >
         <h2 className="mb-4 text-[11px] uppercase tracking-[0.18em] text-(--clr-fg-muted)">
@@ -49,9 +51,9 @@ export function TopProducts({ products, delay = 0.95 }: TopProductsProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.68, delay, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: 0.56, delay, ease: EASE_OUT }}
       className="relative space-y-4 overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface) p-5 shadow-[0_14px_38px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_46px_rgba(0,0,0,0.16)]"
     >
       <div className="noise-overlay absolute inset-0" />
@@ -76,12 +78,12 @@ export function TopProducts({ products, delay = 0.95 }: TopProductsProps) {
           return (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 0.4,
-                delay: delay + 0.18 + index * 0.08,
-                ease: [0.23, 1, 0.32, 1],
+                duration: 0.45,
+                delay: delay + 0.12 + index * 0.05,
+                ease: EASE_OUT,
               }}
             >
               <Link
