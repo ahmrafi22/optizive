@@ -139,7 +139,7 @@ export function SalesHistoryChart({ productId, productName, className }: SalesHi
                         name: p.dataKey === "sales" ? "Units Sold" : "Revenue",
                         value: p.dataKey === "sales" ? p.value : formatCurrency(p.value as number),
                       }))}
-                      label={label}
+                       label={String(label ?? "")}
                       indicator="square"
                     />
                   )}

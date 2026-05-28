@@ -85,11 +85,21 @@ export function InventoryStats({
   stats: InventoryStatsShape;
 }) {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <StatCard
         label="Total products"
         value={stats.totalProducts}
         hint="All inventory items"
+      />
+      <StatCard
+        label="Expiring soon"
+        value={stats.expiringSoon}
+        hint="Expiring within 7 days"
+      />
+      <StatCard
+        label="Expired"
+        value={stats.expired}
+        hint="Past expiry date"
       />
       <StatCard
         label="Low stock"

@@ -104,7 +104,7 @@ async function seed() {
   const data = SEED_CATALOG.map((item, index) => ({
     ownerId: userId,
     name: item.name,
-    description: item.description ?? `${item.name} for daily inventory operations.`,
+    description: (item as any).description ?? `${item.name} for daily inventory operations.`,
     category: item.category,
     costPrice: item.costPrice,
     sellingPrice: item.sellingPrice,

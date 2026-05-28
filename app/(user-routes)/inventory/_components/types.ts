@@ -6,6 +6,8 @@ import {
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
 
+export type ExpiryStatus = "EXPIRED" | "EXPIRING_SOON" | "EXPIRING" | "FRESH" | "NO_EXPIRY";
+
 export type InventoryProduct = {
   id: string;
   name: string;
@@ -20,9 +22,13 @@ export type InventoryProduct = {
   barcode: string | null;
   imageLink: string | null;
   isActive: boolean;
+  expiryDate: string | null;
+  batchNumber: string | null;
   createdAt: string;
   updatedAt: string;
   stockStatus: InventoryStockStatus;
+  expiryStatus: ExpiryStatus;
+  daysUntilExpiry: number | null;
   margin: number;
   value: number;
   salesHistory?: ProductSalesData[];
@@ -55,6 +61,8 @@ export type InventoryStats = {
   lowStock: number;
   outOfStock: number;
   inactive: number;
+  expiringSoon: number;
+  expired: number;
 };
 
 export const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
@@ -131,6 +139,14 @@ export const STATUS_BADGES: Record<InventoryStockStatus, string> = {
   INACTIVE: "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted)",
 };
 
+export const EXPIRY_BADGES: Record<ExpiryStatus, string> = {
+  EXPIRED: "border-rose-500/40 bg-rose-500/15 text-rose-500 dark:text-rose-400",
+  EXPIRING_SOON: "border-orange-400/40 bg-orange-400/15 text-orange-600 dark:text-orange-300",
+  EXPIRING: "border-amber-400/30 bg-amber-400/10 text-amber-700 dark:text-amber-300",
+  FRESH: "border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",
+  NO_EXPIRY: "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted)",
+};
+
 export const CATEGORY_PALETTES: Record<string, { from: string; to: string }> = {
   GROCERIES: { from: "#fff44f", to: "#f7d96c" },
   FMCG: { from: "#4ecdc4", to: "#8be0d9" },
@@ -176,6 +192,22 @@ export function formatCurrency(value: number) {
     currency: "BDT",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+export const EXPIRY_LABELS: Record<ExpiryStatus, string> = {
+  EXPIRED: "Expired",
+  EXPIRING_SOON: "Expiring Soon",
+  EXPIRING: "Expiring",
+  FRESH: "Fresh",
+  NO_EXPIRY: "No Expiry",
+};
+
+export function formatExpiryDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
 }
 
 export function formatDate(value: string) {

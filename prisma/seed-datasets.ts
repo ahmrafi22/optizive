@@ -576,7 +576,7 @@ async function main() {
   if (existsSync(SNAPSHOT_PATH)) {
     console.log("[Snapshot] Found existing snapshot, loading...");
     snapshot = JSON.parse(readFileSync(SNAPSHOT_PATH, "utf-8"));
-    console.log(`[Snapshot] Loaded ${snapshot.coPurchaseEdges.length} edges, ${snapshot.categoryAffinities.length} affinities`);
+    console.log(`[Snapshot] Loaded ${snapshot!.coPurchaseEdges.length} edges, ${snapshot!.categoryAffinities.length} affinities`);
   } else {
     console.log("[Snapshot] No snapshot found, processing real datasets...\n");
 

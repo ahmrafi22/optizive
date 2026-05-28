@@ -21,7 +21,6 @@ export function ProductRow({ product }: { product: InventoryProduct }) {
             alt={product.name}
             className="w-full h-full object-cover"
             onError={(e) => {
-              // Fallback to gradient if image fails to load or no imageLink
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
               const fallback = target.nextElementSibling as HTMLElement;
@@ -30,7 +29,6 @@ export function ProductRow({ product }: { product: InventoryProduct }) {
               }
             }}
             onLoad={(e) => {
-              // Ensure image is visible when it loads successfully
               const target = e.target as HTMLImageElement;
               target.style.display = 'block';
               const fallback = target.nextElementSibling as HTMLElement;
