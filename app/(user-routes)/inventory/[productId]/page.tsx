@@ -12,11 +12,23 @@ import { SalesHistoryChart } from "../_components/SalesHistoryChart";
 import { MonthlyComparisonChart } from "../_components/MonthlyComparisonChart";
 import {
   CATEGORY_PALETTES,
+  EXPIRY_BADGES,
+  EXPIRY_LABELS,
   formatCategory,
   formatCurrency,
   formatDate,
+  formatExpiryDate,
+  type ExpiryStatus,
   type InventoryProduct,
 } from "../_components/types";
+
+function getExpiryBadgeClass(status: ExpiryStatus) {
+  return EXPIRY_BADGES[status] ?? EXPIRY_BADGES.NO_EXPIRY;
+}
+
+function getExpiryLabel(status: ExpiryStatus) {
+  return EXPIRY_LABELS[status] ?? EXPIRY_LABELS.NO_EXPIRY;
+}
 
 export default function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -176,11 +188,26 @@ export default function ProductDetailPage() {
                 </>
               )}
             </div>
+
+            {product.expiryDate && (
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${getExpiryBadgeClass(product.expiryStatus)}`}>
+                  {getExpiryLabel(product.expiryStatus)}
+                </span>
+                <span className="text-xs text-(--clr-fg-muted)">
+                  {product.daysUntilExpiry !== null
+                    ? product.daysUntilExpiry > 0
+                      ? `${product.daysUntilExpiry} days remaining`
+                      : `${Math.abs(product.daysUntilExpiry)} days overdue`
+                    : ""}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bento-card noise-overlay p-5 space-y-4">
           <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted)">Pricing</h2>
           <div className="space-y-3">
@@ -252,6 +279,91 @@ export default function ProductDetailPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="bento-card noise-overlay p-5 space-y-4">
+          <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted)">Expiry</h2>
+          {product.expiryDate ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-lg"
+                  style={{
+                    background: product.daysUntilExpiry !== null && product.daysUntilExpiry <= 7
+                      ? "#f8717120" : "#34d39920",
+                    color: product.daysUntilExpiry !== null && product.daysUntilExpiry <= 7
+                      ? "#f87171" : "#34d399",
+                  }}
+                >
+                  <LuPackage />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-(--clr-fg)">
+                    {formatExpiryDate(product.expiryDate)}
+                  </div>
+                  <div className="text-xs text-(--clr-fg-muted)">{product.batchNumber ?? "No batch"}</div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-(--clr-fg-muted)">Days remaining</span>
+                  <span
+                    className="font-bold"
+                    style={{
+                      color: product.daysUntilExpiry !== null
+                        ? product.daysUntilExpiry <= 0
+                          ? "#f87171"
+                          : product.daysUntilExpiry <= 7
+                            ? "#fb923c"
+                            : product.daysUntilExpiry <= 30
+                              ? "#fbbf24"
+                              : "#34d399"
+                        : "var(--clr-fg-muted)",
+                    }}
+                  >
+                    {product.daysUntilExpiry !== null
+                      ? product.daysUntilExpiry > 0
+                        ? `${product.daysUntilExpiry} days`
+                        : `${Math.abs(product.daysUntilExpiry)} days overdue`
+                      : "N/A"}
+                  </span>
+                </div>
+                {product.daysUntilExpiry !== null && (
+                  <div className="h-2 rounded-full bg-(--clr-surface2) overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.max(2, Math.min(100, ((product.daysUntilExpiry > 0 ? product.daysUntilExpiry : 0) / 90) * 100))}%`,
+                        background: product.daysUntilExpiry <= 0
+                          ? "#f87171"
+                          : product.daysUntilExpiry <= 7
+                            ? "#fb923c"
+                            : product.daysUntilExpiry <= 30
+                              ? "#fbbf24"
+                              : "#34d399",
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-(--clr-fg-muted)">Status</span>
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${getExpiryBadgeClass(product.expiryStatus)}`}>
+                  {getExpiryLabel(product.expiryStatus)}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6 text-center">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg text-(--clr-fg-dim) bg-(--clr-surface2)">
+                <LuPackage />
+              </div>
+              <p className="mt-3 text-sm font-medium text-(--clr-fg-muted)">No expiry date</p>
+              <p className="mt-0.5 text-xs text-(--clr-fg-dim)">This product does not expire</p>
+            </div>
+          )}
         </div>
       </div>
 

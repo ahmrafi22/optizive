@@ -17,7 +17,8 @@ export interface InventoryQuery {
   search?: string;
   category?: Category | "ALL";
   status?: InventoryStockStatus | "ALL";
-  sort?: "updated" | "name" | "price" | "quantity";
+  expiryStatus?: ExpiryStatus | "ALL";
+  sort?: "updated" | "name" | "price" | "quantity" | "expiryDate";
   order?: "asc" | "desc";
   minPrice?: number | null;
   maxPrice?: number | null;
@@ -25,6 +26,9 @@ export interface InventoryQuery {
   limit?: number;
   offset?: number;
 }
+
+import { getExpiryStatus } from "@/backend/expiry-utils";
+import type { ExpiryStatus } from "@/backend/expiry-utils";
 
 export interface InventoryProduct {
   id: string;
@@ -40,9 +44,13 @@ export interface InventoryProduct {
   barcode: string | null;
   imageLink: string | null;
   isActive: boolean;
+  expiryDate: string | null;
+  batchNumber: string | null;
   createdAt: string;
   updatedAt: string;
   stockStatus: InventoryStockStatus;
+  expiryStatus: ExpiryStatus;
+  daysUntilExpiry: number | null;
   margin: number;
   value: number;
   salesHistory?: ProductSalesData[];
@@ -65,6 +73,8 @@ export interface UpdateProductPayload {
   sku?: string | null;
   barcode?: string | null;
   isActive?: boolean;
+  expiryDate?: string | null;
+  batchNumber?: string | null;
   imageBase64?: string | null;
 }
 
@@ -74,6 +84,8 @@ export interface InventoryStats {
   lowStock: number;
   outOfStock: number;
   inactive: number;
+  expiringSoon: number;
+  expired: number;
 }
 
 export interface InventoryResponse {
@@ -216,12 +228,17 @@ export async function getInventoryStats(): Promise<InventoryStats | null> {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  const now = new Date();
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
   const statsResult = await prisma.$queryRaw<Array<{
     totalValue: number;
     totalProducts: number;
     lowStock: number;
     outOfStock: number;
     inactive: number;
+    expiringSoon: number;
+    expired: number;
   }>>(
     Prisma.sql`
       SELECT
@@ -229,7 +246,9 @@ export async function getInventoryStats(): Promise<InventoryStats | null> {
         COUNT(*) as "totalProducts",
         COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
         COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
-        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock"
+        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "expiryDate" IS NOT NULL AND "expiryDate" <= ${sevenDaysFromNow} AND "expiryDate" > ${now}) as "expiringSoon",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "expiryDate" IS NOT NULL AND "expiryDate" <= ${now}) as "expired"
       FROM "Product"
       WHERE "ownerId" = ${userId}
     `,
@@ -243,6 +262,8 @@ export async function getInventoryStats(): Promise<InventoryStats | null> {
     lowStock: Number(serverStats?.lowStock) || 0,
     outOfStock: Number(serverStats?.outOfStock) || 0,
     inactive: Number(serverStats?.inactive) || 0,
+    expiringSoon: Number(serverStats?.expiringSoon) || 0,
+    expired: Number(serverStats?.expired) || 0,
   };
 }
 
@@ -254,6 +275,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
   const search = query.search?.trim() ?? "";
   const category = query.category ?? "ALL";
   const status = query.status ?? "ALL";
+  const expiryStatus = query.expiryStatus ?? "ALL";
   const sort = query.sort ?? "updated";
   const order = query.order ?? "desc";
   const activeOnly = query.activeOnly ?? false;
@@ -293,8 +315,26 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     where.isActive = true;
     where.quantity = { lte: 0 };
   } else if (activeOnly) {
-    // Only apply activeOnly filter when no specific status is selected
     where.isActive = true;
+  }
+
+  // Apply expiry status filters
+  if (expiryStatus !== "ALL") {
+    const now = new Date();
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    if (expiryStatus === "EXPIRED") {
+      where.expiryDate = { not: null, lte: now };
+    } else if (expiryStatus === "EXPIRING_SOON") {
+      where.expiryDate = { not: null, gt: now, lte: sevenDaysFromNow };
+    } else if (expiryStatus === "EXPIRING") {
+      where.expiryDate = { not: null, gt: sevenDaysFromNow, lte: thirtyDaysFromNow };
+    } else if (expiryStatus === "FRESH") {
+      where.expiryDate = { not: null, gt: thirtyDaysFromNow };
+    } else if (expiryStatus === "NO_EXPIRY") {
+      where.expiryDate = null;
+    }
   }
 
   const orderBy =
@@ -304,6 +344,8 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       ? { sellingPrice: order }
       : sort === "quantity"
       ? { quantity: order }
+      : sort === "expiryDate"
+      ? { expiryDate: order }
       : { updatedAt: order };
 
   const [items, rawCount, overallCount] = await Promise.all([
@@ -336,6 +378,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       quantity: product.quantity,
       minStock: product.minStock,
     });
+    const expiryDateStr = product.expiryDate ? product.expiryDate.toISOString() : null;
     const margin = Number((product.sellingPrice - product.costPrice).toFixed(2));
     const value = Number((product.sellingPrice * product.quantity).toFixed(2));
 
@@ -353,9 +396,13 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       barcode: product.barcode ?? null,
       imageLink: product.imageLink ?? null,
       isActive: product.isActive,
+      expiryDate: expiryDateStr,
+      batchNumber: product.batchNumber ?? null,
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),
       stockStatus,
+      expiryStatus: getExpiryStatus(expiryDateStr),
+      daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
       margin,
       value,
       salesHistory: salesHistoryByProduct.get(product.id) ?? [],
@@ -387,6 +434,7 @@ export async function getProductById(productId: string): Promise<InventoryProduc
     minStock: product.minStock,
   });
 
+  const expiryDateStr = product.expiryDate ? product.expiryDate.toISOString() : null;
   const margin = Number((product.sellingPrice - product.costPrice).toFixed(2));
   const value = Number((product.sellingPrice * product.quantity).toFixed(2));
 
@@ -404,9 +452,13 @@ export async function getProductById(productId: string): Promise<InventoryProduc
     barcode: product.barcode ?? null,
     imageLink: product.imageLink ?? null,
     isActive: product.isActive,
+    expiryDate: expiryDateStr,
+    batchNumber: product.batchNumber ?? null,
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
     stockStatus,
+    expiryStatus: getExpiryStatus(expiryDateStr),
+    daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
     margin,
     value,
   };
@@ -626,6 +678,8 @@ export async function updateProduct(
   if (data.minStock !== undefined) updateData.minStock = data.minStock;
   if (data.sku !== undefined) updateData.sku = data.sku;
   if (data.barcode !== undefined) updateData.barcode = data.barcode;
+  if (data.expiryDate !== undefined) updateData.expiryDate = data.expiryDate ? new Date(data.expiryDate) : null;
+  if (data.batchNumber !== undefined) updateData.batchNumber = data.batchNumber;
   if (data.isActive !== undefined) updateData.isActive = data.isActive;
   if (imageLink !== existing.imageLink) updateData.imageLink = imageLink;
 
@@ -640,6 +694,7 @@ export async function updateProduct(
     minStock: updated.minStock,
   });
 
+  const expiryDateStr = updated.expiryDate ? updated.expiryDate.toISOString() : null;
   const margin = Number((updated.sellingPrice - updated.costPrice).toFixed(2));
   const value = Number((updated.sellingPrice * updated.quantity).toFixed(2));
 
@@ -657,9 +712,13 @@ export async function updateProduct(
     barcode: updated.barcode ?? null,
     imageLink: updated.imageLink ?? null,
     isActive: updated.isActive,
+    expiryDate: expiryDateStr,
+    batchNumber: updated.batchNumber ?? null,
     createdAt: updated.createdAt.toISOString(),
     updatedAt: updated.updatedAt.toISOString(),
     stockStatus,
+    expiryStatus: getExpiryStatus(expiryDateStr),
+    daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
     margin,
     value,
   };

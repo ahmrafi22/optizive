@@ -279,3 +279,8 @@ body {
     padding-bottom: 1.5rem;
   }
 }
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

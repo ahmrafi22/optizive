@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaUser } from "react-icons/fa";
 import { TbLayoutDashboardFilled, } from "react-icons/tb";
-import { FaCodeCompare, FaBoxesPacking, FaBasketShopping } from "react-icons/fa6";
+import { FaCodeCompare, FaBoxesPacking, FaBasketShopping, FaClock } from "react-icons/fa6";
 
 import SignOutButton from './SignOutButton';
 
@@ -18,6 +18,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboardFilled },
   { label: 'Inventory', href: '/inventory', icon: FaBoxesPacking },
+  { label: 'Expiry Tracker', href: '/expiry-tracker', icon: FaClock },
   { label: 'Smart Basket', href: '/smart-basket', icon: FaBasketShopping },
   { label: 'Price Compare', href: '/price-compare', icon: FaCodeCompare },
   { label: 'Profile', href: '/profile', icon: FaUser },

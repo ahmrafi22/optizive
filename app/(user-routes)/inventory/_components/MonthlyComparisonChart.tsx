@@ -98,7 +98,7 @@ export function MonthlyComparisonChart({ productId, className }: MonthlyComparis
                         name: p.dataKey === "current" ? "This Year" : "Last Year",
                         value: `${p.value} units`,
                       }))}
-                      label={label}
+                       label={String(label ?? "")}
                       indicator="square"
                     />
                   )}

@@ -19,6 +19,8 @@ const DEFAULT_STATS: InventoryStats = {
   lowStock: 0,
   outOfStock: 0,
   inactive: 0,
+  expiringSoon: 0,
+  expired: 0,
 };
 
 export function useInventory(
