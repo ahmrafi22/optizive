@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useMotionTemplate, useMotionValue } from "motion/react";
+import { motion } from "motion/react";
+import NumberFlow, { continuous, type Format } from "@number-flow/react";
 import {
   LuTriangleAlert,
   LuTimer,
@@ -15,7 +16,6 @@ import {
   LuCircleAlert,
   LuTrendingUp,
   LuFlame,
-  LuCalendarClock,
   LuClock,
 } from "react-icons/lu";
 
@@ -40,6 +40,72 @@ import {
 } from "@/app/(user-routes)/inventory/_components/types";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const numberTiming = { duration: 900, easing: "cubic-bezier(0.23, 1, 0.32, 1)" };
+const numberOpacityTiming = { duration: 720, easing: "cubic-bezier(0.23, 1, 0.32, 1)" };
+
+function StatValue({ value, delayMs }: { value: number; delayMs: number }) {
+  const [ready, setReady] = useState(false);
+  const [flowValue, setFlowValue] = useState(0);
+  const hasAnimatedRef = useRef(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [delayMs]);
+
+  useEffect(() => {
+    if (!ready) {
+      setFlowValue(0);
+      hasAnimatedRef.current = false;
+      return;
+    }
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      const frame = window.requestAnimationFrame(() => setFlowValue(value));
+      return () => window.cancelAnimationFrame(frame);
+    }
+    setFlowValue(value);
+  }, [ready, value]);
+
+  return (
+    <NumberFlow
+      willChange
+      plugins={[continuous]}
+      value={flowValue}
+      locales="en-US"
+      animated={ready}
+      transformTiming={numberTiming}
+      spinTiming={numberTiming}
+      opacityTiming={numberOpacityTiming}
+    />
+  );
+}
+
+function getSalesHealth(product: ExpiryProduct): { color: string; bg: string; label: string; icon: string } {
+  if (product.daysUntilExpiry === null) {
+    return { color: "#60a5fa", bg: "rgba(96,165,250,0.08)", label: "No expiry date", icon: "#60a5fa" };
+  }
+  if (product.isAtRisk) {
+    if (product.daysUntilExpiry <= 3) {
+      return { color: "#dc2626", bg: "rgba(220,38,38,0.1)", label: "Critical — may not sell", icon: "#dc2626" };
+    }
+    return { color: "#f97316", bg: "rgba(249,115,22,0.1)", label: "At risk — may not sell", icon: "#f97316" };
+  }
+  if (product.daysUntilExpiry <= 0) {
+    return { color: "#991b1b", bg: "rgba(153,27,27,0.1)", label: "Expired — overdue", icon: "#991b1b" };
+  }
+  if (product.daysUntilSoldOut !== null && product.dailySellRate > 0) {
+    const ratio = product.daysUntilSoldOut / product.daysUntilExpiry;
+    if (ratio <= 0.5) {
+      return { color: "#34d399", bg: "rgba(52,211,153,0.1)", label: "Healthy — selling fast", icon: "#34d399" };
+    }
+    if (ratio <= 0.8) {
+      return { color: "#eab308", bg: "rgba(234,179,8,0.1)", label: "Moderate — keep watching", icon: "#eab308" };
+    }
+    return { color: "#f97316", bg: "rgba(249,115,22,0.1)", label: "Slow — may need discount", icon: "#f97316" };
+  }
+  return { color: "#34d399", bg: "rgba(52,211,153,0.08)", label: "Healthy — selling well", icon: "#34d399" };
+}
 
 function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
@@ -53,15 +119,16 @@ function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   );
 }
 
-function StatCard({ label, value, hint, icon, accent }: {
+function StatCard({ label, value, hint, icon, accent, delayMs = 0 }: {
   label: string;
   value: number | string;
   hint: string;
   icon: React.ReactNode;
   accent: string;
+  delayMs?: number;
 }) {
   return (
-    <div className="bento-card noise-overlay p-5 flex items-start gap-4">
+    <div className="bento-card noise-overlay p-5 flex items-center gap-4">
       <div
         className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-lg"
         style={{ background: `${accent}20`, color: accent }}
@@ -70,7 +137,7 @@ function StatCard({ label, value, hint, icon, accent }: {
       </div>
       <div className="min-w-0">
         <div className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted)">{label}</div>
-        <div className="mt-1 text-2xl font-semibold text-(--clr-fg)">{value}</div>
+        <div className="mt-1 text-2xl font-semibold text-(--clr-fg) tabular-nums">{typeof value === "number" ? <StatValue value={value} delayMs={delayMs} /> : value}</div>
         <div className="mt-0.5 text-xs text-(--clr-fg-muted)">{hint}</div>
       </div>
     </div>
@@ -78,13 +145,13 @@ function StatCard({ label, value, hint, icon, accent }: {
 }
 
 type UrgencyLevel = "EXPIRED" | "CRITICAL" | "SOON" | "WARNING" | "OK" | "FRESH";
-const URGENCY_COLORS: Record<UrgencyLevel, { base: string; bg: string; dim: string; glint: string }> = {
-  EXPIRED:  { base: "#ef4444", bg: "rgba(239,68,68,0.08)", dim: "rgba(239,68,68,0.35)", glint: "#fca5a5" },
-  CRITICAL: { base: "#f97316", bg: "rgba(249,115,22,0.08)", dim: "rgba(249,115,22,0.35)", glint: "#fdba74" },
-  SOON:     { base: "#eab308", bg: "rgba(234,179,8,0.08)", dim: "rgba(234,179,8,0.35)", glint: "#fde047" },
-  WARNING:  { base: "#a3e635", bg: "rgba(163,230,53,0.08)", dim: "rgba(163,230,53,0.35)", glint: "#d9f99d" },
-  OK:       { base: "#34d399", bg: "rgba(52,211,153,0.08)", dim: "rgba(52,211,153,0.35)", glint: "#a7f3d0" },
-  FRESH:    { base: "#60a5fa", bg: "rgba(96,165,250,0.08)", dim: "rgba(96,165,250,0.35)", glint: "#bfdbfe" },
+const URGENCY_COLORS: Record<UrgencyLevel, { base: string; bg: string; dim: string }> = {
+  EXPIRED:  { base: "#991b1b", bg: "rgba(153,27,27,0.12)", dim: "rgba(220,38,38,0.75)" },
+  CRITICAL: { base: "#dc2626", bg: "rgba(220,38,38,0.10)", dim: "rgba(220,38,38,0.70)" },
+  SOON:     { base: "#ef4444", bg: "rgba(239,68,68,0.08)", dim: "rgba(239,68,68,0.65)" },
+  WARNING:  { base: "#f97316", bg: "rgba(249,115,22,0.08)", dim: "rgba(249,115,22,0.65)" },
+  OK:       { base: "#eab308", bg: "rgba(234,179,8,0.08)", dim: "rgba(234,179,8,0.65)" },
+  FRESH:    { base: "#60a5fa", bg: "rgba(96,165,250,0.08)", dim: "rgba(96,165,250,0.65)" },
 };
 
 function getUrgencyLevel(product: ExpiryProduct): UrgencyLevel {
@@ -101,40 +168,18 @@ function ExpiryProductCard({ product }: { product: ExpiryProduct }) {
   const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
   const urgency = getUrgencyLevel(product);
   const uc = URGENCY_COLORS[urgency];
+  const salesHealth = getSalesHealth(product);
   const barWidth = product.daysUntilExpiry !== null
     ? Math.max(2, Math.min(100, ((product.daysUntilExpiry > 0 ? product.daysUntilExpiry : 0) / 90) * 100))
     : 100;
 
-  const cardRef = useRef<HTMLAnchorElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const background = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, ${uc.dim}, transparent 80%)`;
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (rect) {
-      mouseX.set(e.clientX - rect.left);
-      mouseY.set(e.clientY - rect.top);
-    }
-  }, [mouseX, mouseY]);
-
   return (
     <Link
-      ref={cardRef}
       href={`/inventory/${product.id}`}
-      onMouseMove={handleMouseMove}
-      className="group relative block overflow-hidden rounded-2xl border border-(--clr-border) bg-(--clr-surface) transition-all duration-300 hover:scale-[1.015] hover:shadow-xl hover:border-transparent cursor-pointer"
+      className="group block overflow-hidden rounded-2xl border-[3px] bg-(--clr-surface) transition-all duration-300 hover:scale-[1.015] hover:shadow-xl cursor-pointer"
+      style={{ borderColor: `${uc.base}60` }}
     >
-      {/* Urgency side bar */}
-      <div className="absolute left-0 top-0 bottom-0 w-[5px]" style={{ background: uc.base }} />
-
-      {/* Mouse-follow radial glint */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background }}
-      />
-
-      <div className="relative p-5 pb-0 space-y-4">
+      <div className="p-5 pb-0 space-y-4">
         {/* Row 1: Image + Name + Countdown */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -187,20 +232,12 @@ function ExpiryProductCard({ product }: { product: ExpiryProduct }) {
         <div className="space-y-1.5">
           <div className="h-2.5 rounded-full bg-(--clr-surface2) overflow-hidden relative">
             <motion.div
-              className="h-full rounded-full relative"
+              className="h-full rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${barWidth}%` }}
               transition={{ duration: 0.8, ease: EASE_OUT }}
               style={{ background: uc.base }}
-            >
-              <div
-                className="absolute inset-0 rounded-full opacity-30"
-                style={{
-                  background: `linear-gradient(90deg, transparent 0%, ${uc.glint} 50%, transparent 100%)`,
-                  animation: "shimmer 2s ease-in-out infinite",
-                }}
-              />
-            </motion.div>
+            />
           </div>
           <div className="flex justify-between text-[10px]">
             <span className="text-(--clr-fg-dim)">Now</span>
@@ -227,39 +264,32 @@ function ExpiryProductCard({ product }: { product: ExpiryProduct }) {
           ))}
         </div>
 
-        {/* Row 4: AI Risk insight */}
-        {product.isAtRisk ? (
-          <div
-            className="rounded-xl border px-3.5 py-2.5 space-y-1.5"
-            style={{ borderColor: `${uc.base}25`, background: uc.bg }}
-          >
-            <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: uc.base }}>
-              <LuFlame className="h-3.5 w-3.5 shrink-0" />
-              <span>At risk — may not sell before expiry</span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-(--clr-fg-muted)">
-              <span>Sells {product.dailySellRate.toFixed(1)}/day</span>
-              {product.daysUntilSoldOut !== null && (
-                <span className="tabular-nums">Stock lasts ~{product.daysUntilSoldOut}d</span>
-              )}
-            </div>
-            {product.suggestedDiscount && (
-              <div className="flex items-center gap-2 pt-1">
-                <span className="rounded-md px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: uc.base }}>
-                  -{product.suggestedDiscount}%
-                </span>
-                <span className="text-[11px] text-(--clr-fg-muted)">
-                  suggested discount to clear stock
-                </span>
-              </div>
+        {/* Row 4: Sales insight */}
+        <div
+          className="rounded-xl px-3.5 py-3 space-y-2"
+          style={{ background: salesHealth.bg }}
+        >
+          <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: salesHealth.color }}>
+            <LuFlame className="h-3.5 w-3.5 shrink-0" />
+            <span>{salesHealth.label}</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-(--clr-fg-muted)">
+            <span>Sells <span className="font-semibold tabular-nums" style={{ color: salesHealth.color }}>{product.dailySellRate.toFixed(1)}/day</span></span>
+            {product.daysUntilSoldOut !== null && (
+              <span className="tabular-nums">Stock lasts <span className="font-semibold" style={{ color: salesHealth.color }}>~{product.daysUntilSoldOut}d</span></span>
             )}
           </div>
-        ) : (
-          <div className="rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3.5 py-2.5 flex items-center gap-1.5 text-xs text-(--clr-fg-dim)">
-            <LuCalendarClock className="h-3.5 w-3.5 shrink-0" />
-            <span>Sales velocity looks healthy</span>
-          </div>
-        )}
+          {product.isAtRisk && product.suggestedDiscount && (
+            <div className="flex items-center gap-2 pt-1 border-t border-(--clr-border)">
+              <span className="rounded-md px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: uc.base }}>
+                -{product.suggestedDiscount}%
+              </span>
+              <span className="text-[11px] text-(--clr-fg-muted)">
+                suggested discount to clear stock
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Row 5: Status + Action */}
         <div className="flex items-center justify-between -mx-5 px-5 py-3 border-t border-(--clr-border)">
@@ -371,7 +401,7 @@ export default function ExpiryTrackerPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-6xl space-y-8">
+      <div className="mx-auto w-full max-w-7xl space-y-8">
         <div className="h-10 w-48 bg-(--clr-surface2) rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -387,14 +417,11 @@ export default function ExpiryTrackerPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-8">
+    <div className="mx-auto w-full max-w-7xl space-y-10">
       <FadeUp>
         <header className="flex items-center justify-between">
           <div>
             <h1 className="mt-3 text-3xl md:text-4xl font-naston text-(--clr-fg)">Expiry Tracker</h1>
-            <p className="mt-1 text-sm text-(--clr-fg-muted)">
-              AI-powered expiry prediction &amp; clearance suggestions
-            </p>
           </div>
           <button
             type="button"
@@ -416,6 +443,7 @@ export default function ExpiryTrackerPage() {
             hint={`${formatCurrency(stats?.totalValueAtRisk ?? 0)} at risk`}
             icon={<LuTimer />}
             accent="#f87171"
+            delayMs={600}
           />
           <StatCard
             label="Expiring Soon"
@@ -423,6 +451,7 @@ export default function ExpiryTrackerPage() {
             hint="Within 7 days"
             icon={<LuTriangleAlert />}
             accent="#fb923c"
+            delayMs={680}
           />
           <StatCard
             label="At Risk Items"
@@ -430,6 +459,7 @@ export default function ExpiryTrackerPage() {
             hint={`Est. loss ${formatCurrency(stats?.potentialLoss ?? 0)}`}
             icon={<LuCircleAlert />}
             accent="#fbbf24"
+            delayMs={760}
           />
           <StatCard
             label="Total Expirable"
@@ -437,6 +467,7 @@ export default function ExpiryTrackerPage() {
             hint={`${stats?.fresh ?? 0} fresh · ${stats?.expiring ?? 0} expiring`}
             icon={<LuPackage />}
             accent="#34d399"
+            delayMs={840}
           />
         </section>
       </FadeUp>
@@ -459,7 +490,7 @@ export default function ExpiryTrackerPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {expiringProducts.map((product) => (
                 <ExpiryProductCard key={product.id} product={product} />
               ))}
@@ -488,7 +519,7 @@ export default function ExpiryTrackerPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {atRiskProducts.slice(0, 9).map((product) => (
                 <ExpiryProductCard key={product.id} product={product} />
               ))}
