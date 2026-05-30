@@ -3,7 +3,7 @@ import Link from "next/link";
 import { StockBadge } from "./StockBadge";
 import { MiniSalesChart } from "./MiniSalesChart";
 import {
-  CATEGORY_PALETTES,
+  CATEGORY_ICONS,
   formatCategory,
   formatCurrency,
   type InventoryProduct,
@@ -11,7 +11,7 @@ import {
 } from "./types";
 
 export function ProductCard({ product, view }: { product: InventoryProduct; view: ViewMode }) {
-  const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
+  const FallbackIcon = CATEGORY_ICONS[product.category ?? "OTHER"] ?? CATEGORY_ICONS.OTHER;
 
   return (
     <Link
@@ -19,36 +19,19 @@ export function ProductCard({ product, view }: { product: InventoryProduct; view
       className={`bento-card noise-overlay flex flex-col cursor-pointer! ${view === "large" ? "min-h-95" : "min-h-85"}`}
     >
       {/* Square polaroid-style image */}
-      <div className="w-full aspect-square border-b border-(--clr-border) relative p-4">
-        <img
-          src={product.imageLink || ''}
-          alt={product.name}
-          className="w-full h-full object-cover rounded-lg"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            const fallback = target.nextElementSibling as HTMLElement;
-            if (fallback) {
-              fallback.style.display = 'block';
-            }
-          }}
-          onLoad={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'block';
-            const fallback = target.nextElementSibling as HTMLElement;
-            if (fallback) {
-              fallback.style.display = 'none';
-            }
-          }}
-          style={{ display: product.imageLink ? 'block' : 'none' }}
-        />
-        <div
-          className="absolute inset-4 w-full h-full rounded-lg"
-          style={{ 
-            background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
-            display: product.imageLink ? 'none' : 'block'
-          }}
-        />
+      <div className="w-full aspect-square border-b border-(--clr-border) relative p-4 bg-(--clr-surface2)">
+        {product.imageLink ? (
+          <img
+            src={product.imageLink}
+            alt={product.name}
+            className="w-full h-full object-cover rounded-lg"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          />
+        ) : (
+          <div className="w-full h-full rounded-lg bg-(--clr-surface) flex items-center justify-center">
+            <FallbackIcon className="h-10 w-10 text-(--clr-fg-dim)" />
+          </div>
+        )}
       </div>
 
       {/* Polaroid-style bottom section with info */}

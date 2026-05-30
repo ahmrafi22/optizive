@@ -12,6 +12,7 @@ import type {
   SortOption,
   StatusFilter,
 } from "./types";
+import { CATEGORIES, formatCategory } from "./types";
 
 const DEFAULT_STATS: InventoryStats = {
   totalValue: 0,
@@ -34,7 +35,9 @@ export function useInventory(
   refreshKey: number,
 ) {
   const [products, setProducts] = useState<InventoryProduct[]>([]);
-  const [categories, setCategories] = useState<InventoryCategoryOption[]>([]);
+  const [categories, setCategories] = useState<InventoryCategoryOption[]>(
+    CATEGORIES.map((c) => ({ value: c, label: formatCategory(c) })),
+  );
   const [totalCount, setTotalCount] = useState(0);
   const [overallCount, setOverallCount] = useState(0);
   const [stats, setStats] = useState<InventoryStats>(DEFAULT_STATS);
