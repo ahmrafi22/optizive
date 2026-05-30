@@ -17,6 +17,8 @@ import {
   CATEGORIES,
   STOCK_UNITS,
   formatCategory,
+  EXPIRY_BADGES,
+  EXPIRY_LABELS,
   type InventoryProduct,
 } from "./types";
 
@@ -38,6 +40,8 @@ interface FormState {
   minStock: string;
   sku: string;
   barcode: string;
+  expiryDate: string;
+  batchNumber: string;
   isActive: boolean;
 }
 
@@ -53,6 +57,8 @@ function toFormState(product: InventoryProduct): FormState {
     minStock: product.minStock !== null ? String(product.minStock) : "",
     sku: product.sku ?? "",
     barcode: product.barcode ?? "",
+    expiryDate: product.expiryDate ? product.expiryDate.split("T")[0] : "",
+    batchNumber: product.batchNumber ?? "",
     isActive: product.isActive,
   };
 }
@@ -197,6 +203,8 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
         minStock: draft.minStock.trim() ? Number(draft.minStock) : null,
         sku: draft.sku.trim() || null,
         barcode: draft.barcode.trim() || null,
+        expiryDate: draft.expiryDate || null,
+        batchNumber: draft.batchNumber.trim() || null,
         isActive: draft.isActive,
         imageBase64,
       });
@@ -484,6 +492,50 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
                 Product is active
               </span>
             </label>
+          </div>
+
+          <div className="rounded-2xl border border-(--clr-border) bg-(--clr-surface) p-5 space-y-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-(--clr-fg-dim)">
+              Expiry & Batch
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <label className="block">
+                <span className="text-xs font-semibold text-(--clr-fg-dim)">Expiry Date</span>
+                <input
+                  type="date"
+                  value={draft.expiryDate}
+                  onChange={(e) => updateField("expiryDate", e.target.value)}
+                  className={`${inputBase} mt-2`}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-xs font-semibold text-(--clr-fg-dim)">Batch Number</span>
+                <input
+                  type="text"
+                  value={draft.batchNumber}
+                  onChange={(e) => updateField("batchNumber", e.target.value)}
+                  className={`${inputBase} mt-2`}
+                  placeholder="e.g. BATCH-2026-001"
+                />
+              </label>
+            </div>
+
+            {draft.expiryDate && (
+              <div className="flex items-center gap-2 rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-2">
+                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${EXPIRY_BADGES[product.expiryStatus]}`}>
+                  {EXPIRY_LABELS[product.expiryStatus]}
+                </div>
+                <span className="text-xs text-(--clr-fg-muted)">
+                  {product.daysUntilExpiry !== null
+                    ? product.daysUntilExpiry > 0
+                      ? `${product.daysUntilExpiry} days remaining`
+                      : `${Math.abs(product.daysUntilExpiry)} days overdue`
+                    : ""}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

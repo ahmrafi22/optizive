@@ -281,9 +281,13 @@ export default function OnboardingForm({ initialName }: { initialName: string })
                   {" "}and I can be reached at{" "}
                   <InlineInput 
                     value={form.phone} 
-                    onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} 
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                      setForm(p => ({ ...p, phone: value }));
+                    }} 
                     placeholder="phone number"
                     size="large"
+                    maxLength={11}
                   />
                   {" "}I am joining as a{" "}
                   <InlineSelect 

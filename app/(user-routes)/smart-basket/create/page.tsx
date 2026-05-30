@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "motion/react";
 import { FiLoader } from "react-icons/fi";
 import {
   LuPlus,
@@ -33,6 +34,33 @@ import { ProductPickerDialog } from "../_components/ProductPickerDialog";
 const MAX_PRODUCTS = 3;
 
 const btnActive = "active:scale-[0.97] transition-transform duration-150";
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
+function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.56, ease: EASE_OUT }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SuggestionSkeleton() {
+  return (
+    <div className="bento-card bento-card-no-hover noise-overlay overflow-hidden">
+      <div className="aspect-square w-full bg-(--clr-surface) animate-pulse" />
+      <div className="p-4 space-y-2">
+        <div className="h-3 w-3/4 rounded-full bg-(--clr-surface) animate-pulse" />
+        <div className="h-2.5 w-1/2 rounded-full bg-(--clr-surface) animate-pulse" />
+        <div className="h-2 w-full rounded-full bg-(--clr-surface) animate-pulse mt-3" />
+      </div>
+    </div>
+  );
+}
 
 export default function SmartBasketCreatePage() {
   const router = useRouter();
@@ -180,15 +208,15 @@ export default function SmartBasketCreatePage() {
         <button
           type="button"
           onClick={() => setIsPickerOpen(true)}
-          className={`${btnActive} bento-card bento-card-no-hover noise-overlay overflow-hidden border-dashed border-(--clr-border) bg-(--clr-surface2)/50 hover:border-(--clr-border-hover) flex flex-col w-full`}
+          className={`${btnActive} bento-card bento-card-no-hover noise-overlay overflow-hidden border-dashed border-(--clr-border) bg-(--clr-surface2)/50 hover:border-(--clr-border-hover) flex flex-col w-full min-h-75`}
         >
-          <div className="h-40 w-full flex items-center justify-center border-b border-(--clr-border)">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface)">
-              <LuPlus className="h-4 w-4" />
-            </span>
-          </div>
-          <div className="p-3">
-            <div className="text-sm font-semibold text-(--clr-fg-muted)">Add product</div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface) mx-auto mb-2">
+                <LuPlus className="h-4 w-4" />
+              </span>
+              <div className="text-sm font-semibold text-(--clr-fg-muted)">Add product</div>
+            </div>
           </div>
         </button>
       );
@@ -201,24 +229,51 @@ export default function SmartBasketCreatePage() {
         <button
           type="button"
           onClick={() => handleRemoveProduct(product.id)}
-          className={`${btnActive} absolute right-2 top-2 z-10 rounded-full border border-(--clr-border) bg-(--clr-surface2) p-1.5 text-(--clr-fg-muted) hover:bg-(--clr-surface) hover:text-(--clr-fg)`}
+          className={`${btnActive} absolute right-2 top-2 z-10 rounded-full border border-(--clr-border) bg-(--clr-surface2) p-1.5 text-(--clr-fg-muted) hover:bg-(--clr-surface) hover:text-(--clr-fg) opacity-70 hover:opacity-100 transition-opacity`}
         >
           <LuX className="h-3.5 w-3.5" />
         </button>
-        <div className="h-32 w-full border-b border-(--clr-border)">
-          {product.imageLink ? (
-            <img src={product.imageLink} alt={product.name} className="h-full w-full object-cover" />
-          ) : (
-            <div
-              className="h-full w-full"
-              style={{ background: `linear-gradient(135deg, ${palette.from}, ${palette.to})` }}
-            />
-          )}
+        <div className="w-full aspect-square border-b border-(--clr-border) relative p-3">
+          <img
+            src={product.imageLink || ''}
+            alt={product.name}
+            className="w-full h-full object-cover rounded-lg"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = 'block';
+            }}
+            onLoad={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'block';
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = 'none';
+            }}
+            style={{ display: product.imageLink ? 'block' : 'none' }}
+          />
+          <div
+            className="absolute inset-3 rounded-lg"
+            style={{
+              background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
+              display: product.imageLink ? 'none' : 'block'
+            }}
+          />
         </div>
-        <div className="p-3">
-          <div className="text-sm font-semibold text-(--clr-fg) truncate">{product.name}</div>
-          <div className="mt-1 text-xs text-(--clr-fg-muted) truncate">
-            {formatCategory(product.category)} - <span className="font-mono">{formatCurrency(product.sellingPrice)}</span>
+        <div className="p-3 flex flex-col gap-1.5">
+          <h3 className="text-sm font-semibold text-(--clr-fg) truncate">{product.name}</h3>
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className="rounded-full border px-2 py-0.5 text-[10px] font-semibold truncate max-w-[60%]"
+              style={{
+                borderColor: `${palette.from}40`,
+                backgroundColor: `${palette.from}18`,
+                color: palette.from,
+              }}
+            >
+              {formatCategory(product.category)}
+            </span>
+            <span className="font-mono text-sm font-bold text-(--clr-fg) shrink-0">{formatCurrency(product.sellingPrice)}</span>
           </div>
         </div>
       </div>
@@ -231,184 +286,224 @@ export default function SmartBasketCreatePage() {
     const matchPercent = Math.round(item.matchPercent ?? 0);
 
     return (
-      <div key={item.id} className="bento-card noise-overlay overflow-hidden">
-        <div className="relative">
-          <div className="aspect-square w-full border-b border-(--clr-border)">
-            {item.imageLink ? (
-              <img src={item.imageLink} alt={item.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="h-full w-full" style={{ background: `linear-gradient(135deg, ${palette.from}, ${palette.to})` }} />
-            )}
-          </div>
-          <span className="absolute right-3 top-3 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-2 py-0.5 text-[10px] font-semibold text-(--clr-fg)">
-            Match {matchPercent}%
+      <div key={item.id} className="bento-card noise-overlay overflow-hidden flex flex-col">
+        <div className="w-full aspect-square border-b border-(--clr-border) relative p-3">
+          <img
+            src={item.imageLink || ''}
+            alt={item.name}
+            className="w-full h-full object-cover rounded-lg"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = 'block';
+            }}
+            onLoad={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'block';
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = 'none';
+            }}
+            style={{ display: item.imageLink ? 'block' : 'none' }}
+          />
+          <div
+            className="absolute inset-3 rounded-lg"
+            style={{
+              background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
+              display: item.imageLink ? 'none' : 'block'
+            }}
+          />
+          <span
+            className="absolute right-4 top-4 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+            style={{
+              borderColor: matchPercent >= 80 ? '#fff44f' : '#60a5fa',
+              backgroundColor: matchPercent >= 80 ? '#fff44f' : '#60a5fa',
+              color: matchPercent >= 80 ? '#1a1a1a' : '#ffffff',
+            }}
+          >
+            {matchPercent}% match
           </span>
         </div>
-        <div className="p-4 space-y-2">
-          <div className="text-sm font-semibold text-(--clr-fg)">{item.name}</div>
-          <div className="text-xs text-(--clr-fg-muted)">
-            {formatCategory(item.category)} - <span className="font-mono">{formatCurrency(item.sellingPrice)}</span>
+        <div className="p-3 flex flex-col gap-1.5 flex-1">
+          <h3 className="text-sm font-semibold text-(--clr-fg) line-clamp-2 leading-snug">{item.name}</h3>
+          <div className="flex items-center gap-2">
+            <span
+              className="rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+              style={{
+                borderColor: `${palette.from}40`,
+                backgroundColor: `${palette.from}18`,
+                color: palette.from,
+              }}
+            >
+              {formatCategory(item.category)}
+            </span>
+            <span className="font-mono text-sm font-bold text-(--clr-fg)">{formatCurrency(item.sellingPrice)}</span>
           </div>
-          <div className="text-xs text-(--clr-fg-muted)">{item.reason}</div>
-          <button
-            type="button"
-            onClick={() => handleAddProduct({
-              id: item.id,
-              name: item.name,
-              category: item.category,
-              sellingPrice: item.sellingPrice,
-              costPrice: 0,
-              quantity: item.quantity,
-              unit: item.unit,
-              imageLink: item.imageLink,
-              isActive: true,
-              expiryDate: null,
-              margin: 0,
-            })}
-            disabled={isAdded || selectedProducts.length >= MAX_PRODUCTS}
-            className={`${btnActive} inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-(--clr-border) bg-(--clr-surface) px-3 py-1.5 text-[11px] font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-50`}
-          >
-            <LuPlus className="h-3 w-3" />
-            {isAdded ? "Added" : "Add"}
-          </button>
+          {item.reason && (
+            <p className="text-[11px] text-(--clr-fg-muted) leading-relaxed mt-0.5">{item.reason}</p>
+          )}
+          <div className="mt-auto pt-1.5">
+            <button
+              type="button"
+              onClick={() => handleAddProduct({
+                id: item.id,
+                name: item.name,
+                category: item.category,
+                sellingPrice: item.sellingPrice,
+                costPrice: 0,
+                quantity: item.quantity,
+                unit: item.unit,
+                imageLink: item.imageLink,
+                isActive: true,
+                expiryDate: null,
+                margin: 0,
+              })}
+              disabled={isAdded || selectedProducts.length >= MAX_PRODUCTS}
+              className={`${btnActive} inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-(--clr-border) bg-(--clr-surface) px-3 py-1.5 text-[11px] font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-50`}
+            >
+              <LuPlus className="h-3 w-3" />
+              {isAdded ? "Added" : "Add"}
+            </button>
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-3xl md:text-4xl font-naston text-(--clr-fg)">Smart Basket Creator</h1>
-      </header>
+    <div className="relative pb-10">
+      <div className="flex flex-col xl:flex-row gap-6 items-start">
+        {/* LEFT SIDEBAR */}
+        <div className="xl:sticky xl:top-24 xl:w-90 shrink-0 space-y-6 z-10">
+          <FadeUp delay={0}>
+            <header>
+              <h1 className="font-naston text-3xl md:text-5xl text-(--clr-fg)">
+                Smart Basket Creator
+              </h1>
+            </header>
+          </FadeUp>
 
-      {error && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
-          {error}
-        </div>
-      )}
+          {error && (
+            <FadeUp delay={0.02}>
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+                {error}
+              </div>
+            </FadeUp>
+          )}
 
-      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div>
-          <div className="bento-card bento-card-no-hover noise-overlay p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-(--clr-fg)">Basket details</h2>
-            <div className="grid gap-4">
-              <label className="space-y-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">Title</span>
-                <input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
-                />
-              </label>
-              <label className="space-y-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">Description</span>
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  rows={3}
-                  className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
-                  placeholder="Optional note for shoppers"
-                />
-              </label>
-
-              <div className="flex flex-wrap gap-3 justify-end">
-                <label className="inline-flex items-center gap-3 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm cursor-pointer">
-                  <span className="flex items-center gap-2 text-(--clr-fg)">
-                    {isPublic ? <LuGlobe className="h-4 w-4" /> : <LuLock className="h-4 w-4" />}
-                    Public
-                  </span>
+          <FadeUp delay={0.04}>
+            <div className="bento-card bento-card-no-hover noise-overlay p-5 space-y-4">
+              <h2 className="text-sm font-semibold text-(--clr-fg)">Basket details</h2>
+              <div className="grid gap-4">
+                <label className="space-y-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">Title</span>
                   <input
-                    type="checkbox"
-                    checked={isPublic}
-                    onChange={(event) => setIsPublic(event.target.checked)}
-                    className="h-4 w-4"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
                   />
                 </label>
-                <label className="inline-flex items-center gap-3 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm cursor-pointer">
-                  <span className="flex items-center gap-2 text-(--clr-fg)">
-                    <LuPackage className="h-4 w-4" />
-                    Save
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={saveAsBundle}
-                    onChange={(event) => setSaveAsBundle(event.target.checked)}
-                    className="h-4 w-4"
+                <label className="space-y-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">Description</span>
+                  <textarea
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    rows={3}
+                    className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
+                    placeholder="Optional note for shoppers"
                   />
                 </label>
+
+                <div className="flex flex-wrap gap-3 justify-end">
+                  <label className="inline-flex items-center gap-3 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm cursor-pointer">
+                    <span className="flex items-center gap-2 text-(--clr-fg)">
+                      {isPublic ? <LuGlobe className="h-4 w-4" /> : <LuLock className="h-4 w-4" />}
+                      Public
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={isPublic}
+                      onChange={(event) => setIsPublic(event.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </label>
+                  <label className="inline-flex items-center gap-3 rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm cursor-pointer">
+                    <span className="flex items-center gap-2 text-(--clr-fg)">
+                      <LuPackage className="h-4 w-4" />
+                      Save
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={saveAsBundle}
+                      onChange={(event) => setSaveAsBundle(event.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </FadeUp>
 
-        <aside className="space-y-6">
-          <div className="bento-card bento-card-no-hover noise-overlay p-5 space-y-5">
-            <h2 className="text-sm font-semibold text-(--clr-fg)">Pricing</h2>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-(--clr-fg-muted)">Base total</span>
-              <span className="font-mono text-base font-bold text-(--clr-fg)">{formatCurrency(baseTotal)}</span>
+          <FadeUp delay={0.08}>
+            <div className="bento-card bento-card-no-hover noise-overlay p-5 space-y-5">
+              <h2 className="text-sm font-semibold text-(--clr-fg)">Pricing</h2>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-(--clr-fg-muted)">Base total</span>
+                <span className="font-mono text-base font-bold text-(--clr-fg)">{formatCurrency(baseTotal)}</span>
+              </div>
+              <div className="border-t border-(--clr-border) pt-5 space-y-2">
+                <span className="block text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">
+                  Custom total
+                </span>
+                <input
+                  value={customTotal}
+                  onChange={(event) => setCustomTotal(event.target.value)}
+                  placeholder="Override total price"
+                  className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
+                />
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-(--clr-fg-muted)">Final total</span>
+                <span className="font-mono text-base font-bold text-(--clr-fg)">{formatCurrency(finalTotal)}</span>
+              </div>
             </div>
-            <div className="border-t border-(--clr-border) pt-5 space-y-2">
-              <span className="block text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">
-                Custom total
-              </span>
-              <input
-                value={customTotal}
-                onChange={(event) => setCustomTotal(event.target.value)}
-                placeholder="Override total price"
-                className="w-full rounded-2xl border border-(--clr-border) bg-(--clr-surface2) px-4 py-2.5 text-sm text-(--clr-fg) placeholder:text-(--clr-fg-dim) focus:outline-none focus:border-(--clr-border-hover) focus:ring-2 focus:ring-[rgba(255,244,79,0.25)] transition"
-              />
+          </FadeUp>
+
+          <FadeUp delay={0.12}>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`${btnActive} w-full inline-flex items-center justify-center gap-2 rounded-full bg-(--clr-yellow) px-5 py-2.5 text-sm font-semibold text-(--clr-charcoal) hover:bg-(--clr-yellow-dim) disabled:opacity-60`}
+            >
+              <LuSave className="h-4 w-4" />
+              {isSaving ? "Saving..." : "Save smart basket"}
+            </button>
+          </FadeUp>
+        </div>
+
+        {/* RIGHT CONTENT */}
+        <section className="flex-1 min-w-0 space-y-6 w-full">
+          <FadeUp delay={0}>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-(--clr-fg)">Selected products</h2>
+                <span className="text-xs text-(--clr-fg-muted)">
+                  <span className="font-mono">{selectedProducts.length}</span>/{MAX_PRODUCTS} selected
+                </span>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {Array.from({ length: MAX_PRODUCTS }).map((_, index) => (
+                  <div key={index}>{renderSlot(index)}</div>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-xs text-(--clr-fg-muted)">Final total</span>
-              <span className="font-mono text-base font-bold text-(--clr-fg)">{formatCurrency(finalTotal)}</span>
-            </div>
-          </div>
+          </FadeUp>
 
-          <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`${btnActive} inline-flex items-center justify-center gap-2 rounded-full bg-(--clr-yellow) px-5 py-2.5 text-sm font-semibold text-(--clr-charcoal) hover:bg-(--clr-yellow-dim) disabled:opacity-60`}
-          >
-            <LuSave className="h-4 w-4" />
-            {isSaving ? "Saving..." : "Save smart basket"}
-          </button>
-          </div>
-        </aside>
-      </section>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-(--clr-fg)">Selected products</h2>
-          <span className="text-xs text-(--clr-fg-muted)">
-            <span className="font-mono">{selectedProducts.length}</span>/{MAX_PRODUCTS} selected
-          </span>
-        </div>
-        <div className="grid gap-3 md:grid-cols-3">
-          {Array.from({ length: MAX_PRODUCTS }).map((_, index) => (
-            <div key={index}>{renderSlot(index)}</div>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 text-sm font-semibold text-(--clr-fg)">
-          <LuSparkles className="h-4 w-4 text-(--clr-teal-dim)" />
-          Rule + AI suggestions
-        </div>
-        {!hasSeedProducts && (
-          <p className="text-xs text-(--clr-fg-muted)">Select at least one product to load suggestions.</p>
-        )}
-        {suggestionsPaused && (
-          <p className="text-xs text-(--clr-fg-muted)">Max products selected. Remove one to see suggestions.</p>
-        )}
-
-        <div className="grid gap-6 lg:grid-cols-2">
+          <FadeUp delay={0.08}>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">
+                <LuSparkles className="h-3 w-3 text-(--clr-teal-dim)" />
                 <span>Rule picks</span>
                 {isSuggestingRules && <FiLoader className="h-3 w-3 animate-spin" />}
               </div>
@@ -421,13 +516,13 @@ export default function SmartBasketCreatePage() {
                   Suggestions paused for full basket.
                 </div>
               ) : suggestions.rule.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
                   {suggestions.rule.map(renderSuggestion)}
                 </div>
               ) : isSuggestingRules ? (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="bento-card bento-card-no-hover noise-overlay h-56 animate-pulse bg-(--clr-surface2)" />
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SuggestionSkeleton key={i} />
                   ))}
                 </div>
               ) : (
@@ -436,9 +531,12 @@ export default function SmartBasketCreatePage() {
                 </div>
               )}
             </div>
+          </FadeUp>
 
+          <FadeUp delay={0.16}>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-(--clr-fg-dim)">
+                <LuSparkles className="h-3 w-3 text-(--clr-teal-dim)" />
                 <span>AI picks</span>
                 {isSuggestingAi && <FiLoader className="h-3 w-3 animate-spin" />}
               </div>
@@ -451,13 +549,13 @@ export default function SmartBasketCreatePage() {
                   Suggestions paused for full basket.
                 </div>
               ) : suggestions.ai.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
                   {suggestions.ai.map(renderSuggestion)}
                 </div>
               ) : isSuggestingAi ? (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="bento-card bento-card-no-hover noise-overlay h-56 animate-pulse bg-(--clr-surface2)" />
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SuggestionSkeleton key={i} />
                   ))}
                 </div>
               ) : (
@@ -466,7 +564,8 @@ export default function SmartBasketCreatePage() {
                 </div>
               )}
             </div>
-        </div>
+          </FadeUp>
+        </section>
       </div>
 
       <ProductPickerDialog

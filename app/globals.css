@@ -92,6 +92,24 @@ body {
   border-radius: 3px;
 }
 
+/* Custom scrollbar for specific elements */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--clr-border);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--clr-fg-muted);
+}
+
 /* ── Noise texture overlay ── */
 .noise-overlay::before {
   content: '';
@@ -260,4 +278,9 @@ body {
     gap: 1.25rem;
     padding-bottom: 1.5rem;
   }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }

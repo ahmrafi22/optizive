@@ -2,16 +2,23 @@
 
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
-import { Category, StockUnit } from "@/prisma/generated/prisma/client";
+import { Category, StockUnit, Prisma } from "@/prisma/generated/prisma/client";
 import { uploadImage, deleteImageByUrl } from "@/lib/cloudinary";
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
+
+export interface ProductSalesData {
+  date: string;
+  sales: number;
+  revenue: number;
+}
 
 export interface InventoryQuery {
   search?: string;
   category?: Category | "ALL";
   status?: InventoryStockStatus | "ALL";
-  sort?: "updated" | "name" | "price" | "quantity";
+  expiryStatus?: ExpiryStatus | "ALL";
+  sort?: "updated" | "name" | "price" | "quantity" | "expiryDate";
   order?: "asc" | "desc";
   minPrice?: number | null;
   maxPrice?: number | null;
@@ -19,6 +26,9 @@ export interface InventoryQuery {
   limit?: number;
   offset?: number;
 }
+
+import { getExpiryStatus } from "@/backend/expiry-utils";
+import type { ExpiryStatus } from "@/backend/expiry-utils";
 
 export interface InventoryProduct {
   id: string;
@@ -34,11 +44,16 @@ export interface InventoryProduct {
   barcode: string | null;
   imageLink: string | null;
   isActive: boolean;
+  expiryDate: string | null;
+  batchNumber: string | null;
   createdAt: string;
   updatedAt: string;
   stockStatus: InventoryStockStatus;
+  expiryStatus: ExpiryStatus;
+  daysUntilExpiry: number | null;
   margin: number;
   value: number;
+  salesHistory?: ProductSalesData[];
 }
 
 export interface InventoryCategoryOption {
@@ -58,6 +73,8 @@ export interface UpdateProductPayload {
   sku?: string | null;
   barcode?: string | null;
   isActive?: boolean;
+  expiryDate?: string | null;
+  batchNumber?: string | null;
   imageBase64?: string | null;
 }
 
@@ -67,6 +84,8 @@ export interface InventoryStats {
   lowStock: number;
   outOfStock: number;
   inactive: number;
+  expiringSoon: number;
+  expired: number;
 }
 
 export interface InventoryResponse {
@@ -74,7 +93,7 @@ export interface InventoryResponse {
   totalCount: number;
   overallCount: number;
   categories: InventoryCategoryOption[];
-  stats: InventoryStats;
+  stats?: InventoryStats;
 }
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -137,6 +156,117 @@ function buildSearchWhere(search: string) {
   };
 }
 
+async function getSalesHistoryForProducts(
+  productIds: string[],
+  userId: string,
+  days: number,
+): Promise<Map<string, ProductSalesData[]>> {
+  const historyMap = new Map<string, ProductSalesData[]>();
+  if (productIds.length === 0) return historyMap;
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const salesRows = await prisma.$queryRaw<Array<{
+    productId: string;
+    date: Date;
+    totalQuantity: number;
+    totalRevenue: number;
+  }>>(
+    Prisma.sql`
+      SELECT
+        "SaleItem"."productId" as "productId",
+        DATE("Sale"."createdAt") as "date",
+        COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity",
+        COALESCE(SUM("SaleItem"."totalPrice"), 0) as "totalRevenue"
+      FROM "SaleItem"
+      INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+      WHERE "SaleItem"."productId" IN (${Prisma.join(productIds)})
+        AND "Sale"."ownerId" = ${userId}
+        AND "Sale"."createdAt" >= ${startDate}
+      GROUP BY "SaleItem"."productId", DATE("Sale"."createdAt")
+      ORDER BY "SaleItem"."productId", date ASC
+    `,
+  );
+
+  const grouped = new Map<string, Map<string, { sales: number; revenue: number }>>();
+  salesRows.forEach((row) => {
+    const dateStr = row.date.toISOString().split("T")[0];
+    const productMap = grouped.get(row.productId) ?? new Map();
+    productMap.set(dateStr, {
+      sales: Number(row.totalQuantity),
+      revenue: Number(row.totalRevenue),
+    });
+    grouped.set(row.productId, productMap);
+  });
+
+  productIds.forEach((productId) => {
+    const dataMap = grouped.get(productId) ?? new Map();
+    const series: ProductSalesData[] = [];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      const data = dataMap.get(dateStr) || { sales: 0, revenue: 0 };
+
+      series.push({
+        date: dateStr,
+        sales: data.sales,
+        revenue: data.revenue,
+      });
+    }
+
+    historyMap.set(productId, series);
+  });
+
+  return historyMap;
+}
+
+export async function getInventoryStats(): Promise<InventoryStats | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const now = new Date();
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  const statsResult = await prisma.$queryRaw<Array<{
+    totalValue: number;
+    totalProducts: number;
+    lowStock: number;
+    outOfStock: number;
+    inactive: number;
+    expiringSoon: number;
+    expired: number;
+  }>>(
+    Prisma.sql`
+      SELECT
+        COALESCE(SUM("sellingPrice" * "quantity"), 0) as "totalValue",
+        COUNT(*) as "totalProducts",
+        COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "expiryDate" IS NOT NULL AND "expiryDate" <= ${sevenDaysFromNow} AND "expiryDate" > ${now}) as "expiringSoon",
+        COUNT(*) FILTER (WHERE "isActive" = true AND "expiryDate" IS NOT NULL AND "expiryDate" <= ${now}) as "expired"
+      FROM "Product"
+      WHERE "ownerId" = ${userId}
+    `,
+  );
+
+  const serverStats = Array.isArray(statsResult) ? statsResult[0] : statsResult;
+
+  return {
+    totalValue: Number(serverStats?.totalValue) || 0,
+    totalProducts: Number(serverStats?.totalProducts) || 0,
+    lowStock: Number(serverStats?.lowStock) || 0,
+    outOfStock: Number(serverStats?.outOfStock) || 0,
+    inactive: Number(serverStats?.inactive) || 0,
+    expiringSoon: Number(serverStats?.expiringSoon) || 0,
+    expired: Number(serverStats?.expired) || 0,
+  };
+}
+
 export async function listInventoryProducts(query: InventoryQuery): Promise<InventoryResponse | null> {
   const session = await auth();
   const userId = session?.user?.id;
@@ -145,6 +275,7 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
   const search = query.search?.trim() ?? "";
   const category = query.category ?? "ALL";
   const status = query.status ?? "ALL";
+  const expiryStatus = query.expiryStatus ?? "ALL";
   const sort = query.sort ?? "updated";
   const order = query.order ?? "desc";
   const activeOnly = query.activeOnly ?? false;
@@ -184,8 +315,26 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     where.isActive = true;
     where.quantity = { lte: 0 };
   } else if (activeOnly) {
-    // Only apply activeOnly filter when no specific status is selected
     where.isActive = true;
+  }
+
+  // Apply expiry status filters
+  if (expiryStatus !== "ALL") {
+    const now = new Date();
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    if (expiryStatus === "EXPIRED") {
+      where.expiryDate = { not: null, lte: now };
+    } else if (expiryStatus === "EXPIRING_SOON") {
+      where.expiryDate = { not: null, gt: now, lte: sevenDaysFromNow };
+    } else if (expiryStatus === "EXPIRING") {
+      where.expiryDate = { not: null, gt: sevenDaysFromNow, lte: thirtyDaysFromNow };
+    } else if (expiryStatus === "FRESH") {
+      where.expiryDate = { not: null, gt: thirtyDaysFromNow };
+    } else if (expiryStatus === "NO_EXPIRY") {
+      where.expiryDate = null;
+    }
   }
 
   const orderBy =
@@ -195,9 +344,11 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       ? { sellingPrice: order }
       : sort === "quantity"
       ? { quantity: order }
+      : sort === "expiryDate"
+      ? { expiryDate: order }
       : { updatedAt: order };
 
-  const [items, rawCount, overallCount, statsResult] = await Promise.all([
+  const [items, rawCount, overallCount] = await Promise.all([
     prisma.product.findMany({
       where,
       orderBy,
@@ -206,23 +357,6 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
     }),
     prisma.product.count({ where }),
     prisma.product.count({ where: { ownerId: userId } }),
-    prisma.$queryRawUnsafe<Array<{
-      totalValue: number;
-      totalProducts: number;
-      lowStock: number;
-      outOfStock: number;
-      inactive: number;
-    }>>(
-      `SELECT
-        COALESCE(SUM("sellingPrice" * "quantity"), 0) as "totalValue",
-        COUNT(*) as "totalProducts",
-        COUNT(*) FILTER (WHERE "isActive" = false) as "inactive",
-        COUNT(*) FILTER (WHERE "isActive" = true AND "quantity" <= 0) as "outOfStock",
-        COUNT(*) FILTER (WHERE "isActive" = true AND "minStock" IS NOT NULL AND "quantity" > 0 AND "quantity" <= "minStock") as "lowStock"
-      FROM "Product"
-      WHERE "ownerId" = $1`,
-      userId,
-    ),
   ]);
 
   const filteredItems =
@@ -232,12 +366,19 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
 
   const totalCount = status === "LOW_STOCK" ? filteredItems.length : rawCount;
 
+  const salesHistoryByProduct = await getSalesHistoryForProducts(
+    filteredItems.map((item) => item.id),
+    userId,
+    30,
+  );
+
   const products = filteredItems.map((product) => {
     const stockStatus = getStockStatus({
       isActive: product.isActive,
       quantity: product.quantity,
       minStock: product.minStock,
     });
+    const expiryDateStr = product.expiryDate ? product.expiryDate.toISOString() : null;
     const margin = Number((product.sellingPrice - product.costPrice).toFixed(2));
     const value = Number((product.sellingPrice * product.quantity).toFixed(2));
 
@@ -255,28 +396,24 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
       barcode: product.barcode ?? null,
       imageLink: product.imageLink ?? null,
       isActive: product.isActive,
+      expiryDate: expiryDateStr,
+      batchNumber: product.batchNumber ?? null,
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),
       stockStatus,
+      expiryStatus: getExpiryStatus(expiryDateStr),
+      daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
       margin,
       value,
+      salesHistory: salesHistoryByProduct.get(product.id) ?? [],
     } satisfies InventoryProduct;
   });
-
-  const serverStats = Array.isArray(statsResult) ? statsResult[0] : statsResult;
 
   return {
     items: products,
     totalCount,
     overallCount,
     categories: getCategoryOptions(),
-    stats: {
-      totalValue: Number(serverStats?.totalValue) || 0,
-      totalProducts: Number(serverStats?.totalProducts) || 0,
-      lowStock: Number(serverStats?.lowStock) || 0,
-      outOfStock: Number(serverStats?.outOfStock) || 0,
-      inactive: Number(serverStats?.inactive) || 0,
-    },
   };
 }
 
@@ -297,6 +434,7 @@ export async function getProductById(productId: string): Promise<InventoryProduc
     minStock: product.minStock,
   });
 
+  const expiryDateStr = product.expiryDate ? product.expiryDate.toISOString() : null;
   const margin = Number((product.sellingPrice - product.costPrice).toFixed(2));
   const value = Number((product.sellingPrice * product.quantity).toFixed(2));
 
@@ -314,12 +452,187 @@ export async function getProductById(productId: string): Promise<InventoryProduc
     barcode: product.barcode ?? null,
     imageLink: product.imageLink ?? null,
     isActive: product.isActive,
+    expiryDate: expiryDateStr,
+    batchNumber: product.batchNumber ?? null,
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
     stockStatus,
+    expiryStatus: getExpiryStatus(expiryDateStr),
+    daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
     margin,
     value,
   };
+}
+
+export interface MonthlyComparisonData {
+  month: string;
+  current: number;
+  previous: number;
+}
+
+export async function getProductSalesHistory(
+  productId: string,
+  days: number = 30
+): Promise<ProductSalesData[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+
+  // Verify product ownership
+  const product = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+    select: { id: true },
+  });
+
+  if (!product) return [];
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  // Fetch sales data grouped by date
+  const salesData = await prisma.$queryRaw<Array<{
+    date: Date;
+    totalQuantity: number;
+    totalRevenue: number;
+  }>>`
+    SELECT 
+      DATE("Sale"."createdAt") as date,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity",
+      COALESCE(SUM("SaleItem"."totalPrice"), 0) as "totalRevenue"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${startDate}
+    GROUP BY DATE("Sale"."createdAt")
+    ORDER BY date ASC
+  `;
+
+  // Create a map of existing data
+  const dataMap = new Map<string, { sales: number; revenue: number }>();
+  salesData.forEach((row) => {
+    const dateStr = row.date.toISOString().split('T')[0];
+    dataMap.set(dateStr, {
+      sales: Number(row.totalQuantity),
+      revenue: Number(row.totalRevenue),
+    });
+  });
+
+  // Fill in missing dates with zero values
+  const result: ProductSalesData[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    const data = dataMap.get(dateStr) || { sales: 0, revenue: 0 };
+    
+    result.push({
+      date: dateStr,
+      sales: data.sales,
+      revenue: data.revenue,
+    });
+  }
+
+  return result;
+}
+
+export async function getProductMonthlyComparison(
+  productId: string,
+  months: number = 6
+): Promise<MonthlyComparisonData[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+
+  // Verify product ownership
+  const product = await prisma.product.findUnique({
+    where: { id: productId, ownerId: userId },
+    select: { id: true },
+  });
+
+  if (!product) return [];
+
+  const now = new Date();
+  const currentYearStart = new Date(now);
+  currentYearStart.setMonth(now.getMonth() - months + 1);
+  currentYearStart.setDate(1);
+  currentYearStart.setHours(0, 0, 0, 0);
+
+  const previousYearStart = new Date(currentYearStart);
+  previousYearStart.setFullYear(previousYearStart.getFullYear() - 1);
+
+  const previousYearEnd = new Date(now);
+  previousYearEnd.setFullYear(previousYearEnd.getFullYear() - 1);
+
+  // Fetch current year data
+  const currentYearData = await prisma.$queryRaw<Array<{
+    month: number;
+    year: number;
+    totalQuantity: number;
+  }>>`
+    SELECT 
+      EXTRACT(MONTH FROM "Sale"."createdAt")::int as month,
+      EXTRACT(YEAR FROM "Sale"."createdAt")::int as year,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${currentYearStart}
+      AND "Sale"."createdAt" <= ${now}
+    GROUP BY EXTRACT(MONTH FROM "Sale"."createdAt"), EXTRACT(YEAR FROM "Sale"."createdAt")
+    ORDER BY year, month
+  `;
+
+  // Fetch previous year data
+  const previousYearData = await prisma.$queryRaw<Array<{
+    month: number;
+    year: number;
+    totalQuantity: number;
+  }>>`
+    SELECT 
+      EXTRACT(MONTH FROM "Sale"."createdAt")::int as month,
+      EXTRACT(YEAR FROM "Sale"."createdAt")::int as year,
+      COALESCE(SUM("SaleItem"."quantity"), 0) as "totalQuantity"
+    FROM "SaleItem"
+    INNER JOIN "Sale" ON "SaleItem"."saleId" = "Sale"."id"
+    WHERE "SaleItem"."productId" = ${productId}
+      AND "Sale"."ownerId" = ${userId}
+      AND "Sale"."createdAt" >= ${previousYearStart}
+      AND "Sale"."createdAt" <= ${previousYearEnd}
+    GROUP BY EXTRACT(MONTH FROM "Sale"."createdAt"), EXTRACT(YEAR FROM "Sale"."createdAt")
+    ORDER BY year, month
+  `;
+
+  // Create maps for easy lookup
+  const currentMap = new Map<number, number>();
+  currentYearData.forEach((row) => {
+    currentMap.set(row.month, Number(row.totalQuantity));
+  });
+
+  const previousMap = new Map<number, number>();
+  previousYearData.forEach((row) => {
+    previousMap.set(row.month, Number(row.totalQuantity));
+  });
+
+  // Generate result for the last N months
+  const result: MonthlyComparisonData[] = [];
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const date = new Date(now);
+    date.setMonth(date.getMonth() - i);
+    const monthNum = date.getMonth() + 1; // 1-12
+    const monthName = monthNames[date.getMonth()];
+
+    result.push({
+      month: monthName,
+      current: currentMap.get(monthNum) || 0,
+      previous: previousMap.get(monthNum) || 0,
+    });
+  }
+
+  return result;
 }
 
 export async function updateProduct(
@@ -365,6 +678,8 @@ export async function updateProduct(
   if (data.minStock !== undefined) updateData.minStock = data.minStock;
   if (data.sku !== undefined) updateData.sku = data.sku;
   if (data.barcode !== undefined) updateData.barcode = data.barcode;
+  if (data.expiryDate !== undefined) updateData.expiryDate = data.expiryDate ? new Date(data.expiryDate) : null;
+  if (data.batchNumber !== undefined) updateData.batchNumber = data.batchNumber;
   if (data.isActive !== undefined) updateData.isActive = data.isActive;
   if (imageLink !== existing.imageLink) updateData.imageLink = imageLink;
 
@@ -379,6 +694,7 @@ export async function updateProduct(
     minStock: updated.minStock,
   });
 
+  const expiryDateStr = updated.expiryDate ? updated.expiryDate.toISOString() : null;
   const margin = Number((updated.sellingPrice - updated.costPrice).toFixed(2));
   const value = Number((updated.sellingPrice * updated.quantity).toFixed(2));
 
@@ -396,9 +712,13 @@ export async function updateProduct(
     barcode: updated.barcode ?? null,
     imageLink: updated.imageLink ?? null,
     isActive: updated.isActive,
+    expiryDate: expiryDateStr,
+    batchNumber: updated.batchNumber ?? null,
     createdAt: updated.createdAt.toISOString(),
     updatedAt: updated.updatedAt.toISOString(),
     stockStatus,
+    expiryStatus: getExpiryStatus(expiryDateStr),
+    daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
     margin,
     value,
   };

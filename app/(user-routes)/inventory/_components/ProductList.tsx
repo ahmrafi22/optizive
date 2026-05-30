@@ -44,7 +44,7 @@ export function ProductList({
       {isLoading ? (
         <div className={`grid ${gridClass} gap-4`}>
           {Array.from({ length: view === "list" ? 4 : 6 }).map((_, index) => (
-            <div key={index} className="bento-card noise-overlay h-52 animate-pulse bg-(--clr-surface2)" />
+            <div key={index} className="bento-card noise-overlay h-52 animate-pulse  bg-(--clr-surface2)" />
           ))}
         </div>
       ) : isEmpty ? (
@@ -59,7 +59,7 @@ export function ProductList({
         </div>
       ) : (
         <>
-          <div className={`grid ${gridClass} gap-4`}>
+          <div className={`grid ${gridClass}  gap-4`}>
             {view === "list"
               ? products.map((product) => <ProductRow key={product.id} product={product} />)
               : products.map((product) => <ProductCard key={product.id} product={product} view={view} />)}

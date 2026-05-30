@@ -1,0 +1,28 @@
+model CoPurchaseEdge {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+
+  productAId  String
+  productBId  String
+
+  score       Float
+  frequency   Int
+  source      String
+  category    Category
+
+  @@unique([productAId, productBId])
+  @@index([productAId, score])
+  @@index([category, score])
+}
+
+model CategoryAffinity {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+
+  categoryA     Category
+  categoryB     Category
+  affinityScore Float
+
+  @@unique([categoryA, categoryB])
+  @@index([categoryA, affinityScore])
+}

@@ -129,7 +129,7 @@ export function ProductPickerDialog({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative mx-4 max-h-[92vh] w-full max-w-3xl overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface2) shadow-2xl flex flex-col"
+        className="relative mx-4 max-h-[92vh] w-full max-w-3xl rounded-3xl border border-(--clr-border) bg-(--clr-surface2) shadow-2xl flex flex-col"
       >
         <div className="flex items-center justify-between border-b border-(--clr-border) px-6 py-4 shrink-0">
           <h2 className="text-sm font-bold text-(--clr-fg) uppercase tracking-wider">
@@ -144,117 +144,119 @@ export function ProductPickerDialog({
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="grid gap-3 md:grid-cols-[2fr_1fr]">
-            <label className="relative">
-              <span className="sr-only">Search products</span>
-              <LuSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-(--clr-fg-muted)" />
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by name, sku, or barcode"
-                className={`${inputBase} pl-10`}
-              />
-            </label>
-            <label className="relative">
-              <span className="sr-only">Filter category</span>
-              <select
-                value={category}
-                onChange={(event) => setCategory(event.target.value as Category | "ALL")}
-                className={`${inputBase} appearance-none pr-9`}
-              >
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <LuChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-(--clr-fg-muted)" />
-            </label>
+        <div className="flex-1 overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-(--clr-surface2) border-b border-(--clr-border) p-6 space-y-4">
+            <div className="grid gap-3 md:grid-cols-[2fr_1fr]">
+              <label className="relative">
+                <span className="sr-only">Search products</span>
+                <LuSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-(--clr-fg-muted)" />
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search by name, sku, or barcode"
+                  className={`${inputBase} pl-10`}
+                />
+              </label>
+              <label className="relative">
+                <span className="sr-only">Filter category</span>
+                <select
+                  value={category}
+                  onChange={(event) => setCategory(event.target.value as Category | "ALL")}
+                  className={`${inputBase} appearance-none pr-9`}
+                >
+                  {categoryOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <LuChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-(--clr-fg-muted)" />
+              </label>
+            </div>
+
+            {error && (
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+                {error}
+              </div>
+            )}
+
+            {isLoading && (
+              <div className="text-xs text-(--clr-fg-muted)">Loading products...</div>
+            )}
+            {!isLoading && isFetchingMore && (
+              <div className="text-xs text-(--clr-fg-muted)">Loading more products...</div>
+            )}
           </div>
 
-          {error && (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
-              {error}
-            </div>
-          )}
-
-          {isLoading && (
-            <div className="text-xs text-(--clr-fg-muted)">Loading products...</div>
-          )}
-          {!isLoading && isFetchingMore && (
-            <div className="text-xs text-(--clr-fg-muted)">Loading more products...</div>
-          )}
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-6 pb-6">
-          {isLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="bento-card noise-overlay h-32 animate-pulse bg-(--clr-surface)" />
-              ))}
-            </div>
-          ) : items.length === 0 ? (
-            <div className="bento-card noise-overlay p-6 text-center text-sm text-(--clr-fg-muted)">
-              No products found. Try a different search.
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {items.map((item) => {
-                const isExcluded = excludedIds.includes(item.id);
-                return (
-                  <div key={item.id} className="bento-card noise-overlay p-4 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-11 w-11 rounded-2xl border border-(--clr-border) overflow-hidden shrink-0">
-                        {item.imageLink ? (
-                          <img src={item.imageLink} alt={item.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <div
-                            className="h-full w-full"
-                            style={{
-                              background: `linear-gradient(135deg, ${
-                                CATEGORY_PALETTES[item.category ?? "OTHER"]?.from ?? CATEGORY_PALETTES.OTHER.from
-                              }, ${
-                                CATEGORY_PALETTES[item.category ?? "OTHER"]?.to ?? CATEGORY_PALETTES.OTHER.to
-                              })`,
-                            }}
-                          />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-sm font-semibold text-(--clr-fg) truncate">{item.name}</div>
-                        <div className="text-xs text-(--clr-fg-muted)">
-                          {formatCategory(item.category)} - <span className="font-mono">{formatCurrency(item.sellingPrice)}</span>
+          <div className="p-6">
+            {isLoading ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="bento-card noise-overlay h-32 animate-pulse bg-(--clr-surface)" />
+                ))}
+              </div>
+            ) : items.length === 0 ? (
+              <div className="bento-card noise-overlay p-6 text-center text-sm text-(--clr-fg-muted)">
+                No products found. Try a different search.
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {items.map((item) => {
+                  const isExcluded = excludedIds.includes(item.id);
+                  return (
+                    <div key={item.id} className="bento-card noise-overlay p-4 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-2xl border border-(--clr-border) shrink-0">
+                          {item.imageLink ? (
+                            <img src={item.imageLink} alt={item.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <div
+                              className="h-full w-full"
+                              style={{
+                                background: `linear-gradient(135deg, ${
+                                  CATEGORY_PALETTES[item.category ?? "OTHER"]?.from ?? CATEGORY_PALETTES.OTHER.from
+                                }, ${
+                                  CATEGORY_PALETTES[item.category ?? "OTHER"]?.to ?? CATEGORY_PALETTES.OTHER.to
+                                })`,
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-(--clr-fg) truncate">{item.name}</div>
+                          <div className="text-xs text-(--clr-fg-muted)">
+                            {formatCategory(item.category)} - <span className="font-mono">{formatCurrency(item.sellingPrice)}</span>
+                          </div>
                         </div>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => onSelect(item)}
+                        disabled={isExcluded}
+                        className={`${btnActive} inline-flex items-center gap-1.5 rounded-full border border-(--clr-border) bg-(--clr-surface) px-2.5 py-1 text-[11px] font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-40 shrink-0`}
+                      >
+                        <LuPlus className="h-3 w-3" />
+                        {isExcluded ? "Added" : "Add"}
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => onSelect(item)}
-                      disabled={isExcluded}
-                      className={`${btnActive} inline-flex items-center gap-1.5 rounded-full border border-(--clr-border) bg-(--clr-surface) px-2.5 py-1 text-[11px] font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-40 shrink-0`}
-                    >
-                      <LuPlus className="h-3 w-3" />
-                      {isExcluded ? "Added" : "Add"}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
 
-          {hasMore && !isLoading && (
-            <div className="flex justify-center pt-4">
-              <button
-                type="button"
-                onClick={() => fetchItems(false)}
-                disabled={isFetchingMore}
-                className={`${btnActive} inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-50`}
-              >
-                {isFetchingMore ? "Loading..." : "Load more"}
-              </button>
-            </div>
-          )}
+            {hasMore && !isLoading && (
+              <div className="flex justify-center pt-4">
+                <button
+                  type="button"
+                  onClick={() => fetchItems(false)}
+                  disabled={isFetchingMore}
+                  className={`${btnActive} inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors disabled:opacity-50`}
+                >
+                  {isFetchingMore ? "Loading..." : "Load more"}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

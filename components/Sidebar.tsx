@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaTruck } from "react-icons/fa";
 import { TbLayoutDashboardFilled, } from "react-icons/tb";
-import { FaCodeCompare, FaBoxesPacking, FaBasketShopping } from "react-icons/fa6";
+import { FaCodeCompare, FaBoxesPacking, FaBasketShopping, FaClock } from "react-icons/fa6";
 
 import SignOutButton from './SignOutButton';
 
@@ -18,7 +18,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboardFilled },
   { label: 'Inventory', href: '/inventory', icon: FaBoxesPacking },
+  { label: 'Expiry Tracker', href: '/expiry-tracker', icon: FaClock },
   { label: 'Smart Basket', href: '/smart-basket', icon: FaBasketShopping },
+  { label: 'Suppliers', href: '/suppliers', icon: FaTruck },
   { label: 'Price Compare', href: '/price-compare', icon: FaCodeCompare },
   { label: 'Profile', href: '/profile', icon: FaUser },
 ];
@@ -110,22 +112,32 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Sidebar navigation">
+      <nav className="flex-1 px-3 py-4 space-y-1 relative" aria-label="Sidebar navigation">
+        {/* Animated background indicator */}
+        <div
+          className="absolute left-3 right-3 h-12 bg-(--clr-surface) rounded-full transition-all duration-300 ease-out pointer-events-none"
+          style={{
+            transform: `translateY(${navItems.findIndex(item => pathname === item.href) * 52}px)`,
+            opacity: navItems.some(item => pathname === item.href) ? 1 : 0,
+          }}
+          aria-hidden="true"
+        />
+
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`
-                group relative flex items-center gap-3 px-3 py-1 rounded-xl
-                transition-all duration-200 ease-out
+                group relative flex items-center gap-3 px-3 py-2 rounded-full
+                transition-all duration-300 ease-out z-10
                 ${
                   isActive
-                    ? ' text-(--clr-teal-dim)'
-                    : 'text-(--clr-fg-muted) hover:text-(--clr-fg) hover:bg-(--clr-surface)'
+                    ? 'text-(--clr-teal-dim)'
+                    : 'text-(--clr-fg-muted) hover:text-(--clr-fg) hover:bg-(--clr-surface)/50'
                 }
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--clr-teal-dim) focus-visible:ring-offset-2
                 active:scale-[0.98]
@@ -134,18 +146,28 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             >
               {/* Icon */}
               <span
-                className={`
-                  flex items-center justify-center shrink-0 w-8 h-8 rounded-full
-                  transition-all duration-200
-                  ${
-                    isActive
-                      ? 'bg-(--clr-teal-dim) text-white shadow-[0_2px_6px_rgba(58,181,173,0.35)]'
-                      : 'text-(--clr-fg-muted) group-hover:text-(--clr-fg)'
-                  }
-                `}
+                className="relative flex items-center justify-center shrink-0 w-8 h-8"
                 aria-hidden="true"
               >
-                <Icon className="w-5 h-5" />
+                {/* Animated teal background circle */}
+                <span
+                  className={`
+                    absolute inset-0 rounded-full
+                    transition-all duration-300 ease-out
+                    ${
+                      isActive
+                        ? 'bg-(--clr-teal-dim) shadow-[0_2px_6px_rgba(58,181,173,0.35)] scale-100'
+                        : 'bg-transparent scale-0'
+                    }
+                  `}
+                />
+                {/* Icon */}
+                <Icon
+                  className={`
+                    w-5 h-5 relative z-10 transition-colors duration-300
+                    ${isActive ? 'text-white' : 'text-(--clr-fg-muted) group-hover:text-(--clr-fg)'}
+                  `}
+                />
               </span>
 
               {/* Label - always visible on mobile, desktop depends on isExpanded */}
