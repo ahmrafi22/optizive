@@ -1,6 +1,29 @@
 import Link from "next/link";
 import {
   LuPackage,
+  LuShoppingCart,
+  LuSprout,
+  LuTractor,
+  LuFish,
+  LuBone,
+  LuMilk,
+  LuMonitor,
+  LuSmartphone,
+  LuShirt,
+  LuFootprints,
+  LuSparkles,
+  LuCpu,
+  LuSofa,
+  LuWrench,
+  LuBuilding,
+  LuBuilding2,
+  LuCar,
+  LuPill,
+  LuScissors,
+  LuBoxes,
+  LuFlaskRound,
+  LuCylinder,
+  LuUtensils,
   LuCircleCheck,
   LuTriangleAlert,
   LuCircleX,
@@ -12,6 +35,36 @@ const CURRENCY = new Intl.NumberFormat("en-BD", {
   currency: "BDT",
   maximumFractionDigits: 0,
 });
+
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  GROCERIES: LuShoppingCart,
+  FMCG: LuPackage,
+  FRESH_PRODUCE: LuSprout,
+  AGRO_PRODUCTS: LuTractor,
+  FISHERY_SEAFOOD: LuFish,
+  MEAT_POULTRY: LuBone,
+  DAIRY: LuMilk,
+  ELECTRONICS: LuMonitor,
+  MOBILE_ACCESSORIES: LuSmartphone,
+  CLOTHING: LuShirt,
+  TEXTILES_APPAREL: LuShirt,
+  FOOTWEAR: LuFootprints,
+  BEAUTY_PERSONAL_CARE: LuSparkles,
+  HOME_APPLIANCE: LuCpu,
+  FURNITURE: LuSofa,
+  HARDWARE: LuWrench,
+  CONSTRUCTION_MATERIALS: LuBuilding,
+  AUTO_PARTS: LuCar,
+  PHARMACY: LuPill,
+  STATIONERY: LuScissors,
+  OFFICE_SUPPLIES: LuBoxes,
+  PACKAGING: LuPackage,
+  CHEMICALS: LuFlaskRound,
+  PLASTICS: LuCylinder,
+  RESTAURANT_SUPPLY: LuUtensils,
+  HOSPITALITY_SUPPLY: LuBuilding2,
+  OTHER: LuPackage,
+};
 
 function formatCategory(value: string | null) {
   if (!value) return "Uncategorized";
@@ -64,7 +117,10 @@ export function SupplierCatalog({ products, supplierId }: { products: SupplierPr
                 />
               ) : (
                 <div className="w-full h-full rounded-lg bg-(--clr-surface) flex items-center justify-center">
-                  <LuPackage className="h-10 w-10 text-(--clr-fg-dim)" />
+                  {(() => {
+                    const Icon = CATEGORY_ICONS[product.category ?? "OTHER"] ?? LuPackage;
+                    return <Icon className="h-10 w-10 text-(--clr-fg-dim)" />;
+                  })()}
                 </div>
               )}
             </div>

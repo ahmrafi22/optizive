@@ -38,10 +38,6 @@ export default async function DashboardPage() {
         <div className="pointer-events-none absolute -right-12 -top-14 h-36 w-36 rounded-full bg-primary/10 blur-2xl" />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-(--clr-fg-muted)">
-              <LuSparkles className="h-3.5 w-3.5 text-primary" />
-              Business overview
-            </div>
             <div>
               <h1 className="text-3xl font-naston leading-tight text-(--clr-fg) sm:text-4xl">
                 Welcome back, {displayName}
