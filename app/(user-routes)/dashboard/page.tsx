@@ -4,6 +4,7 @@ import { SalesChart } from "./_components/SalesChart";
 import { TopProducts } from "./_components/TopProducts";
 import { RecentSales } from "./_components/RecentSales";
 import { CategoryChart } from "./_components/CategoryChart";
+import { RecommendedSuppliers } from "./_components/RecommendedSuppliers";
 import { LuLayoutDashboard, LuSparkles } from "react-icons/lu";
 
 export default async function DashboardPage() {
@@ -116,6 +117,9 @@ export default async function DashboardPage() {
           chartAnimationDelay={1000}
         />
       )}
+
+      {/* Recommended Suppliers */}
+      <RecommendedSuppliers suppliers={dashboardData.recommendedSuppliers} />
     </main>
   );
 }

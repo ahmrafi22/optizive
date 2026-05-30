@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { LuArrowLeft, LuPackage, LuPencil } from "react-icons/lu";
 
 import { getProductById } from "@/backend/inventory/inventory";
+import { getRestockSuggestions } from "@/backend/supplier-recommender/supplier-recommender";
+import type { RestockSuggestion } from "@/backend/supplier-recommender/types";
 
 import { ProductEditDialog } from "../_components/ProductEditDialog";
 import { StockBadge } from "../_components/StockBadge";
@@ -38,6 +40,8 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [restockSuggestions, setRestockSuggestions] = useState<RestockSuggestion[]>([]);
+  const [restockLoading, setRestockLoading] = useState(false);
 
   const handleSaved = useCallback((updated: InventoryProduct) => {
     setProduct(updated);
@@ -54,6 +58,16 @@ export default function ProductDetailPage() {
           return;
         }
         setProduct(result);
+
+        if (result.stockStatus === "LOW_STOCK" || result.stockStatus === "OUT_OF_STOCK") {
+          setRestockLoading(true);
+          try {
+            const suggestions = await getRestockSuggestions([productId]);
+            setRestockSuggestions(suggestions);
+          } catch { /* ignore */ } finally {
+            setRestockLoading(false);
+          }
+        }
       } catch (err) {
         setError((err as Error).message ?? "Failed to load product.");
       } finally {
@@ -384,6 +398,58 @@ export default function ProductDetailPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Restock Suggestions */}
+      {(product.stockStatus === "LOW_STOCK" || product.stockStatus === "OUT_OF_STOCK") && (
+        <div className="bento-card noise-overlay p-5 space-y-4">
+          <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted) flex items-center gap-2">
+            <LuArrowLeft className="h-3.5 w-3.5 rotate-90 text-amber-400" />
+            Restock Options
+          </h2>
+          {restockLoading ? (
+            <div className="animate-pulse space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-14 bg-(--clr-surface2) rounded-xl" />
+              ))}
+            </div>
+          ) : restockSuggestions.length > 0 && restockSuggestions[0].suppliers.length > 0 ? (
+            <div className="space-y-2">
+              {restockSuggestions[0].suppliers.map((s) => (
+                <a
+                  key={s.id}
+                  href={`/suppliers/${s.id}`}
+                  className="flex items-center gap-3 rounded-xl bg-(--clr-surface2) px-4 py-3 transition-colors hover:bg-(--clr-border) cursor-pointer!"
+                >
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-(--clr-surface) border border-(--clr-border)">
+                    {s.profileImage ? (
+                      <img
+                        src={s.profileImage}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-sm font-bold text-(--clr-fg-muted)">
+                        {(s.businessName ?? s.name).charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-(--clr-fg)">{s.businessName || s.name}</p>
+                    <p className="text-xs text-(--clr-fg-muted)">Match {s.matchScore}% &middot; ★ {s.avgRating.toFixed(1)}</p>
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-(--clr-teal-dim)">View &rarr;</span>
+                </a>
+              ))}
+              {restockSuggestions[0].suppliers.length === 0 && (
+                <p className="text-xs text-(--clr-fg-muted)">No matching suppliers found for this category</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-(--clr-fg-muted)">Searching for matching suppliers...</p>
+          )}
         </div>
       )}
 
