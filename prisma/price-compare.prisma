@@ -1,0 +1,16 @@
+model PriceCompareResult {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productName String
+  category    String
+  info        String?
+  city        String?
+  country     String
+
+  data Json
+
+  @@index([userId, createdAt])
+}
