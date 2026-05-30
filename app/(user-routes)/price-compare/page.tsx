@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
+import { useSession } from "next-auth/react";
+import { LuHistory } from "react-icons/lu";
 
 import {
   runStreamingCompare,
@@ -16,6 +18,7 @@ import { PipelineStatus } from "./_components/PipelineStatus";
 import { PriceSummaryCards } from "./_components/PriceSummaryCards";
 import { MarketOverview } from "./_components/MarketOverview";
 import { ProductResults } from "./_components/ProductResults";
+import { PriceCompareHistory } from "./_components/PriceCompareHistory";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
@@ -59,6 +62,77 @@ export default function PriceComparePage() {
   const [searchLinks, setSearchLinks] = useState<string[]>([]);
 
   const abortRef = useRef<AbortController | null>(null);
+
+  const { data: session } = useSession();
+
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyItems, setHistoryItems] = useState<
+    { id: string; productName: string; category: string; country: string; createdAt: string }[]
+  >([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  const fetchHistory = useCallback(async () => {
+    if (!session?.user?.id) return;
+    setLoadingHistory(true);
+    try {
+      const res = await fetch("/api/price-compare/save");
+      if (res.ok) {
+        setHistoryItems(await res.json());
+      }
+    } catch {
+      // ignore
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  const saveCurrentResult = async (response: CompareResponse) => {
+    if (!session?.user?.id) return;
+    if (!response.success) return;
+    try {
+      const countryLabel = COUNTRY_OPTIONS.find((c) => c.value === form.country)?.label ?? form.country;
+      await fetch("/api/price-compare/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: form.productName,
+          category: form.category,
+          info: form.info || undefined,
+          city: form.city || undefined,
+          country: countryLabel,
+          data: response,
+        }),
+      });
+      fetchHistory();
+    } catch {
+      // ignore
+    }
+  };
+
+  const loadHistoryItem = async (id: string) => {
+    try {
+      const res = await fetch(`/api/price-compare/save/${id}`);
+      if (res.ok) {
+        const saved = await res.json();
+        setForm({
+          productName: saved.productName,
+          category: saved.category,
+          info: saved.info || "",
+          city: saved.city || "",
+          country: saved.country,
+        });
+        resetResults();
+        applyCompleteResponse(saved.data as CompareResponse);
+        setShowHistory(false);
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   const progressPercent = useMemo(() => {
     if (!progress.total) return 0;
@@ -229,7 +303,10 @@ export default function PriceComparePage() {
                 setStatusStage("analysis");
                 setStatusMessage("Finalizing market analysis...");
               },
-              onComplete: applyCompleteResponse,
+              onComplete: (response) => {
+                applyCompleteResponse(response);
+                saveCurrentResult(response);
+              },
               onError: (message) => {
                 setStatusStage("error");
                 setStatusMessage("Request failed");
@@ -248,12 +325,14 @@ export default function PriceComparePage() {
           abortRef.current = new AbortController();
           const data = await runStandardCompare(payload, abortRef.current.signal);
           applyCompleteResponse(data);
+          saveCurrentResult(data);
         }
       } else {
         setStatusStage("analysis");
         setStatusMessage("Fetching full response");
         const data = await runStandardCompare(payload, abortRef.current.signal);
         applyCompleteResponse(data);
+        saveCurrentResult(data);
       }
     } catch (err) {
       if ((err as Error).name === "AbortError") {
@@ -276,10 +355,17 @@ export default function PriceComparePage() {
       <div className="flex flex-col xl:flex-row gap-6 items-start">
         <div className="xl:sticky xl:top-24 xl:w-90 shrink-0 space-y-6 z-10">
           <FadeUp delay={0}>
-            <header className="relative">
+            <header className="relative flex items-center justify-between">
               <h1 className="font-naston text-3xl md:text-5xl text-(--clr-fg)">
                 Price Compare
               </h1>
+              <button
+                onClick={() => setShowHistory(true)}
+                className="p-2.5 rounded-2xl border border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-muted) hover:bg-(--clr-surface2) hover:text-(--clr-fg) transition-colors"
+                title="Saved comparisons"
+              >
+                <LuHistory className="h-5 w-5" />
+              </button>
             </header>
           </FadeUp>
         <FadeUp delay={0.04}>
@@ -348,6 +434,14 @@ export default function PriceComparePage() {
           )}
         </section>
       </div>
+
+      <PriceCompareHistory
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        items={historyItems}
+        loading={loadingHistory}
+        onSelect={loadHistoryItem}
+      />
     </div>
   );
 }

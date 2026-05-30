@@ -71,11 +71,12 @@ model User {
   // =========================
   // RELATIONS
   // =========================
-  inventory        Product[] @relation("ProductOwner")
-  suppliedProducts Product[] @relation("ProductSupplier")
-  bundles          Bundle[]  @relation("BundleOwner")
-  sales            Sale[]    @relation("SaleOwner")
-  smartBaskets     SmartBasket[] @relation("SmartBasketOwner")
+  inventory           Product[] @relation("ProductOwner")
+  suppliedProducts    Product[] @relation("ProductSupplier")
+  bundles             Bundle[]  @relation("BundleOwner")
+  sales               Sale[]    @relation("SaleOwner")
+  smartBaskets        SmartBasket[] @relation("SmartBasketOwner")
+  priceCompareResults PriceCompareResult[]
 
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])
