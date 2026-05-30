@@ -2,6 +2,8 @@
 
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
+import { getSupplierRecommendations } from "@/backend/supplier-recommender/supplier-recommender";
+import type { SupplierSummary } from "@/backend/supplier-recommender/types";
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -50,6 +52,7 @@ export interface DashboardData {
   categorySales: CategorySales[];
   dailySales: DailySales[];
   monthlySales: DailySales[];
+  recommendedSuppliers: SupplierSummary[];
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
@@ -277,6 +280,8 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     revenue: Number(row.revenue),
   }));
 
+  const recommendedSuppliers = await getSupplierRecommendations(5);
+
   return {
     userName,
     stats: {
@@ -312,5 +317,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
       })),
     dailySales: formattedDailySales,
     monthlySales: formattedMonthlySales,
+    recommendedSuppliers,
   };
 }
