@@ -3,31 +3,28 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   LuX,
-  LuSave,
+  LuPlus,
   LuUpload,
   LuTrash2,
   LuCircleAlert,
   LuCamera,
 } from "react-icons/lu";
 
-import { updateProduct } from "@/backend/inventory/inventory";
+import { createProduct } from "@/backend/inventory/inventory";
 
 import {
   CATEGORY_PALETTES,
   CATEGORIES,
   STOCK_UNITS,
   formatCategory,
-  EXPIRY_BADGES,
-  EXPIRY_LABELS,
   type InventoryProduct,
 } from "./types";
 import { DatePicker } from "./DatePicker";
 
-interface ProductEditDialogProps {
-  product: InventoryProduct;
+interface AddProductDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSaved: (updated: InventoryProduct) => void;
+  onCreated: (product: InventoryProduct) => void;
 }
 
 interface FormState {
@@ -46,23 +43,21 @@ interface FormState {
   isActive: boolean;
 }
 
-function toFormState(product: InventoryProduct): FormState {
-  return {
-    name: product.name,
-    description: product.description ?? "",
-    category: product.category ?? "",
-    sellingPrice: String(product.sellingPrice),
-    costPrice: String(product.costPrice),
-    quantity: String(product.quantity),
-    unit: product.unit,
-    minStock: product.minStock !== null ? String(product.minStock) : "",
-    sku: product.sku ?? "",
-    barcode: product.barcode ?? "",
-    expiryDate: product.expiryDate ? product.expiryDate.split("T")[0] : "",
-    batchNumber: product.batchNumber ?? "",
-    isActive: product.isActive,
-  };
-}
+const INITIAL_FORM: FormState = {
+  name: "",
+  description: "",
+  category: "",
+  sellingPrice: "",
+  costPrice: "",
+  quantity: "",
+  unit: "PCS",
+  minStock: "",
+  sku: "",
+  barcode: "",
+  expiryDate: "",
+  batchNumber: "",
+  isActive: true,
+};
 
 const CATEGORY_OPTIONS = CATEGORIES.map((value) => ({
   value,
@@ -74,29 +69,26 @@ const UNIT_OPTIONS = STOCK_UNITS.map((value) => ({
   label: value,
 }));
 
-export function ProductEditDialog({ product, isOpen, onClose, onSaved }: ProductEditDialogProps) {
-  const [draft, setDraft] = useState<FormState>(() => toFormState(product));
-  const [noExpiry, setNoExpiry] = useState(!product.expiryDate);
-  const [imagePreview, setImagePreview] = useState<string | null>(product.imageLink);
+export function AddProductDialog({ isOpen, onClose, onCreated }: AddProductDialogProps) {
+  const [draft, setDraft] = useState<FormState>(INITIAL_FORM);
+  const [noExpiry, setNoExpiry] = useState(true);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [removeImage, setRemoveImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setDraft(toFormState(product));
-      setNoExpiry(!product.expiryDate);
-      setImagePreview(product.imageLink);
+      setDraft(INITIAL_FORM);
+      setNoExpiry(true);
+      setImagePreview(null);
       setImageFile(null);
-      setRemoveImage(false);
       setErrorMessage(null);
       setImageError(null);
     }
-  }, [isOpen, product]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -136,7 +128,6 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
     }
 
     setImageFile(file);
-    setRemoveImage(false);
     setImageError(null);
 
     const reader = new FileReader();
@@ -148,7 +139,6 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
   const handleRemoveImage = useCallback(() => {
     setImagePreview(null);
     setImageFile(null);
-    setRemoveImage(true);
     setImageError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, []);
@@ -167,14 +157,14 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
       return;
     }
 
-    const costPrice = Number(draft.costPrice);
-    if (Number.isNaN(costPrice) || costPrice < 0) {
+    const costPrice = draft.costPrice.trim() ? Number(draft.costPrice) : 0;
+    if (draft.costPrice.trim() && (Number.isNaN(costPrice) || costPrice < 0)) {
       setErrorMessage("Invalid cost price.");
       return;
     }
 
-    const quantity = Number(draft.quantity);
-    if (Number.isNaN(quantity) || quantity < 0) {
+    const quantity = draft.quantity.trim() ? Number(draft.quantity) : 0;
+    if (draft.quantity.trim() && (Number.isNaN(quantity) || quantity < 0)) {
       setErrorMessage("Invalid quantity.");
       return;
     }
@@ -182,11 +172,9 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
     setIsSaving(true);
 
     try {
-      let imageBase64: string | null | undefined;
+      let imageBase64: string | null = null;
 
-      if (removeImage) {
-        imageBase64 = null;
-      } else if (imageFile) {
+      if (imageFile) {
         imageBase64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result as string);
@@ -195,13 +183,13 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
         });
       }
 
-      const result = await updateProduct(product.id, {
-        name: draft.name.trim() || undefined,
+      const result = await createProduct({
+        name: draft.name.trim(),
         description: draft.description.trim() || null,
         category: (draft.category || null) as any,
-        sellingPrice: sellingPrice || undefined,
-        costPrice: costPrice || undefined,
-        quantity: quantity || undefined,
+        sellingPrice,
+        costPrice,
+        quantity,
         unit: draft.unit as any,
         minStock: draft.minStock.trim() ? Number(draft.minStock) : null,
         sku: draft.sku.trim() || null,
@@ -213,22 +201,22 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
       });
 
       if (!result) {
-        setErrorMessage("Failed to update product. Please try again.");
+        setErrorMessage("Failed to create product. Please try again.");
         return;
       }
 
-      onSaved(result);
+      onCreated(result);
       onClose();
     } catch (err) {
-      setErrorMessage((err as Error).message ?? "Failed to update product.");
+      setErrorMessage((err as Error).message ?? "Failed to create product.");
     } finally {
       setIsSaving(false);
     }
-  }, [draft, imageFile, removeImage, product.id, onSaved, onClose]);
+  }, [draft, imageFile, onCreated, onClose]);
 
   if (!isOpen) return null;
 
-  const palette = CATEGORY_PALETTES[product.category ?? "OTHER"] ?? CATEGORY_PALETTES.OTHER;
+  const palette = CATEGORY_PALETTES[draft.category || "OTHER"] ?? CATEGORY_PALETTES.OTHER;
   const inputBase =
     "w-full rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-2 text-sm text-(--clr-fg) focus:outline-none focus:ring-2 focus:ring-[color:var(--clr-yellow)]/40 focus:border-(--clr-yellow) transition-all";
   const selectBase =
@@ -246,12 +234,12 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="edit-product-title"
+        aria-labelledby="add-product-title"
         className="relative mx-4 max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-3xl border border-(--clr-border) bg-(--clr-surface2) shadow-2xl transition-all duration-300 ease-out will-change-transform flex flex-col"
       >
         <div className="flex items-center justify-between border-b border-(--clr-border) px-6 py-4 shrink-0">
-          <h2 id="edit-product-title" className="text-base font-bold text-(--clr-fg) uppercase tracking-wider">
-            Edit Product
+          <h2 id="add-product-title" className="text-base font-bold text-(--clr-fg) uppercase tracking-wider">
+            Add New Product
           </h2>
           <button
             type="button"
@@ -301,28 +289,25 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
                     accept="image/*"
                     className="hidden"
                     onChange={handleImageSelect}
-                    disabled={isUploadingImage}
                   />
                 </label>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer disabled:opacity-60">
+                <label className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-(--clr-fg) hover:border-(--clr-border-hover) cursor-pointer">
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
                     onChange={handleImageSelect}
-                    disabled={isUploadingImage}
                   />
                   <LuUpload className="h-3.5 w-3.5" />
-                  {isUploadingImage ? "Uploading..." : "Upload New"}
+                  Upload Image
                 </label>
                 {imagePreview && (
                   <button
                     type="button"
                     onClick={handleRemoveImage}
-                    disabled={isUploadingImage}
-                    className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 disabled:opacity-60 transition-colors"
+                    className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-red-400 hover:border-red-400/50 hover:text-red-300 transition-colors"
                   >
                     <LuTrash2 className="h-3.5 w-3.5" />
                     Remove
@@ -443,7 +428,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
               </label>
 
               <label className="block">
-                <span className="text-xs font-semibold text-(--clr-fg-dim)">Cost Price *</span>
+                <span className="text-xs font-semibold text-(--clr-fg-dim)">Cost Price</span>
                 <input
                   type="number"
                   step="0.01"
@@ -458,7 +443,7 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block">
-                <span className="text-xs font-semibold text-(--clr-fg-dim)">Quantity *</span>
+                <span className="text-xs font-semibold text-(--clr-fg-dim)">Quantity</span>
                 <input
                   type="number"
                   step="0.01"
@@ -545,21 +530,6 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
                 No expiry date
               </span>
             </label>
-
-            {!noExpiry && draft.expiryDate && (
-              <div className="flex items-center gap-2 rounded-xl border border-(--clr-border) bg-(--clr-surface2) px-3 py-2">
-                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${EXPIRY_BADGES[product.expiryStatus]}`}>
-                  {EXPIRY_LABELS[product.expiryStatus]}
-                </div>
-                <span className="text-xs text-(--clr-fg-muted)">
-                  {product.daysUntilExpiry !== null
-                    ? product.daysUntilExpiry > 0
-                      ? `${product.daysUntilExpiry} days remaining`
-                      : `${Math.abs(product.daysUntilExpiry)} days overdue`
-                    : ""}
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
@@ -581,12 +551,12 @@ export function ProductEditDialog({ product, isOpen, onClose, onSaved }: Product
             {isSaving ? (
               <>
                 <div className="animate-spin h-3.5 w-3.5 border-2 border-(--clr-charcoal) border-t-transparent rounded-full" />
-                Saving...
+                Creating...
               </>
             ) : (
               <>
-                <LuSave className="h-3.5 w-3.5" />
-                Save Changes
+                <LuPlus className="h-3.5 w-3.5" />
+                Add Product
               </>
             )}
           </button>

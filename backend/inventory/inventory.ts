@@ -635,6 +635,96 @@ export async function getProductMonthlyComparison(
   return result;
 }
 
+export interface CreateProductPayload {
+  name: string;
+  description?: string | null;
+  category?: Category | null;
+  sellingPrice: number;
+  costPrice?: number;
+  quantity?: number;
+  unit?: StockUnit;
+  minStock?: number | null;
+  sku?: string | null;
+  barcode?: string | null;
+  expiryDate?: string | null;
+  batchNumber?: string | null;
+  isActive?: boolean;
+  imageBase64?: string | null;
+}
+
+export async function createProduct(
+  data: CreateProductPayload,
+): Promise<InventoryProduct | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  let imageLink: string | null = null;
+
+  if (data.imageBase64) {
+    imageLink = await uploadImage(data.imageBase64, "products", {
+      width: 800,
+      height: 800,
+      crop: "fill",
+    });
+  }
+
+  const created = await prisma.product.create({
+    data: {
+      ownerId: userId,
+      name: data.name.trim(),
+      description: data.description?.trim() || null,
+      category: data.category ?? null,
+      sellingPrice: data.sellingPrice,
+      costPrice: data.costPrice ?? 0,
+      quantity: data.quantity ?? 0,
+      unit: data.unit ?? "PCS",
+      minStock: data.minStock ?? null,
+      sku: data.sku?.trim() || null,
+      barcode: data.barcode?.trim() || null,
+      expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
+      batchNumber: data.batchNumber?.trim() || null,
+      isActive: data.isActive ?? true,
+      imageLink,
+    },
+  });
+
+  const stockStatus = getStockStatus({
+    isActive: created.isActive,
+    quantity: created.quantity,
+    minStock: created.minStock,
+  });
+
+  const expiryDateStr = created.expiryDate ? created.expiryDate.toISOString() : null;
+  const margin = Number((created.sellingPrice - created.costPrice).toFixed(2));
+  const value = Number((created.sellingPrice * created.quantity).toFixed(2));
+
+  return {
+    id: created.id,
+    name: created.name,
+    description: created.description ?? null,
+    category: created.category ?? null,
+    sellingPrice: created.sellingPrice,
+    costPrice: created.costPrice,
+    quantity: created.quantity,
+    unit: created.unit,
+    minStock: created.minStock,
+    sku: created.sku ?? null,
+    barcode: created.barcode ?? null,
+    imageLink: created.imageLink ?? null,
+    isActive: created.isActive,
+    expiryDate: expiryDateStr,
+    batchNumber: created.batchNumber ?? null,
+    createdAt: created.createdAt.toISOString(),
+    updatedAt: created.updatedAt.toISOString(),
+    stockStatus,
+    expiryStatus: getExpiryStatus(expiryDateStr),
+    daysUntilExpiry: expiryDateStr ? Math.ceil((new Date(expiryDateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null,
+    margin,
+    value,
+  };
+}
+
 export async function updateProduct(
   productId: string,
   data: UpdateProductPayload,
