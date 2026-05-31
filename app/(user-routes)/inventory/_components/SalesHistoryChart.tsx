@@ -68,7 +68,7 @@ export function SalesHistoryChart({ productId, productName, className }: SalesHi
 
   if (loading) {
     return (
-      <div className={`bento-card noise-overlay p-5 space-y-4 ${className || ""}`}>
+      <div className={`bento-card bento-card-no-hover noise-overlay p-5 space-y-4 ${className || ""}`}>
         <div className="h-4 w-48 bg-(--clr-surface2) animate-pulse rounded" />
         <div className="h-64 bg-(--clr-surface2) animate-pulse rounded" />
       </div>
@@ -76,7 +76,7 @@ export function SalesHistoryChart({ productId, productName, className }: SalesHi
   }
 
   return (
-    <div className={`bento-card noise-overlay p-5 space-y-4 ${className || ""}`}>
+    <div className={`bento-card bento-card-no-hover noise-overlay p-5 space-y-4 ${className || ""}`}>
       <div className="flex items-center justify-between">
         <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted)">
           Sales History (30 Days)

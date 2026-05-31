@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { LuArrowLeft, LuPackage, LuPencil } from "react-icons/lu";
+import { LuArrowLeft, LuArrowUpRight, LuDownload, LuPackage, LuPencil, LuQrCode, LuX } from "react-icons/lu";
+import { QRCodeSVG } from "qrcode.react";
 
 import { getProductById } from "@/backend/inventory/inventory";
 import { getRestockSuggestions } from "@/backend/supplier-recommender/supplier-recommender";
@@ -40,8 +41,42 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isQrOpen, setIsQrOpen] = useState(false);
   const [restockSuggestions, setRestockSuggestions] = useState<RestockSuggestion[]>([]);
   const [restockLoading, setRestockLoading] = useState(false);
+
+  const qrInfoRef = useRef<HTMLDivElement>(null);
+  const qrUpdateRef = useRef<HTMLDivElement>(null);
+
+  async function downloadQrPng(ref: React.RefObject<HTMLDivElement | null>, filename: string) {
+    const el = ref.current;
+    if (!el) return;
+    const svg = el.querySelector("svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = svg.clientWidth * 4;
+      canvas.height = svg.clientHeight * 4;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { URL.revokeObjectURL(url); return; }
+      ctx.scale(4, 4);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }, "image/png");
+    };
+    img.src = url;
+  }
 
   const handleSaved = useCallback((updated: InventoryProduct) => {
     setProduct(updated);
@@ -125,7 +160,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-4xl space-y-6">
-      <div className="bento-card noise-overlay overflow-hidden">
+      <div className="bento-card bento-card-no-hover noise-overlay overflow-hidden">
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-80 lg:w-96 aspect-square md:aspect-auto md:min-h-100 relative">
             <img
@@ -149,8 +184,8 @@ export default function ProductDetailPage() {
             />
           </div>
 
-          <div className="flex-1 p-6 md:p-8 space-y-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex-1 p-6 md:p-8 flex flex-col">
+            <div className="space-y-5">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3 py-1 text-xs text-(--clr-fg-muted)">
@@ -160,33 +195,24 @@ export default function ProductDetailPage() {
                 </div>
                 <h1 className="text-2xl md:text-3xl font-naston text-(--clr-fg)">{product.name}</h1>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsEditOpen(true)}
-                className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-4 py-2 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover)"
-              >
-                <LuPencil className="h-3.5 w-3.5" />
-                Edit
-              </button>
-            </div>
 
             <p className="text-sm text-(--clr-fg-muted) leading-relaxed">
               {product.description || "No description added yet."}
             </p>
 
             {product.sku || product.barcode ? (
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-(--clr-fg-muted)">
+              <div className="flex flex-wrap items-center gap-3">
                 {product.sku && (
-                  <div>
-                    <span className="uppercase tracking-widest">SKU</span>
-                    <p className="mt-0.5 text-sm font-medium text-(--clr-fg)">{product.sku}</p>
-                  </div>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3.5 py-1.5 text-xs">
+                    <span className="uppercase text-(--clr-fg-dim) tracking-widest">SKU</span>
+                    <span className="font-mono font-medium text-(--clr-fg) tracking-tight">{product.sku}</span>
+                  </span>
                 )}
                 {product.barcode && (
-                  <div>
-                    <span className="uppercase tracking-widest">Barcode</span>
-                    <p className="mt-0.5 text-sm font-medium text-(--clr-fg)">{product.barcode}</p>
-                  </div>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-3.5 py-1.5 text-xs">
+                    <span className="uppercase text-(--clr-fg-dim) tracking-widest">Barcode</span>
+                    <span className="font-mono font-medium text-(--clr-fg) tracking-tight">{product.barcode}</span>
+                  </span>
                 )}
               </div>
             ) : null}
@@ -218,7 +244,26 @@ export default function ProductDetailPage() {
               </div>
             )}
           </div>
+          <div className="mt-auto flex items-center justify-end gap-2 pt-4">
+            <button
+              type="button"
+              onClick={() => setIsQrOpen(true)}
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-yellow)/40 bg-(--clr-yellow)/10 px-4 py-2 text-xs font-semibold text-(--clr-yellow) hover:bg-(--clr-yellow)/20 hover:border-(--clr-yellow)/60"
+            >
+              <LuQrCode className="h-3.5 w-3.5" />
+              QR Code
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditOpen(true)}
+              className="active:scale-[0.97] transition-transform duration-150 inline-flex items-center gap-2 rounded-full border border-(--clr-teal)/40 bg-(--clr-teal)/10 px-4 py-2 text-xs font-semibold text-(--clr-teal) hover:bg-(--clr-teal)/20 hover:border-(--clr-teal)/60"
+            >
+              <LuPencil className="h-3.5 w-3.5" />
+              Edit
+            </button>
+          </div>
         </div>
+      </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -381,29 +426,9 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {(product.barcode || product.sku) && (
-        <div className="bento-card noise-overlay p-5">
-          <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted) mb-4">Identifiers</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {product.sku && (
-              <div>
-                <span className="text-xs uppercase tracking-widest text-(--clr-fg-muted)">SKU</span>
-                <p className="mt-1 text-sm font-mono text-(--clr-fg)">{product.sku}</p>
-              </div>
-            )}
-            {product.barcode && (
-              <div>
-                <span className="text-xs uppercase tracking-widest text-(--clr-fg-muted)">Barcode</span>
-                <p className="mt-1 text-sm font-mono text-(--clr-fg)">{product.barcode}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Restock Suggestions */}
       {(product.stockStatus === "LOW_STOCK" || product.stockStatus === "OUT_OF_STOCK") && (
-        <div className="bento-card noise-overlay p-5 space-y-4">
+        <div className="bento-card bento-card-no-hover noise-overlay p-5 space-y-4">
           <h2 className="text-[11px] uppercase tracking-[0.2em] text-(--clr-fg-muted) flex items-center gap-2">
             <LuArrowLeft className="h-3.5 w-3.5 rotate-90 text-amber-400" />
             Restock Options
@@ -443,12 +468,18 @@ export default function ProductDetailPage() {
                   <span className="shrink-0 text-xs font-medium text-(--clr-teal-dim)">View &rarr;</span>
                 </a>
               ))}
-              {restockSuggestions[0].suppliers.length === 0 && (
-                <p className="text-xs text-(--clr-fg-muted)">No matching suppliers found for this category</p>
-              )}
             </div>
           ) : (
-            <p className="text-xs text-(--clr-fg-muted)">Searching for matching suppliers...</p>
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <p className="text-sm text-(--clr-fg-muted)">No suitable restocker found for this product.</p>
+              <a
+                href="/community"
+                className="inline-flex items-center gap-2 rounded-full border border-(--clr-border) bg-(--clr-surface2) px-5 py-2 text-xs font-semibold text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors"
+              >
+                Post in our community
+                <LuArrowUpRight className="h-3 w-3" />
+              </a>
+            </div>
           )}
         </div>
       )}
@@ -465,6 +496,114 @@ export default function ProductDetailPage() {
         onClose={() => setIsEditOpen(false)}
         onSaved={handleSaved}
       />
+
+      {/* QR Sidebar Overlay */}
+      <div
+        className={`fixed inset-0 z-50 flex justify-end ${
+          isQrOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <div
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ${
+            isQrOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setIsQrOpen(false)}
+        />
+        <div
+          className={`relative w-full max-w-sm bg-(--clr-surface) border-l border-(--clr-border) shadow-2xl flex flex-col will-change-transform transition-transform duration-200 ease-out ${
+            isQrOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-(--clr-border)">
+            <h2 className="text-sm font-semibold text-(--clr-fg)">QR Codes</h2>
+            <button
+              type="button"
+              onClick={() => setIsQrOpen(false)}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors"
+            >
+              <LuX className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            {/* QR 1 - Product Info */}
+            <div ref={qrInfoRef} className="flex flex-col items-center gap-4 p-5 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)">
+              <QRCodeSVG
+                value={`${typeof window !== "undefined" ? window.location.origin : ""}/product/${product.id}/info`}
+                size={180}
+                bgColor="transparent"
+                fgColor="var(--clr-fg)"
+                level="M"
+                includeMargin={false}
+              />
+              <div className="text-center space-y-1">
+                <p className="text-sm font-semibold text-(--clr-fg)">Product Info</p>
+                <p className="text-[11px] text-(--clr-fg-muted) leading-relaxed">
+                  Full product details, 7-day sales history, inventory stats, pricing & expiry info
+                </p>
+              </div>
+              <div className="flex w-full gap-2">
+                <a
+                  href={`/product/${product.id}/info`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center rounded-xl border border-(--clr-border) bg-(--clr-surface) px-4 py-2.5 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors"
+                >
+                  Open in new tab
+                </a>
+                <button
+                  type="button"
+                  onClick={() => downloadQrPng(qrInfoRef, `product-info-${product.id}.png`)}
+                  className="flex items-center justify-center rounded-xl border border-(--clr-yellow)/40 bg-(--clr-yellow)/10 px-3 py-2.5 text-xs font-semibold text-(--clr-yellow) hover:bg-(--clr-yellow)/20 hover:border-(--clr-yellow)/60 transition-colors"
+                >
+                  <LuDownload className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* QR 2 - Quick Update */}
+            <div ref={qrUpdateRef} className="flex flex-col items-center gap-4 p-5 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)">
+              <QRCodeSVG
+                value={`${typeof window !== "undefined" ? window.location.origin : ""}/product/${product.id}/update`}
+                size={180}
+                bgColor="transparent"
+                fgColor="var(--clr-fg)"
+                level="M"
+                includeMargin={false}
+              />
+              <div className="text-center space-y-1">
+                <p className="text-sm font-semibold text-(--clr-fg)">Quick Update</p>
+                <p className="text-[11px] text-(--clr-fg-muted) leading-relaxed">
+                  Update quantity, expiry date & batch number without login
+                </p>
+              </div>
+              <div className="flex w-full gap-2">
+                <a
+                  href={`/product/${product.id}/update`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center rounded-xl border border-(--clr-border) bg-(--clr-surface) px-4 py-2.5 text-xs font-semibold text-(--clr-fg-muted) hover:text-(--clr-fg) hover:border-(--clr-border-hover) transition-colors"
+                >
+                  Open in new tab
+                </a>
+                <button
+                  type="button"
+                  onClick={() => downloadQrPng(qrUpdateRef, `quick-update-${product.id}.png`)}
+                  className="flex items-center justify-center rounded-xl border border-(--clr-teal)/40 bg-(--clr-teal)/10 px-3 py-2.5 text-xs font-semibold text-(--clr-teal) hover:bg-(--clr-teal)/20 hover:border-(--clr-teal)/60 transition-colors"
+                >
+                  <LuDownload className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 border-t border-(--clr-border)">
+            <p className="text-[11px] text-(--clr-fg-dim) text-center">
+              These links require no authentication
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
