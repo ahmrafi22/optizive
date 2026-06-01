@@ -1,0 +1,36 @@
+model Store {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  name          String
+  slug          String
+  apiKey        String   @unique
+  isActive      Boolean  @default(false)
+  termsAccepted Boolean  @default(false)
+
+  apiLogs       ApiLog[]
+
+  @@unique([ownerId, slug])
+  @@index([ownerId])
+  @@index([apiKey])
+  @@index([isActive])
+}
+
+model ApiLog {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+
+  storeId    String
+  store      Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  endpoint   String
+  method     String
+  statusCode Int
+  ip         String?
+
+  @@index([storeId, createdAt])
+}
