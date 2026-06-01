@@ -112,7 +112,7 @@ export function InventoryFilters({
               type="checkbox"
               checked={activeOnly}
               onChange={(e) => onActiveOnlyChange(e.target.checked)}
-              className="h-4 w-4 accent-[var(--clr-yellow)]"
+              className="h-4 w-4 accent-(--clr-yellow)"
             />
           </div>
           <div className="flex items-center gap-2">

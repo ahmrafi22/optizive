@@ -130,6 +130,21 @@ enum PaymentStatus {
   UNPAID
 }
 
+enum BuyerType {
+  PLATFORM_USER
+  EXTERNAL
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
 enum StockUnit {
   PCS
   KG

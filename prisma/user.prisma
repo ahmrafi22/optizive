@@ -75,6 +75,7 @@ model User {
   suppliedProducts    Product[] @relation("ProductSupplier")
   bundles             Bundle[]  @relation("BundleOwner")
   sales               Sale[]    @relation("SaleOwner")
+  purchases           Sale[]    @relation("SaleBuyer")
   smartBaskets        SmartBasket[] @relation("SmartBasketOwner")
   priceCompareResults PriceCompareResult[]
 

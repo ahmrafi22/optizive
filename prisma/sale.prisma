@@ -10,6 +10,10 @@ model Sale {
   customerName  String?
   customerPhone String?
 
+  buyerType     BuyerType     @default(EXTERNAL)
+  buyerId       String?
+  buyer         User?         @relation(fields: [buyerId], references: [id], name: "SaleBuyer")
+
   totalAmount   Float
   discount      Float         @default(0)
   finalAmount   Float
@@ -18,12 +22,19 @@ model Sale {
   paidAmount    Float         @default(0)
   dueAmount     Float
 
+  orderStatus   OrderStatus   @default(PENDING)
+
+  deliveryAddress String?
+  deliveryDate    DateTime?
+
   notes         String?
 
   items         SaleItem[]
 
   @@index([ownerId, createdAt])
   @@index([paymentStatus])
+  @@index([buyerType])
+  @@index([buyerId])
 }
 
 model SaleItem {
