@@ -159,3 +159,25 @@ enum StockUnit {
   CAN
   ROLL
 }
+
+enum PostType {
+  PROCUREMENT
+  GENERAL
+}
+
+enum PostStatus {
+  OPEN
+  FILLED
+  CLOSED
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+}
+
+enum FulfillmentStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}

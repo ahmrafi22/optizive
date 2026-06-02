@@ -1,0 +1,122 @@
+model Post {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+
+  title      String
+  content    String
+
+  type       PostType     @default(GENERAL)
+  status     PostStatus   @default(OPEN)
+
+  budget     Float?
+  needByDate DateTime?
+  image      String?
+
+  upvoteCount   Int @default(0)
+  downvoteCount Int @default(0)
+  commentCount  Int @default(0)
+
+  categories  PostCategory[]
+  postTags    PostTag[]
+  comments    Comment[]
+  votes       Vote[]
+  fulfillments Fulfillment[]
+
+  @@index([authorId, createdAt])
+  @@index([type, status])
+  @@index([createdAt])
+  @@index([upvoteCount])
+}
+
+model PostCategory {
+  id       String   @id @default(uuid())
+
+  postId   String
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  category Category
+
+  @@unique([postId, category])
+  @@index([category])
+}
+
+model Tag {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+
+  postTags  PostTag[]
+
+  @@index([slug])
+}
+
+model PostTag {
+  id    String @id @default(uuid())
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  tagId  String
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+  @@index([tagId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+
+  content   String
+
+  @@index([postId, createdAt])
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  type      VoteType
+
+  @@unique([postId, userId])
+  @@index([postId])
+}
+
+model Fulfillment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  supplierId String
+  supplier   User     @relation(fields: [supplierId], references: [id])
+
+  message   String
+  price     Float?
+  estimatedDelivery DateTime?
+
+  status    FulfillmentStatus @default(PENDING)
+
+  @@index([postId, status])
+  @@index([supplierId])
+}

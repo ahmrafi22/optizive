@@ -81,6 +81,10 @@ model User {
   smartBaskets        SmartBasket[] @relation("SmartBasketOwner")
   priceCompareResults PriceCompareResult[]
   chats               Chat[]
+  communityPosts       Post[]
+  communityComments    Comment[]
+  communityVotes       Vote[]
+  communityFulfillments Fulfillment[]
 
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])
