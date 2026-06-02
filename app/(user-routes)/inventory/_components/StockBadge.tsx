@@ -1,17 +1,4 @@
-import {
-  LuTriangleAlert,
-  LuCheck as LuCheckCircle2,
-  LuCircleX as LuXCircle,
-} from "react-icons/lu";
-
-import { STATUS_BADGES, type InventoryStockStatus } from "./types";
-
-const STATUS_ICONS: Record<InventoryStockStatus, typeof LuCheckCircle2> = {
-  IN_STOCK: LuCheckCircle2,
-  LOW_STOCK: LuTriangleAlert,
-  OUT_OF_STOCK: LuXCircle,
-  INACTIVE: LuXCircle,
-};
+import { STATUS_BADGES, STATUS_ICONS, type InventoryStockStatus } from "./types";
 
 export function StockBadge({ status }: { status: InventoryStockStatus }) {
   const Icon = STATUS_ICONS[status];

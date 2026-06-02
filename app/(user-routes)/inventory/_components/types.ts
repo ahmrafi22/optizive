@@ -26,6 +26,9 @@ import {
   LuFlaskRound,
   LuCylinder,
   LuUtensils,
+  LuTriangleAlert,
+  LuCheck as LuCheckCircle2,
+  LuCircleX as LuXCircle,
 } from "react-icons/lu";
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
@@ -156,6 +159,13 @@ export const STOCK_UNITS = [
   "ROLL",
 ] as const;
 
+export const STATUS_ICONS: Record<InventoryStockStatus, typeof LuCheckCircle2> = {
+  IN_STOCK: LuCheckCircle2,
+  LOW_STOCK: LuTriangleAlert,
+  OUT_OF_STOCK: LuXCircle,
+  INACTIVE: LuXCircle,
+};
+
 export const STATUS_BADGES: Record<InventoryStockStatus, string> = {
   IN_STOCK: "border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",
   LOW_STOCK: "border-amber-400/30 bg-amber-400/10 text-amber-700 dark:text-amber-300",
@@ -268,5 +278,6 @@ export function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "2-digit",
+    year: "numeric",
   }).format(new Date(value));
 }
