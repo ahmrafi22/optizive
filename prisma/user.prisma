@@ -80,6 +80,7 @@ model User {
   stores              Store[]
   smartBaskets        SmartBasket[] @relation("SmartBasketOwner")
   priceCompareResults PriceCompareResult[]
+  chats               Chat[]
 
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])

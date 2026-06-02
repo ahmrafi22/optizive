@@ -17,9 +17,6 @@ export default async function SalesPage() {
         <h1 className="text-2xl font-naston leading-tight text-(--clr-fg) sm:text-3xl">
           Sales
         </h1>
-        <p className="text-sm text-(--clr-fg-muted) mt-0.5">
-          Track all your sales — from platform users and external customers
-        </p>
       </div>
 
       {stats && <SalesStats stats={stats} />}

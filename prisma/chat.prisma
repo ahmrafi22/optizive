@@ -1,0 +1,27 @@
+model Chat {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+
+  title     String   @default("New Chat")
+
+  messages  ChatMessage[]
+
+  @@index([ownerId, updatedAt])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  role      String   // "user" | "assistant"
+  content   String
+
+  @@index([chatId, createdAt])
+}

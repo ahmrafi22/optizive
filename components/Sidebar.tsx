@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { FaUser, FaTruck, FaMoneyBillWave, FaCloud } from "react-icons/fa";
 import { TbLayoutDashboardFilled, } from "react-icons/tb";
 import { FaCodeCompare, FaBoxesPacking, FaBasketShopping, FaClock } from "react-icons/fa6";
+import { AiFillAliwangwang } from "react-icons/ai";
 
 import SignOutButton from './SignOutButton';
 
@@ -17,6 +18,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboardFilled },
+  { label: 'AI Chatbot', href: '/ai-chatbot', icon: AiFillAliwangwang },
   { label: 'Sales', href: '/sales', icon: FaMoneyBillWave },
   { label: 'Store API', href: '/store-api', icon: FaCloud },
   { label: 'Inventory', href: '/inventory', icon: FaBoxesPacking },
