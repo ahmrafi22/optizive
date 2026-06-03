@@ -2,6 +2,7 @@
 
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateText } from "ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 
@@ -214,6 +215,34 @@ async function callOpenCodeCompatible(history: { role: string; content: string }
   return text;
 }
 
+async function callGemini(history: { role: string; content: string }[]) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+
+  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: modelName });
+
+  const systemMsg = history.find((m) => m.role === "system");
+  const chatHistory = history
+    .filter((m) => m.role !== "system")
+    .map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+  const lastMsg = chatHistory.pop();
+
+  const chat = model.startChat({
+    history: chatHistory,
+    systemInstruction: systemMsg?.content ? { role: "system", parts: [{ text: systemMsg.content }] } : undefined,
+  });
+
+  const result = await chat.sendMessage(lastMsg!.parts[0].text);
+  return result.response.text();
+}
+
 export async function sendMessage(
   chatId: string,
   content: string
@@ -244,6 +273,8 @@ export async function sendMessage(
 
   if (aiUse === "2") {
     replyContent = await callOpenCodeCompatible(history);
+  } else if (aiUse === "3") {
+    replyContent = await callGemini(history);
   } else {
     replyContent = await callOpenRouter(history);
   }
