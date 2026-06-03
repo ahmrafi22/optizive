@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Optizive
+
+Inventory management & B2B platform for Bangladeshi grocery businesses.
+
+## Features
+
+- **Auth** — Email/password + Google OAuth via NextAuth v5, role-based access (STORE_OWNER / SUPPLIER / BOTH)
+- **Onboarding** — Multi-step wizard collecting business profile, role-specific preferences (seller/supplier)
+- **Dashboard** — Revenue/sales trends, category distribution, top products, low-stock alerts, recommended suppliers
+- **Inventory** — Product CRUD, card/list views, search/filter/sort, stock status badges, Cloudinary image upload
+- **Sales** — Create sales with line items, invoice generation, payment & order status tracking, paginated history
+- **Expiry Tracker** — Risk scoring, sales velocity, clearance suggestions, predictive at-risk detection (90 days)
+- **Smart Basket** — Curated baskets with AI recommendations, public sharing, one-click buy-to-sale
+- **Price Compare** — Multi-market price comparison via SSE streaming, history, savings summary
+- **Supplier Network** — Personalized match scoring, search/filter, profiles, restock suggestions, bulk discount alerts
+- **Community** — Posts feed (PROCUREMENT / GENERAL), comments, votes, fulfillment system with quotes
+- **AI Chatbot (OptiBot)** — Persistent chat threads, inventory/sales/sourcing/demand advice, Bangladesh market context
+- **Store API** — Auto-generated API keys, endpoint docs, hit logging, activate/deactivate stores
+- **Public API** — RESTful endpoints for products, sales, smart baskets, price compare
+- **Public Product Pages** — Public product info & update pages
+
+## Tech Stack
+
+Next.js 16, React 19, TypeScript, Tailwind CSS v4, Prisma ORM v7 (Neon/PostgreSQL), NextAuth v5, Cloudinary, Recharts, Motion.dev
 
 ## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

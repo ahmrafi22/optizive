@@ -16,7 +16,8 @@
     "seed:products": "tsx scripts/seed-grocery-products.ts",
     "seed:sales": "tsx scripts/seed-sales-data.ts",
     "seed:all": "tsx scripts/seed-grocery-products.ts && tsx scripts/seed-sales-data.ts",
-    "seed:expiry": "tsx scripts/seed-expiry-data.ts"
+    "seed:expiry": "tsx scripts/seed-expiry-data.ts",
+    "debug:basket": "tsx scripts/debug-smart-basket.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
