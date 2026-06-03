@@ -1,5 +1,7 @@
 "use server";
 
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { generateText } from "ai";
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 
@@ -31,7 +33,7 @@ const SYSTEM_PROMPT = `You are OptiBot, an expert sales & inventory optimization
 ## YOUR ROLE
 You help store owners, suppliers, and distributors optimize their sales, inventory, pricing, and supply chain decisions. Be practical, data-driven, and actionable. Use Bengali-market context (BDT currency, local suppliers, seasonal demand like Pohela Boishakh, Eid, winter harvest).
 
-## CORE CAPABILITIES
+## CORE CAPABILITIESObject literal may only specify known properties, and 'maxTokens' does not exist in type 'CallSettings & (Prompt & { model: LanguageModel; tools?: ToolSet | undefined; toolChoice?: ToolChoice<NoInfer<ToolSet>> | undefined; ... 19 more ...; _internal?: { ...; } | undefined; })'.
 
 ### 1. INVENTORY OPTIMIZATION
 - Identify slow-moving stock and suggest markdowns, bundles, or clearance strategies
@@ -158,31 +160,11 @@ export async function updateChatTitle(chatId: string, title: string): Promise<vo
   });
 }
 
-export async function sendMessage(
-  chatId: string,
-  content: string
-): Promise<{ userMessage: ChatMessage; assistantMessage: ChatMessage }> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) throw new Error("Not authenticated");
-
+async function callOpenRouter(history: { role: string; content: string }[]) {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OpenRouter API key not configured");
 
   const model = process.env.OPENROUTER_MODEL || "openrouter/free";
-
-  const chat = await prisma.chat.findFirst({
-    where: { id: chatId, ownerId: userId },
-    include: { messages: { orderBy: { createdAt: "asc" } } },
-  });
-
-  if (!chat) throw new Error("Chat not found");
-
-  const savedUserMessage = await prisma.chatMessage.create({
-    data: { chatId, role: "user", content },
-  });
-
-  const history = [...chat.messages, savedUserMessage];
 
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -196,21 +178,75 @@ export async function sendMessage(
       model,
       temperature: 0.7,
       max_tokens: 2048,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...history.map((m) => ({ role: m.role, content: m.content })),
-      ],
+      messages: history,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("[Chatbot AI] Error", response.status, errorText);
+    console.error("[Chatbot AI] OpenRouter Error", response.status, errorText);
     throw new Error(`AI request failed: ${response.status}`);
   }
 
   const data = (await response.json()) as any;
-  const replyContent = data?.choices?.[0]?.message?.content ?? "";
+  return data?.choices?.[0]?.message?.content ?? "";
+}
+
+async function callOpenCodeCompatible(history: { role: string; content: string }[]) {
+  const apiKey = process.env.OPENCODE_KEY;
+  if (!apiKey) throw new Error("OPENCODE_KEY not configured");
+
+  const model = process.env.OPENCODE_MODEL || "nemotron-3-super-free";
+
+  const client = createOpenAICompatible({
+    name: "opencode",
+    apiKey,
+    baseURL: "https://opencode.ai/zen/v1",
+  });
+
+  const { text } = await generateText({
+    model: client.chatModel(model),
+    messages: history as any,
+    temperature: 0.7,
+    maxOutputTokens: 2048,
+  });
+
+  return text;
+}
+
+export async function sendMessage(
+  chatId: string,
+  content: string
+): Promise<{ userMessage: ChatMessage; assistantMessage: ChatMessage }> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) throw new Error("Not authenticated");
+
+  const chat = await prisma.chat.findFirst({
+    where: { id: chatId, ownerId: userId },
+    include: { messages: { orderBy: { createdAt: "asc" } } },
+  });
+
+  if (!chat) throw new Error("Chat not found");
+
+  const savedUserMessage = await prisma.chatMessage.create({
+    data: { chatId, role: "user", content },
+  });
+
+  const history = [
+    { role: "system", content: SYSTEM_PROMPT },
+    ...chat.messages.map((m) => ({ role: m.role, content: m.content })),
+    { role: "user", content },
+  ];
+
+  const aiUse = process.env.AI_USE;
+  let replyContent: string;
+
+  if (aiUse === "2") {
+    replyContent = await callOpenCodeCompatible(history);
+  } else {
+    replyContent = await callOpenRouter(history);
+  }
 
   const savedAssistantMessage = await prisma.chatMessage.create({
     data: { chatId, role: "assistant", content: replyContent },

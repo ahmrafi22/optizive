@@ -20,10 +20,12 @@
     "debug:basket": "tsx scripts/debug-smart-basket.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.48",
     "@neondatabase/serverless": "^1.0.2",
     "@number-flow/react": "^0.6.0",
     "@prisma/adapter-neon": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "ai": "^6.0.195",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",
