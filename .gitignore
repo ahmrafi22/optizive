@@ -12,7 +12,8 @@
 
 # testing
 /coverage
-
+data/raw/
+*.csv
 # next.js
 /.next/
 /out/
@@ -42,4 +43,3 @@ next-env.d.ts
 generated
 migrations
 skills/
-raw/

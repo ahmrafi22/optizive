@@ -2,6 +2,10 @@
 
 Inventory management & B2B platform for Bangladeshi grocery businesses.
 
+# Docs
+
+check [docs](https://github.com/k-md-mahi/Optizive/tree/main/docs) for detailed documentation on architecture, API, deployment, and more.
+
 ## Features
 
 - **Auth** — Email/password + Google OAuth via NextAuth v5, role-based access (STORE_OWNER / SUPPLIER / BOTH)
