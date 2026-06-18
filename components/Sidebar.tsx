@@ -7,7 +7,7 @@ import { FaUser, FaTruck, FaMoneyBillWave, FaCloud } from "react-icons/fa";
 import { TbLayoutDashboardFilled, } from "react-icons/tb";
 import { FaCodeCompare, FaBoxesPacking, FaBasketShopping, FaClock } from "react-icons/fa6";
 import { AiFillAliwangwang } from "react-icons/ai";
-import { LuMessageSquare } from "react-icons/lu";
+import { LuMessageSquare, LuClipboardList } from "react-icons/lu";
 
 import SignOutButton from './SignOutButton';
 
@@ -26,6 +26,7 @@ const navItems: NavItem[] = [
   { label: 'Expiry Tracker', href: '/expiry-tracker', icon: FaClock },
   { label: 'Smart Basket', href: '/smart-basket', icon: FaBasketShopping },
   { label: 'Community', href: '/community', icon: LuMessageSquare },
+  { label: 'Procurement', href: '/procurement', icon: LuClipboardList },
   { label: 'Suppliers', href: '/suppliers', icon: FaTruck },
   { label: 'Price Compare', href: '/price-compare', icon: FaCodeCompare },
   { label: 'Profile', href: '/profile', icon: FaUser },

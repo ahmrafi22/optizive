@@ -6,6 +6,7 @@ import { LuMenu, LuMoon, LuSun } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
 import { useSession } from 'next-auth/react';
 import SignOutButton from './SignOutButton';
+import { ProcurementBell } from '@/app/(user-routes)/procurement/_components/ProcurementBell';
 
 interface TopBarProps {
   onMenuToggle?: () => void;
@@ -44,6 +45,8 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
       </span>
 
       <div className="justify-self-end flex items-center gap-3 sm:ml-auto">
+        <ProcurementBell />
+
         <Link
           href="/profile"
           className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg) transition-colors hover:border-(--clr-border-hover) overflow-hidden"
