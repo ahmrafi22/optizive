@@ -14,6 +14,15 @@ interface Props {
   initialData: SalesListResponse | null;
 }
 
+type DateRange = "ALL" | "TODAY" | "LAST_7" | "LAST_30";
+
+const DATE_RANGES: { key: DateRange; label: string }[] = [
+  { key: "ALL", label: "All" },
+  { key: "TODAY", label: "Today" },
+  { key: "LAST_7", label: "Last 7 Days" },
+  { key: "LAST_30", label: "Last 30 Days" },
+];
+
 const PAYMENT_FILTERS: (PaymentStatus | "ALL")[] = ["ALL", "PAID", "PARTIAL", "UNPAID"];
 const BUYER_FILTERS: (BuyerType | "ALL")[] = ["ALL", "PLATFORM_USER", "EXTERNAL"];
 const STATUS_FILTERS: (OrderStatus | "ALL")[] = ["ALL", "PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
@@ -22,6 +31,7 @@ export default function SalesListView({ initialData }: Props) {
   const router = useRouter();
   const [data, setData] = useState(initialData);
   const [search, setSearch] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange>("ALL");
   const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | "ALL">("ALL");
   const [buyerFilter, setBuyerFilter] = useState<BuyerType | "ALL">("ALL");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "ALL">("ALL");
@@ -31,6 +41,29 @@ export default function SalesListView({ initialData }: Props) {
   const [showFilters, setShowFilters] = useState(false);
 
   const fetchSales = useCallback(async () => {
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    let dateFrom: string | undefined;
+    let dateTo: string | undefined;
+
+    if (dateRange === "TODAY") {
+      dateFrom = todayStart.toISOString();
+      dateTo = now.toISOString();
+    } else if (dateRange === "LAST_7") {
+      const d = new Date(todayStart);
+      d.setDate(d.getDate() - 6);
+      dateFrom = d.toISOString();
+      dateTo = now.toISOString();
+    } else if (dateRange === "LAST_30") {
+      const d = new Date(todayStart);
+      d.setDate(d.getDate() - 29);
+      dateFrom = d.toISOString();
+      dateTo = now.toISOString();
+    }
+
     const result = await listSales({
       page,
       limit: 20,
@@ -38,11 +71,13 @@ export default function SalesListView({ initialData }: Props) {
       paymentStatus: paymentFilter === "ALL" ? undefined : paymentFilter,
       buyerType: buyerFilter === "ALL" ? undefined : buyerFilter,
       orderStatus: statusFilter === "ALL" ? undefined : statusFilter,
+      dateFrom,
+      dateTo,
       sort,
       order: sortOrder,
     });
     if (result) setData(result);
-  }, [page, search, paymentFilter, buyerFilter, statusFilter, sort, sortOrder]);
+  }, [page, search, dateRange, paymentFilter, buyerFilter, statusFilter, sort, sortOrder]);
 
   useEffect(() => {
     fetchSales();
@@ -63,12 +98,16 @@ export default function SalesListView({ initialData }: Props) {
     const date = new Date(d);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days === 0) return "Today";
-    if (days === 1) return "Yesterday";
-    if (days < 7) return `${days}d ago`;
+    const absDays = Math.abs(Math.floor(diff / (1000 * 60 * 60 * 24)));
+    if (diff >= 0) {
+      if (absDays === 0) return "Today";
+      if (absDays === 1) return "Yesterday";
+      if (absDays < 7) return `${absDays}d ago`;
+    }
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
+
+  const hasActiveFilters = dateRange !== "ALL" || paymentFilter !== "ALL" || buyerFilter !== "ALL" || statusFilter !== "ALL";
 
   return (
     <div className="space-y-4">
@@ -88,49 +127,72 @@ export default function SalesListView({ initialData }: Props) {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
-              showFilters ? "border-(--clr-teal-dim) bg-(--clr-teal-dim)/10 text-(--clr-teal-dim)" : "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted) hover:text-(--clr-fg)"
+              showFilters || hasActiveFilters
+                ? "border-(--clr-teal-dim) bg-(--clr-teal-dim)/10 text-(--clr-teal-dim)"
+                : "border-(--clr-border) bg-(--clr-surface2) text-(--clr-fg-muted) hover:text-(--clr-fg)"
             }`}
           >
             <LuFilter className="h-4 w-4" />
             Filters
+            {hasActiveFilters && (
+              <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-(--clr-teal-dim) text-[10px] font-bold text-white">
+                {(dateRange !== "ALL" ? 1 : 0) + (paymentFilter !== "ALL" ? 1 : 0) + (buyerFilter !== "ALL" ? 1 : 0) + (statusFilter !== "ALL" ? 1 : 0)}
+              </span>
+            )}
           </button>
-
         </div>
       </div>
 
-      {/* Filter Chips */}
-      {showFilters && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="flex flex-wrap items-center gap-2 rounded-xl border border-(--clr-border) bg-(--clr-surface2) p-3"
-        >
-          <span className="text-xs font-semibold uppercase tracking-wider text-(--clr-fg-muted) mr-1">Payment:</span>
-          {PAYMENT_FILTERS.map((f) => (
-            <button key={f} onClick={() => { setPaymentFilter(f); setPage(1); }}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                paymentFilter === f ? "bg-(--clr-teal-dim) text-white" : "bg-(--clr-surface) text-(--clr-fg-muted) hover:text-(--clr-fg)"
-              }`}
-            >{f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}</button>
-          ))}
-          <span className="text-xs font-semibold uppercase tracking-wider text-(--clr-fg-muted) mx-1">Buyer:</span>
-          {BUYER_FILTERS.map((f) => (
-            <button key={f} onClick={() => { setBuyerFilter(f); setPage(1); }}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                buyerFilter === f ? "bg-(--clr-teal-dim) text-white" : "bg-(--clr-surface) text-(--clr-fg-muted) hover:text-(--clr-fg)"
-              }`}
-            >{f === "ALL" ? "All" : f === "PLATFORM_USER" ? "Platform" : "External"}</button>
-          ))}
-          <span className="text-xs font-semibold uppercase tracking-wider text-(--clr-fg-muted) mx-1">Status:</span>
-          {STATUS_FILTERS.map((f) => (
-            <button key={f} onClick={() => { setStatusFilter(f); setPage(1); }}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                statusFilter === f ? "bg-(--clr-teal-dim) text-white" : "bg-(--clr-surface) text-(--clr-fg-muted) hover:text-(--clr-fg)"
-              }`}
-            >{f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}</button>
-          ))}
-        </motion.div>
-      )}
+      {/* Compact filter row */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-teal-500 mr-0.5">Date:</span>
+        {DATE_RANGES.map((r) => (
+          <button key={r.key} onClick={() => { setDateRange(r.key); setPage(1); }}
+            className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+              dateRange === r.key
+                ? "bg-teal-500 text-white"
+                : "border border-(--clr-border) bg-(--clr-surface) text-(--clr-fg-muted) hover:border-teal-500/30 hover:text-teal-600"
+            }`}
+          >{r.label}</button>
+        ))}
+        {showFilters && (
+          <>
+            <span className="w-px h-3.5 bg-(--clr-border)" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500 mx-0.5">Payment:</span>
+            {PAYMENT_FILTERS.map((f) => (
+              <button key={f} onClick={() => { setPaymentFilter(f); setPage(1); }}
+                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+                  paymentFilter === f
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : "border border-transparent text-(--clr-fg-muted) hover:border-emerald-500/30 hover:text-emerald-600"
+                }`}
+              >{f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}</button>
+            ))}
+            <span className="w-px h-3.5 bg-(--clr-border)" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-500 mx-0.5">Buyer:</span>
+            {BUYER_FILTERS.map((f) => (
+              <button key={f} onClick={() => { setBuyerFilter(f); setPage(1); }}
+                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+                  buyerFilter === f
+                    ? "bg-blue-500/10 text-blue-600"
+                    : "border border-transparent text-(--clr-fg-muted) hover:border-blue-500/30 hover:text-blue-600"
+                }`}
+              >{f === "ALL" ? "All" : f === "PLATFORM_USER" ? "Platform" : "External"}</button>
+            ))}
+            <span className="w-px h-3.5 bg-(--clr-border)" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-500 mx-0.5">Status:</span>
+            {STATUS_FILTERS.map((f) => (
+              <button key={f} onClick={() => { setStatusFilter(f); setPage(1); }}
+                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+                  statusFilter === f
+                    ? "bg-amber-500/10 text-amber-600"
+                    : "border border-transparent text-(--clr-fg-muted) hover:border-amber-500/30 hover:text-amber-600"
+                }`}
+              >{f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}</button>
+            ))}
+          </>
+        )}
+      </div>
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-(--clr-border) bg-(--clr-surface)">

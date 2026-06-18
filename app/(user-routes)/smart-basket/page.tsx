@@ -250,7 +250,7 @@ export default function SmartBasketPage() {
                 <h2 className="text-sm font-semibold text-(--clr-fg)">Your baskets ({baskets.length})</h2>
                 <div className="grid gap-4">
                   {baskets.map((basket) => (
-                    <SmartBasketCard key={basket.id} basket={basket} />
+                    <SmartBasketCard key={basket.id} basket={basket} linkTo={`/smart-basket/${basket.id}`} />
                   ))}
                 </div>
               </div>

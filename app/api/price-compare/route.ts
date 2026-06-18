@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
-import http from 'http';
+import https from 'https';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const BACKEND_URL = process.env.PRICE_COMPARE_API_URL || 'http://localhost:2222';
+const BACKEND_URL = process.env.PRICE_COMPARE_API_URL || 'https://optizive-scrape.vercel.app';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
 
   const stream = new ReadableStream({
     start(controller) {
-      const options: http.RequestOptions = {
+      const options: https.RequestOptions = {
         hostname: url.hostname,
-        port: url.port || 80,
+        port: url.port || 443,
         path: url.pathname + url.search,
         method: 'POST',
         headers: {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         },
       };
 
-      const proxyReq = http.request(options, (proxyRes) => {
+      const proxyReq = https.request(options, (proxyRes) => {
         if (proxyRes.statusCode && proxyRes.statusCode >= 400) {
           let errorBody = '';
           proxyRes.on('data', (chunk) => { errorBody += chunk.toString(); });

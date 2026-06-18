@@ -14,9 +14,12 @@ function AuthForms() {
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(
-    searchParams.get("error") ? "Invalid email or password." : null
-  );
+  const [loginError, setLoginError] = useState<string | null>(() => {
+    const err = searchParams.get("error");
+    if (err === "banned_user" || err === "AccessDenied") return "You are banned.";
+    if (err) return "Invalid email or password.";
+    return null;
+  });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Signup State
@@ -38,6 +41,11 @@ function AuthForms() {
         redirect: false,
       });
 
+      if (result?.error === "AccessDenied" || result?.error === "banned_user") {
+        setLoginError("You are banned.");
+        setIsLoggingIn(false);
+        return;
+      }
       if (result?.error) {
         setLoginError("Invalid email or password.");
         setIsLoggingIn(false);

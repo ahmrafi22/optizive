@@ -3,7 +3,7 @@ import { ORDER_CAPACITY_LABELS } from './profile-helpers';
 import { LuTrendingUp, LuStar, LuCalendar, LuPackage } from 'react-icons/lu';
 import type { SerializedUser } from '@/backend/user/user';
 
-export function ProfileStats({ user }: { user: SerializedUser }) {
+export function ProfileStats({ user, onRatingClick }: { user: SerializedUser; onRatingClick?: () => void }) {
   const ratingPct = Math.min((user.avgRating / 5) * 100, 100);
   const experiencePct = Math.min(((user.yearsInBusiness ?? 0) / 20) * 100, 100);
 
@@ -22,6 +22,7 @@ export function ProfileStats({ user }: { user: SerializedUser }) {
         value={user.avgRating.toFixed(1)}
         subValue={`${ratingPct.toFixed(0)}% of 5.0`}
         accent="green"
+        onClick={onRatingClick}
       />
       <MetricCard
         icon={LuCalendar}

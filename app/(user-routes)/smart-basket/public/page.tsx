@@ -75,7 +75,7 @@ export default function SmartBasketPublicPage() {
       ) : (
         <div className="grid gap-4">
           {baskets.map((basket) => (
-            <SmartBasketCard key={basket.id} basket={basket} showOwner />
+            <SmartBasketCard key={basket.id} basket={basket} showOwner linkTo={`/smart-basket/${basket.id}`} />
           ))}
         </div>
       )}

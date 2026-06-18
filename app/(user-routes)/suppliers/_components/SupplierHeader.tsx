@@ -1,4 +1,5 @@
-import { LuStar, LuBadgeCheck, LuMapPin, LuClock, LuPackage, LuTruck } from "react-icons/lu";
+import Link from "next/link";
+import { LuStar, LuBadgeCheck, LuMapPin, LuClock, LuPackage, LuTruck, LuExternalLink } from "react-icons/lu";
 import type { SupplierDetail } from "@/backend/supplier-recommender/types";
 import { CATEGORY_LABELS, SUPPLIER_TAG_LABELS, DELIVERY_TIME_LABELS, PRICING_TYPE_LABELS } from "@/app/(user-routes)/profile/_components/profile-helpers";
 import type { SupplierTag } from "@/prisma/generated/prisma/client";
@@ -15,12 +16,12 @@ export function SupplierHeader({ supplier }: { supplier: SupplierDetail }) {
       <div className="flex flex-col lg:flex-row">
         {/* Left — Avatar + Name */}
         <div className="w-full lg:w-72 lg:shrink-0 p-8 flex flex-col items-center justify-center bg-neutral-900 border-b lg:border-b-0 lg:border-r border-neutral-800">
-          <div className="relative h-24 w-24 overflow-hidden rounded-3xl bg-neutral-800 border border-neutral-700 mb-4">
+          <Link href={`/profile/${supplier.id}`} className="relative h-24 w-24 overflow-hidden rounded-3xl bg-neutral-800 border border-neutral-700 mb-4 block group">
             {supplier.profileImage ? (
               <img
                 src={supplier.profileImage}
                 alt={supplier.businessName ?? supplier.name}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
               />
             ) : (
@@ -28,10 +29,12 @@ export function SupplierHeader({ supplier }: { supplier: SupplierDetail }) {
                 {(supplier.businessName ?? supplier.name).charAt(0).toUpperCase()}
               </div>
             )}
-          </div>
-          <h1 className="text-xl font-naston text-white text-center">
-            {supplier.businessName || supplier.name}
-          </h1>
+          </Link>
+          <Link href={`/profile/${supplier.id}`} className="hover:underline underline-offset-2">
+            <h1 className="text-xl font-naston text-white text-center">
+              {supplier.businessName || supplier.name}
+            </h1>
+          </Link>
           {supplier.businessName && (
             <p className="text-sm text-neutral-500 mt-0.5">{supplier.name}</p>
           )}

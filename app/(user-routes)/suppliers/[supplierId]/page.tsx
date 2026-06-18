@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { LuPackage, LuArrowLeft } from "react-icons/lu";
+import { LuPackage, LuArrowLeft, LuShoppingCart } from "react-icons/lu";
 import { getSupplierProfile } from "@/backend/supplier-recommender/supplier-recommender";
 import type { SupplierDetail } from "@/backend/supplier-recommender/types";
 import { SupplierHeader } from "../_components/SupplierHeader";
 import { SupplierCatalog } from "../_components/SupplierCatalog";
+import { RequestProcurementDialog } from "@/app/(user-routes)/procurement/_components/RequestProcurementDialog";
 
 export default function SupplierDetailPage() {
   const { supplierId } = useParams<{ supplierId: string }>();
@@ -14,6 +15,7 @@ export default function SupplierDetailPage() {
   const [supplier, setSupplier] = useState<SupplierDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
 
   useEffect(() => {
     async function fetchSupplier() {
@@ -90,15 +92,33 @@ export default function SupplierDetailPage() {
     <div className="mx-auto w-full max-w-6xl pb-16">
       <SupplierHeader supplier={supplier} />
 
-      <div className="mt-8 flex items-center gap-2">
-        <h2 className="text-base uppercase tracking-widest text-white font-medium">Product Catalog</h2>
-        <span className="rounded-full border border-neutral-800 bg-neutral-900 px-2.5 py-0.5 text-[11px] text-neutral-400">
-          {supplier.products.length} items
-        </span>
+      <div className="mt-8 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base uppercase tracking-widest text-white font-medium">Product Catalog</h2>
+          <span className="rounded-full border border-neutral-800 bg-neutral-900 px-2.5 py-0.5 text-[11px] text-neutral-400">
+            {supplier.products.length} items
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowRequestDialog(true)}
+          className="inline-flex items-center gap-2 rounded-full bg-(--clr-teal-dim) px-5 py-2.5 text-sm font-semibold text-white hover:brightness-110 transition-all"
+        >
+          <LuShoppingCart className="h-4 w-4" />
+          Request Procurement
+        </button>
       </div>
       <div className="mt-4">
         <SupplierCatalog products={supplier.products} supplierId={supplierId} />
       </div>
+
+      <RequestProcurementDialog
+        open={showRequestDialog}
+        onClose={() => setShowRequestDialog(false)}
+        supplierId={supplierId}
+        supplierName={supplier.businessName || supplier.name}
+        products={supplier.products}
+      />
     </div>
   );
 }

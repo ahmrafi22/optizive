@@ -175,12 +175,14 @@ export function MetricCard({
   value,
   subValue,
   accent = 'yellow',
+  onClick,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
   subValue?: string;
   accent?: 'yellow' | 'teal' | 'green' | 'blue' | 'purple';
+  onClick?: () => void;
 }) {
   const accents = {
     yellow: 'bg-[rgba(255,244,79,0.2)] text-[#5c5400] dark:bg-[rgba(255,244,79,0.12)] dark:text-(--clr-yellow)',
@@ -190,7 +192,7 @@ export function MetricCard({
     purple: 'bg-[rgba(167,139,250,0.2)] text-[#6d28d9] dark:bg-[rgba(167,139,250,0.12)] dark:text-purple-400',
   };
   return (
-    <div className="bento-card p-5">
+    <div className={`bento-card p-5 ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
       <div className="flex items-center gap-2.5 mb-3">
         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${accents[accent]}`}>
           <Icon className="w-4 h-4" />

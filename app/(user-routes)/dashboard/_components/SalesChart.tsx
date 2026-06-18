@@ -172,11 +172,23 @@ export function SalesChart({
       </div>
 
       <div className="relative z-10 rounded-2xl border border-(--clr-border) bg-(--clr-surface2)/35 px-2 pb-1 pt-2">
+        <div className="absolute right-4 top-3 z-20 flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-primary" />
+            <span className="text-[10px] uppercase tracking-wider text-(--clr-fg-muted)">Sales</span>
+          </div>
+          {showRevenue && (
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-2 rounded-full bg-[#4ecdc4]" />
+              <span className="text-[10px] uppercase tracking-wider text-(--clr-fg-muted)">Revenue</span>
+            </div>
+          )}
+        </div>
         <ChartContainer initialDimension={{ width: 800, height: chartHeight }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
-              margin={{ top: 10, right: 8, left: -8, bottom: 0 }}
+              margin={{ top: 26, right: 0, left: 8, bottom: 0 }}
             >
               <defs>
                 <linearGradient
@@ -217,11 +229,24 @@ export function SalesChart({
               />
 
               <YAxis
+                yAxisId="left"
                 stroke="var(--clr-fg-muted)"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                dx={-8}
+                width={40}
+                tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="#4ecdc4"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                dx={8}
+                width={48}
+                tickFormatter={(v: number) => v >= 1000 ? `৳${(v / 1000).toFixed(0)}k` : `৳${v}`}
               />
 
               <Tooltip
@@ -244,6 +269,7 @@ export function SalesChart({
 
               <Area
                 type="monotone"
+                yAxisId="left"
                 dataKey="sales"
                 stroke="#fff44f"
                 strokeWidth={2.5}
@@ -258,6 +284,7 @@ export function SalesChart({
               {showRevenue && (
                 <Area
                   type="monotone"
+                  yAxisId="right"
                   dataKey="revenue"
                   stroke="#4ecdc4"
                   strokeWidth={2.5}
@@ -274,18 +301,7 @@ export function SalesChart({
         </ChartContainer>
       </div>
 
-      <div className="relative z-10 flex items-center gap-6">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-primary" />
-          <span className="text-xs text-(--clr-fg-muted)">Sales</span>
-        </div>
-        {showRevenue && (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-[#4ecdc4]" />
-            <span className="text-xs text-(--clr-fg-muted)">Revenue</span>
-          </div>
-        )}
-      </div>
+
     </motion.div>
   );
 }
