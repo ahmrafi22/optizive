@@ -1,6 +1,6 @@
 import type { CompareRequest, CompareResponse, ProductResult, StreamStage } from "@/app/(user-routes)/price-compare/_components/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_PRICE_COMPARE_API ?? "http://localhost:2222";
+const API_BASE_URL = process.env.NEXT_PUBLIC_PRICE_COMPARE_API ?? "https://optizive-scrape.vercel.app";
 
 export type { CompareRequest, CompareResponse, ProductResult, StreamStage };
 

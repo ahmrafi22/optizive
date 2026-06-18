@@ -137,9 +137,11 @@ export async function getProfile(): Promise<SerializedUser | null> {
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  });
+  const [dbUser, salesCount, purchasesCount] = await Promise.all([
+    prisma.user.findUnique({ where: { id: session.user.id } }),
+    prisma.sale.count({ where: { ownerId: session.user.id } }),
+    prisma.sale.count({ where: { buyerId: session.user.id } }),
+  ]);
   if (!dbUser) return null;
 
   const { updatedAt, password, ...rest } = dbUser;
@@ -148,6 +150,7 @@ export async function getProfile(): Promise<SerializedUser | null> {
     profileImage: dbUser.profileImage ?? null,
     createdAt: dbUser.createdAt.toISOString(),
     lastActiveAt: dbUser.lastActiveAt?.toISOString() ?? null,
+    totalTransactions: salesCount + purchasesCount,
   };
 }
 

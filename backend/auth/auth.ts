@@ -48,6 +48,7 @@ const authConfig = {
           role: user.role,
           username: user.username ?? undefined,
           onboarded: user.onboarded,
+          banned: user.banned,
         };
       },
     }),
@@ -59,15 +60,19 @@ const authConfig = {
   secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account }) {
-      // Handle Google sign-in
+      // Banned check for all providers
+      if ((user as any).banned) {
+        return false;
+      }
       if (account?.provider === "google" && user.email) {
-        try {
-          const existingUser = await prisma.user.findFirst({
-            where: { email: user.email },
-          });
-
-          if (!existingUser) {
-            // Create new user with Google data
+        const existingUser = await prisma.user.findFirst({
+          where: { email: user.email },
+        });
+        if (existingUser?.banned) {
+          return false;
+        }
+        if (!existingUser) {
+          try {
             const username = user.email.split("@")[0] + "_" + Date.now();
             await prisma.user.create({
               data: {
@@ -79,10 +84,10 @@ const authConfig = {
                 onboarded: false,
               },
             });
+          } catch (error) {
+            console.error("Error saving Google user:", error);
+            return false;
           }
-        } catch (error) {
-          console.error("Error saving Google user:", error);
-          return false;
         }
       }
       return true;

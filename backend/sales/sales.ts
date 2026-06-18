@@ -142,19 +142,25 @@ export async function listSales(query: SalesQuery = {}): Promise<SalesListRespon
   else if (query.sort === "customerName") orderBy.customerName = query.order || "asc";
   else orderBy.createdAt = query.order || "desc";
 
-  const [sales, total] = await Promise.all([
-    prisma.sale.findMany({
-      where,
-      orderBy,
-      skip,
-      take: limit,
-      include: {
-        items: { select: { id: true, quantity: true, totalPrice: true } },
-        buyer: { select: { id: true, businessName: true } },
-      },
-    }),
-    prisma.sale.count({ where }),
-  ]);
+  const allSales = await prisma.sale.findMany({
+    where,
+    orderBy,
+    include: {
+      items: { select: { id: true, quantity: true, totalPrice: true } },
+      buyer: { select: { id: true, businessName: true } },
+    },
+  });
+
+  const now = new Date();
+  allSales.sort((a, b) => {
+    const aFuture = a.createdAt > now ? 1 : 0;
+    const bFuture = b.createdAt > now ? 1 : 0;
+    if (aFuture !== bFuture) return aFuture - bFuture;
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  });
+
+  const total = allSales.length;
+  const sales = allSales.slice(skip, skip + limit);
 
   return {
     sales: sales.map((s) => ({
@@ -642,4 +648,109 @@ export async function getSalesChartData(): Promise<SalesChartData | null> {
   }
 
   return { monthlyTrend, paymentDistribution, buyerTypeDistribution, dailyRevenue };
+}
+
+export type ChartRange = "7d" | "30d" | "3m" | "6m" | "1y";
+
+export async function getSalesChartDataByRange(range: ChartRange): Promise<MonthlyTrend[] | null> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const now = new Date();
+  let startDate: Date;
+  const isDaily = range === "7d" || range === "30d";
+
+  if (range === "7d") {
+    startDate = new Date(now);
+    startDate.setDate(now.getDate() - 6);
+  } else if (range === "30d") {
+    startDate = new Date(now);
+    startDate.setDate(now.getDate() - 29);
+  } else if (range === "3m") {
+    startDate = new Date(now);
+    startDate.setMonth(now.getMonth() - 2);
+    startDate.setDate(1);
+  } else if (range === "6m") {
+    startDate = new Date(now);
+    startDate.setMonth(now.getMonth() - 5);
+    startDate.setDate(1);
+  } else {
+    startDate = new Date(now);
+    startDate.setMonth(now.getMonth() - 11);
+    startDate.setDate(1);
+  }
+
+  startDate.setHours(0, 0, 0, 0);
+
+  if (isDaily) {
+    const rows = await prisma.$queryRaw<Array<{ date: Date; revenue: number; sales: number }>>`
+      SELECT DATE("createdAt") as date, COALESCE(SUM("finalAmount"), 0) as revenue, COUNT(*)::int as sales
+      FROM "Sale"
+      WHERE "ownerId" = ${userId} AND "createdAt" >= ${startDate}
+      GROUP BY DATE("createdAt")
+      ORDER BY date ASC
+    `;
+    const dataMap = new Map<string, MonthlyTrend>();
+    for (const r of rows) {
+      const ds = r.date.toISOString().split("T")[0];
+      dataMap.set(ds, {
+        month: new Date(r.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        revenue: Number(r.revenue),
+        sales: Number(r.sales),
+      });
+    }
+    const days = range === "7d" ? 7 : 30;
+    const result: MonthlyTrend[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split("T")[0];
+      if (dataMap.has(ds)) {
+        result.push(dataMap.get(ds)!);
+      } else {
+        result.push({ month: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), revenue: 0, sales: 0 });
+      }
+    }
+    return result;
+  }
+
+  // Monthly grouping for 3m, 6m, 1y
+  const rows = await prisma.$queryRaw<Array<{ year: number; month: number; revenue: number; sales: number }>>`
+    SELECT
+      EXTRACT(YEAR FROM "createdAt")::int as year,
+      EXTRACT(MONTH FROM "createdAt")::int as month,
+      COALESCE(SUM("finalAmount"), 0) as revenue,
+      COUNT(*)::int as sales
+    FROM "Sale"
+    WHERE "ownerId" = ${userId} AND "createdAt" >= ${startDate}
+    GROUP BY year, month
+    ORDER BY year ASC, month ASC
+  `;
+
+  const dataMap = new Map<string, MonthlyTrend>();
+  for (const r of rows) {
+    const key = `${r.year}-${r.month}`;
+    dataMap.set(key, {
+      month: new Date(r.year, r.month - 1).toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
+      revenue: Number(r.revenue),
+      sales: Number(r.sales),
+    });
+  }
+
+  const months = range === "3m" ? 3 : range === "6m" ? 6 : 12;
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const result: MonthlyTrend[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setMonth(now.getMonth() - i);
+    const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+    const label = `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+    if (dataMap.has(key)) {
+      result.push(dataMap.get(key)!);
+    } else {
+      result.push({ month: label, revenue: 0, sales: 0 });
+    }
+  }
+  return result;
 }

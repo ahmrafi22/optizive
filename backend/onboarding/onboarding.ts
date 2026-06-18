@@ -58,12 +58,24 @@ export async function saveOnboarding(payload: OnboardingPayload) {
     return { ok: false, message: "Name and role are required." };
   }
 
+  const phone = payload.phone?.trim() || null;
+
+  if (phone) {
+    const existing = await prisma.user.findFirst({
+      where: { phone, NOT: { id: session.user.id } },
+      select: { id: true },
+    });
+    if (existing) {
+      return { ok: false, message: "Phone number is already in use by another account." };
+    }
+  }
+
   await prisma.user.update({
     where: { id: session.user.id },
     data: {
       name,
       role: payload.role,
-      phone: payload.phone?.trim() || null,
+      phone,
       businessName: payload.businessName?.trim() || null,
       businessType: payload.businessType ?? null,
       businessSize: payload.businessSize ?? null,
