@@ -3,6 +3,7 @@ enum UserRole {
   STORE_OWNER
   SUPPLIER
   BOTH
+  ADMIN
 }
 
 enum BusinessType {

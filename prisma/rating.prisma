@@ -1,0 +1,17 @@
+model Rating {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  raterId   String
+  rater     User     @relation(fields: [raterId], references: [id], name: "RatingRater")
+
+  rateeId   String
+  ratee     User     @relation(fields: [rateeId], references: [id], name: "RatingRatee")
+
+  score     Int
+  comment   String?
+
+  @@unique([raterId, rateeId])
+  @@index([rateeId, createdAt])
+  @@index([raterId])
+}

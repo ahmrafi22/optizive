@@ -55,6 +55,7 @@ model User {
   // TRUST / QUALITY SIGNALS
   // =========================
   isVerified        Boolean @default(false)
+  banned            Boolean @default(false)
   yearsInBusiness   Int?
   avgRating         Float   @default(0)
   totalTransactions Int     @default(0)
@@ -85,6 +86,10 @@ model User {
   communityComments    Comment[]
   communityVotes       Vote[]
   communityFulfillments Fulfillment[]
+  procurementRequestsSent     ProcurementRequest[] @relation("ProcurementBuyer")
+  procurementRequestsReceived ProcurementRequest[] @relation("ProcurementSupplier")
+  ratingsGiven   Rating[] @relation("RatingRater")
+  ratingsReceived Rating[] @relation("RatingRatee")
 
   @@index([role, district, primaryCategory])
   @@index([businessType, businessSize])

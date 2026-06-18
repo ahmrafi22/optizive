@@ -29,7 +29,8 @@ model Sale {
 
   notes         String?
 
-  items         SaleItem[]
+  items           SaleItem[]
+  procurementRequest ProcurementRequest?
 
   @@index([ownerId, createdAt])
   @@index([paymentStatus])

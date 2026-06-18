@@ -1,0 +1,45 @@
+enum ProcurementRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model ProcurementRequest {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  buyerId    String
+  buyer      User     @relation(fields: [buyerId], references: [id], name: "ProcurementBuyer")
+
+  supplierId String
+  supplier   User     @relation(fields: [supplierId], references: [id], name: "ProcurementSupplier")
+
+  status     ProcurementRequestStatus @default(PENDING)
+  notes      String?
+
+  items      ProcurementRequestItem[]
+
+  saleId     String?   @unique
+  sale       Sale?     @relation(fields: [saleId], references: [id])
+
+  @@index([buyerId, createdAt])
+  @@index([supplierId, createdAt])
+  @@index([status])
+}
+
+model ProcurementRequestItem {
+  id          String @id @default(uuid())
+
+  requestId   String
+  request     ProcurementRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  productId   String
+  productName String
+  quantity    Float
+  unitPrice   Float
+  totalPrice  Float
+
+  @@index([requestId])
+}
