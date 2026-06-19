@@ -10,10 +10,12 @@ export function MorphButton({
   children,
   onClick,
   isLoading = false,
+  icon,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   isLoading?: boolean;
+  icon?: React.ReactNode;
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -64,10 +66,11 @@ export function MorphButton({
         animate={{ color: (isHovered || isLoading) ? "#ffffff" : "#111111" }}
         transition={{ duration: 0.4 }}
       >
+        {children}
         {isLoading ? (
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
-          children
+          icon
         )}
       </motion.div>
     </button>

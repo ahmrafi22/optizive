@@ -11,13 +11,13 @@ import { ApiStatusTicker } from "./ApiStatusTicker";
 
 export function FeaturesSection() {
   return (
-    <main id="features" className="relative z-10 py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto">
-      <div className="mb-12 md:mb-16 text-center">
+    <main id="features" className="relative z-10 py-12 md:py-16 px-4 md:px-6 max-w-7xl mx-auto">
+      <div className="mb-8 md:mb-12 text-center">
         <h2 className="font-naston text-3xl md:text-4xl lg:text-5xl mb-4">Architectural Components</h2>
         <p className="font-serif text-lg md:text-xl lg:text-2xl text-zinc-400 italic">Precision tools for the modern digital merchant.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
 
         {/* Smart Inventory */}
         <motion.div
@@ -25,51 +25,51 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="bento-card noise-overlay md:col-span-12 lg:col-span-8 p-6 md:p-8 group flex flex-col justify-between overflow-hidden relative"
+          className="bento-card noise-overlay md:col-span-12 lg:col-span-8 p-5 md:p-6 group flex flex-col justify-between overflow-hidden relative"
         >
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4 md:mb-6">
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
               <MdOutlineInventory className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
               <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">SmartInventory &amp; Expiry Tracker</h3>
             </div>
-            <p className="text-zinc-400 max-w-md mb-8 text-base md:text-lg leading-relaxed">
+            <p className="text-zinc-400 max-w-md mb-5 md:mb-6 text-base md:text-lg leading-relaxed">
               Never lose a margin to spoilage again. Real-time visual countdowns and automated reordering logic.
             </p>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
-              <div className="bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
+              <div className="bg-black/40 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-2">
                   <span className="block text-[8px] md:text-[10px] text-primary/80 group-hover:text-primary font-bold uppercase tracking-widest transition-colors duration-300">Expires 2d</span>
                   <LuMilk className="w-4 h-4 text-primary/60 group-hover:text-primary transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Milk</div>
-                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary/50 group-hover:bg-primary w-4/5" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-3"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary/50 group-hover:bg-primary w-4/5" /></div>
               </div>
 
-              <div className="bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-zinc-400/50 transition-colors duration-300">
+              <div className="bg-black/40 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-zinc-400/50 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-2">
                   <span className="block text-[8px] md:text-[10px] text-zinc-500 group-hover:text-zinc-400 font-bold uppercase tracking-widest transition-colors duration-300">Stock 94%</span>
                   <LuCoffee className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Cold Brew</div>
-                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-zinc-600 group-hover:bg-zinc-400 w-full" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-3"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-zinc-600 group-hover:bg-zinc-400 w-full" /></div>
               </div>
 
-              <div className="bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
+              <div className="bg-black/40 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-2">
                   <span className="block text-[8px] md:text-[10px] text-red-400 font-bold uppercase tracking-widest transition-colors duration-300">Stock 15%</span>
                   <PiBreadFill className="w-4 h-4 text-red-400 transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Bread</div>
-                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-red-500/50 group-hover:bg-red-500 w-[15%]" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-3"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-red-500/50 group-hover:bg-red-500 w-[15%]" /></div>
               </div>
 
-              <div className="hidden md:block bg-black/40 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
+              <div className="hidden md:block bg-black/40 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl border border-white/5 group-hover:border-primary/30 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-2">
                   <span className="block text-[8px] md:text-[10px] text-primary font-bold uppercase tracking-widest transition-colors duration-300">Expires 1d</span>
                   <GiChickenOven className="w-4 h-4 text-primary transition-colors duration-300" />
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-zinc-200">Chicken</div>
-                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-4"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary w-1/5" /></div>
+                <div className="h-[3px] rounded-full overflow-hidden bg-white/6 mt-2 md:mt-3"><div className="h-full rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-primary w-1/5" /></div>
               </div>
             </div>
           </div>
@@ -81,16 +81,16 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bento-card md:col-span-6 lg:col-span-4 p-6 md:p-8 flex flex-col group"
+          className="bento-card md:col-span-6 lg:col-span-4 p-5 md:p-6 flex flex-col group"
         >
-          <div className="flex items-center gap-3 mb-4 md:mb-6">
+          <div className="flex items-center gap-3 mb-3 md:mb-4">
             <MdOutlineAutoGraph className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
             <h3 className="text-xl md:text-2xl font-naston text-zinc-100">Demand Forecasting</h3>
           </div>
           <p className="text-zinc-400 mb-auto leading-relaxed text-sm md:text-base">
             Predictive curves for flash sales and festival spikes using neural networking.
           </p>
-          <div className="mt-8 flex items-end gap-1.5 h-20 md:h-24">
+          <div className="mt-6 flex items-end gap-1.5 h-16 md:h-20">
             {[33, 50, 66, 90, 50].map((h, i) => (
               <div
                 key={i}
@@ -107,19 +107,19 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bento-card md:col-span-6 lg:col-span-4 p-6 md:p-8 group"
+          className="bento-card md:col-span-6 lg:col-span-4 p-5 md:p-6 group"
         >
-          <div className="flex items-center gap-3 mb-4 md:mb-6">
+          <div className="flex items-center gap-3 mb-3 md:mb-4">
             <IoPricetagSharp className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
             <h3 className="text-xl md:text-2xl font-naston text-zinc-100">Price Monitor</h3>
           </div>
-          <p className="text-zinc-400 mb-6 leading-relaxed text-sm md:text-base">Comparative charts &amp; insights to outpace competitors.</p>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-black/40 rounded-xl text-sm border border-transparent group-hover:border-white/5 transition-colors">
+          <p className="text-zinc-400 mb-5 leading-relaxed text-sm md:text-base">Comparative charts &amp; insights to outpace competitors.</p>
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between px-3 py-2.5 bg-black/40 rounded-xl text-sm border border-transparent group-hover:border-white/5 transition-colors">
               <span className="text-zinc-300">Competitor A</span>
               <span className="font-mono text-zinc-500 line-through group-hover:text-zinc-400 transition-colors">$29.99</span>
             </div>
-            <div className="relative flex items-center justify-between p-3 bg-primary/10 border border-primary/20 rounded-xl text-sm overflow-hidden group-hover:bg-primary/20 transition-colors duration-300">
+            <div className="relative flex items-center justify-between px-3 py-2.5 bg-primary/10 border border-primary/20 rounded-xl text-sm overflow-hidden group-hover:bg-primary/20 transition-colors duration-300">
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: "200%" }}
@@ -138,15 +138,15 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bento-card noise-overlay md:col-span-12 lg:col-span-8 p-6 md:p-8 relative overflow-hidden group"
+          className="bento-card noise-overlay md:col-span-12 lg:col-span-8 p-5 md:p-6 relative group"
         >
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+          <div className="flex flex-col md:flex-row gap-6 items-center md:items-center">
             <div className="flex-1 w-full">
-              <div className="flex items-center gap-3 mb-4 md:mb-6">
+              <div className="flex items-center gap-3 mb-3 md:mb-4">
                 <IoPeopleOutline className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
                 <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">Smart Procurement</h3>
               </div>
-              <p className="text-zinc-400 mb-6 text-sm md:text-lg leading-relaxed">
+              <p className="text-zinc-400 mb-5 text-sm md:text-lg leading-relaxed">
                 Connect with social network procurement groups. Unlock tiered pricing with collective buying tags.
               </p>
               <div className="flex flex-wrap gap-2">
@@ -154,9 +154,9 @@ export function FeaturesSection() {
                 <span className="inline-flex items-center gap-1 px-[0.65rem] py-[0.2rem] rounded-full text-[0.65rem] font-bold tracking-[0.08em] uppercase bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary/20 transition-colors text-xs md:text-sm">Save 15%</span>
               </div>
             </div>
-            <div className="flex-1 flex items-center justify-center pointer-events-none mt-4 md:mt-0 gap-4 md:gap-8 md:translate-y-6 -translate-y-2">
+            <div className="flex-1 w-full flex items-center justify-center pointer-events-none mt-6 md:mt-0 gap-4 md:gap-8 py-4 md:py-2">
               {/* Circle 1 - 2 People */}
-              <div className="relative h-24 w-24 md:h-36 md:w-36 shrink-0">
+              <div className="relative h-24 w-24 md:h-32 md:w-32 shrink-0">
                 <div className="absolute inset-0 border-2 md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_10s_linear_infinite] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
                 {/* 12 o'clock */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 md:w-10 md:h-10 bg-black rounded-full border-2 border-primary md:border-zinc-600 flex items-center justify-center md:group-hover:border-primary transition-colors duration-300">
@@ -177,7 +177,7 @@ export function FeaturesSection() {
               </div>
 
               {/* Circle 2 - 3 People */}
-              <div className="relative h-20 w-20 md:h-32 md:w-32 shrink-0 md:translate-y-20 translate-y-0">
+              <div className="relative h-20 w-20 md:h-28 md:w-28 shrink-0 md:translate-y-8">
                 <div className="absolute inset-0 border-2 md:border-[3px] border-dashed border-primary/30 md:border-white/10 rounded-full animate-[spin_12s_linear_infinite_reverse] md:[animation-play-state:paused] md:group-hover:[animation-play-state:running] md:group-hover:border-primary/30 transition-colors duration-500" />
                 {/* 12 o'clock */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 bg-black rounded-full border-2 border-primary md:border-zinc-600 flex items-center justify-center md:group-hover:border-primary transition-colors duration-300">
@@ -206,10 +206,10 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="bento-card md:col-span-12 lg:col-span-6 p-6 md:p-8 flex flex-col justify-between group overflow-hidden"
+          className="bento-card md:col-span-12 lg:col-span-6 p-5 md:p-6 flex flex-col justify-between group overflow-hidden"
         >
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4 md:mb-6">
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
               <IoCartOutline className="transition-transform duration-240 ease-[cubic-bezier(0.23,1,0.32,1)] w-8 h-8 md:w-10 md:h-10 text-primary" />
               <h3 className="text-2xl md:text-3xl font-naston text-zinc-100">Basket Engine</h3>
             </div>
@@ -218,7 +218,7 @@ export function FeaturesSection() {
             </p>
           </div>
 
-          <div className="relative h-24 md:h-32 w-full mt-6 md:mt-8 flex items-center px-4 md:px-8 border border-white/5 rounded-2xl bg-black group-hover:border-primary/20 transition-colors duration-500 overflow-hidden">
+          <div className="relative h-20 md:h-28 w-full mt-5 md:mt-6 flex items-center px-4 md:px-6 border border-white/5 rounded-2xl bg-black group-hover:border-primary/20 transition-colors duration-500 overflow-hidden">
             {/* Bottom Glow */}
             <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-primary/10 to-transparent pointer-events-none" />
 
@@ -271,7 +271,7 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="bento-card md:col-span-12 lg:col-span-6 p-6 md:p-8 font-mono text-xs md:text-sm flex flex-col justify-between group overflow-x-auto scrollbar-hide"
+          className="bento-card md:col-span-12 lg:col-span-6 p-5 md:p-6 font-mono text-xs md:text-sm flex flex-col justify-between group overflow-x-auto scrollbar-hide"
         >
           <div>
             <div className="flex justify-between items-start mb-4">

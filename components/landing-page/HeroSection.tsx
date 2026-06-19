@@ -223,12 +223,12 @@ export function HeroSection() {
               transition={{ delay: 0.52, duration: 0.55, ease: EASE_OUT }}
               className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0 w-full lg:w-auto mt-2 lg:mt-0"
             >
-              <MorphButton 
+              <MorphButton
                 onClick={handleStartOptimizing}
                 isLoading={isNavigating}
+                icon={<ArrowRight className="w-4 h-4 transition-transform duration-220 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-1" />}
               >
                 Start Optimizing
-                <ArrowRight className="w-4 h-4 transition-transform duration-220 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-1" />
               </MorphButton>
             </motion.div>
           </div>
