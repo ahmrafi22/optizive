@@ -49,9 +49,10 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const fmtDate = (d: Date) =>
   `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const token = (days: number, hours = 0) => {
-  const d = days !== 0 ? `T${days >= 0 ? "+" : ""}${days}d` : "";
+  const d = days !== 0 ? `${days >= 0 ? "+" : ""}${days}d` : "";
   const h = hours !== 0 ? `${hours >= 0 ? "+" : ""}${hours}h` : "";
-  return d + h || "T0d";
+  const body = d + h;
+  return body ? "T" + body : "T0d";
 };
 const isoAgo = (days: number) => token(-days);
 

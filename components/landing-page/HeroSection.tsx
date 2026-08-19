@@ -16,6 +16,7 @@ import {
   HandCoins,
   Info,
   X,
+  Loader2,
 } from "lucide-react";
 import { IoPricetagSharp } from "react-icons/io5";
 import { GiAndromedaChain } from "react-icons/gi";
@@ -260,7 +261,14 @@ export function HeroSection() {
                 className="flex items-center justify-center h-12 px-7 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto text-white disabled:opacity-60 disabled:cursor-wait cursor-pointer"
                 style={{ background: "var(--clr-charcoal)", border: "1px solid var(--clr-charcoal)" }}
               >
-                {isDemoNavigating ? "Logging in…" : "Check Demo"}
+                {isDemoNavigating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Logging in…
+                  </>
+                ) : (
+                  "Check Demo"
+                )}
               </button>
               <button
                 onClick={() => setIsInfoOpen(true)}

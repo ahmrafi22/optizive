@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync, statSync } from "fs";
 import { join } from "path";
 import { DEMO_USER_ID } from "@/lib/demo-constants";
 
@@ -6,9 +6,11 @@ import { DEMO_USER_ID } from "@/lib/demo-constants";
 // Relative date tokens: "T-3d", "T+7d", "T-5h", "T-3d-5h"
 // ---------------------------------------------------------------------------
 
-const TOKEN_RE = /^T([+-]?\d+)d([+-]?\d+)h$|^T([+-]?\d+)d$|^T([+-]?\d+)h$/;
+const TOKEN_RE = /^T?([+-]?\d+)d([+-]?\d+)h$|^T?([+-]?\d+)d$|^T?([+-]?\d+)h$/;
+const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 function resolveToken(value: string): Date | null {
+  if (value === "T") return new Date();
   const m = TOKEN_RE.exec(value);
   if (!m) return null;
   const days = m[1] ? parseInt(m[1], 10) : m[3] ? parseInt(m[3], 10) : 0;
@@ -31,7 +33,9 @@ function materializeDates(node: unknown): unknown {
   }
   if (typeof node === "string") {
     const resolved = resolveToken(node);
-    return resolved ?? node;
+    if (resolved) return resolved;
+    const isoDate = ISO_RE.test(node) ? new Date(node) : null;
+    return isoDate && !Number.isNaN(isoDate.getTime()) ? isoDate : node;
   }
   return node;
 }
@@ -57,6 +61,23 @@ export interface DemoData {
 }
 
 let state: DemoData | null = null;
+let stateMtimes: Record<string, number> = {};
+
+const DATA_FILES = [
+  "users.json",
+  "products.json",
+  "sales.json",
+  "sale-items.json",
+  "chats.json",
+  "smart-baskets.json",
+  "procurement.json",
+  "posts.json",
+  "tags.json",
+  "ratings.json",
+  "stores.json",
+  "api-logs.json",
+  "price-compare.json",
+];
 
 function loadFile(name: string): any[] {
   const path = join(process.cwd(), "data", "demo", name);
@@ -64,8 +85,24 @@ function loadFile(name: string): any[] {
   return materializeDates(JSON.parse(raw)) as any[];
 }
 
+function dataFilesChanged(): boolean {
+  for (const name of DATA_FILES) {
+    const path = join(process.cwd(), "data", "demo", name);
+    try {
+      const mtime = statSync(path).mtimeMs;
+      if (stateMtimes[name] !== undefined && stateMtimes[name] !== mtime) {
+        return true;
+      }
+    } catch {
+      // file missing — treat as unchanged (only checked on first load)
+    }
+  }
+  return false;
+}
+
 export function getDemoStore(): DemoData {
-  if (state) return state;
+  if (state && !dataFilesChanged()) return state;
+  stateMtimes = {};
   state = {
     users: loadFile("users.json"),
     products: loadFile("products.json"),
@@ -81,6 +118,14 @@ export function getDemoStore(): DemoData {
     apiLogs: loadFile("api-logs.json"),
     priceCompare: loadFile("price-compare.json"),
   };
+  for (const name of DATA_FILES) {
+    const path = join(process.cwd(), "data", "demo", name);
+    try {
+      stateMtimes[name] = statSync(path).mtimeMs;
+    } catch {
+      // ignore
+    }
+  }
   return state;
 }
 

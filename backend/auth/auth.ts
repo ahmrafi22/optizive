@@ -17,6 +17,7 @@ function isDemoCredentials(email: string, password: string): boolean {
 }
 
 const authConfig = {
+  trustHost: true,
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
@@ -83,7 +84,10 @@ const authConfig = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  secret:
+    process.env.NEXTAUTH_SECRET ??
+    process.env.AUTH_SECRET ??
+    "optizive-demo-fallback-secret-change-in-production",
   callbacks: {
     async signIn({ user, account }) {
       // Banned check for all providers

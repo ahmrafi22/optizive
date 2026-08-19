@@ -13,7 +13,7 @@ export default function Providers({ children }: ProvidersProps) {
     <SessionProvider>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
         {children}
-        <Analytics />
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </ThemeProvider>
     </SessionProvider>
   );
