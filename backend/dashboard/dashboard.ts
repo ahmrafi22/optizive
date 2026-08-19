@@ -4,6 +4,8 @@ import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { getSupplierRecommendations } from "@/backend/supplier-recommender/supplier-recommender";
 import type { SupplierSummary } from "@/backend/supplier-recommender/types";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import { demoGetDashboardData } from "@/backend/demo/demo-dashboard";
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -61,6 +63,8 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   const userName =
     session?.user?.name || session?.user?.email?.split("@")[0] || null;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetDashboardData();
 
   const now = new Date();
   const thirtyDaysAgo = new Date(now);

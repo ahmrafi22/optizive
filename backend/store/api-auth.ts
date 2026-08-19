@@ -1,4 +1,6 @@
 import prisma from "@/lib/prisma";
+import { demoVerifyStoreApiKey, demoResolveStore, demoLogApiHit } from "@/backend/demo/demo-store-api";
+import { isDemoBusinessSlug } from "@/backend/demo/demo-store";
 
 export interface AuthStore {
   id: string;
@@ -15,6 +17,10 @@ export async function verifyStoreApiKey(
 ): Promise<{ store: AuthStore | null; error: string | null }> {
   if (!apiKey) {
     return { store: null, error: "Missing x-api-key header" };
+  }
+
+  if (isDemoBusinessSlug(businessSlug)) {
+    return demoVerifyStoreApiKey(businessSlug, branchSlug, apiKey);
   }
 
   const user = await prisma.user.findUnique({
@@ -53,6 +59,10 @@ export async function resolveStore(
   businessSlug: string,
   branchSlug: string
 ): Promise<{ ownerId: string; storeId: string; isActive: boolean } | null> {
+  if (isDemoBusinessSlug(businessSlug)) {
+    return demoResolveStore(businessSlug, branchSlug);
+  }
+
   const user = await prisma.user.findUnique({
     where: { businessSlug },
     select: { id: true },
@@ -75,6 +85,7 @@ export async function logApiHit(
   statusCode: number,
   ip: string | null
 ) {
+  demoLogApiHit(storeId, endpoint, method, statusCode, ip);
   await prisma.apiLog.create({
     data: { storeId, endpoint, method, statusCode, ip },
   });

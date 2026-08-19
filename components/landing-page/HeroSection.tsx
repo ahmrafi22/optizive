@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Activity,
   HandCoins,
+  Info,
+  X,
 } from "lucide-react";
 import { IoPricetagSharp } from "react-icons/io5";
 import { GiAndromedaChain } from "react-icons/gi";
@@ -21,6 +23,8 @@ import { MdOutlineInventory } from "react-icons/md";
 import { MorphButton } from "./MorphButton";
 import { Navbar } from "./Navbar";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo-constants";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
@@ -58,10 +62,30 @@ function HeroIcon({ icon: Icon, delay }: { icon: any; delay: string }) {
 export function HeroSection() {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isDemoNavigating, setIsDemoNavigating] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   const handleStartOptimizing = () => {
     setIsNavigating(true);
     router.push("/login");
+  };
+
+  const handleCheckDemo = async () => {
+    setIsDemoNavigating(true);
+    try {
+      const result = await signIn("credentials", {
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
+        redirect: false,
+      });
+      if (result?.ok) {
+        router.push("/dashboard");
+        return;
+      }
+      router.push("/login");
+    } catch {
+      router.push("/login");
+    }
   };
 
   return (
@@ -230,6 +254,23 @@ export function HeroSection() {
               >
                 Start Optimizing
               </MorphButton>
+              <button
+                onClick={handleCheckDemo}
+                disabled={isDemoNavigating}
+                className="flex items-center justify-center h-12 px-7 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto text-white disabled:opacity-60 disabled:cursor-wait cursor-pointer"
+                style={{ background: "var(--clr-charcoal)", border: "1px solid var(--clr-charcoal)" }}
+              >
+                {isDemoNavigating ? "Logging in…" : "Check Demo"}
+              </button>
+              <button
+                onClick={() => setIsInfoOpen(true)}
+                aria-label="How it works"
+                className="flex items-center justify-center h-12 px-4 rounded-xl font-archivo font-semibold text-sm w-full sm:w-auto text-white cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)" }}
+              >
+                <Info className="w-4 h-4 mr-2" />
+                How it works
+              </button>
             </motion.div>
           </div>
 
@@ -254,6 +295,61 @@ export function HeroSection() {
         </div>
 
       </div>{/* end 92% wrapper */}
+
+      {/* ── How it works modal ─────────────────────── */}
+      {isInfoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsInfoOpen(false)}
+        >
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.25, ease: EASE_OUT }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#141414] p-6 md:p-8"
+          >
+            <button
+              onClick={() => setIsInfoOpen(false)}
+              aria-label="Close"
+              className="absolute top-4 right-4 flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-white/5 text-zinc-300 hover:text-white cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <h3 className="font-archivo text-2xl font-bold text-white mb-4">
+              How Optizive works
+            </h3>
+            <ul className="space-y-3 text-sm text-zinc-300 leading-relaxed">
+              {[
+                ["1", "Add your inventory", "Track products, costs, stock levels and expiry dates in one place."],
+                ["2", "Get AI insights", "Demand forecasts, flash-sale suggestions and smart restock recommendations."],
+                ["3", "Connect with suppliers", "The recommender matches you with reliable suppliers and bulk discounts."],
+                ["4", "Sell & co-operate", "Create smart baskets, join the buying network and auto-generate invoices."],
+                ["5", "Monitor the market", "Compare prices, watch competitors and stay ahead of every trend."],
+                ["6", "Ask the AI assistant", "Get instant answers about your store from the built-in chatbot."],
+              ].map(([n, title, desc]) => (
+                <li key={n} className="flex gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-black text-xs font-bold shrink-0 mt-0.5">
+                    {n}
+                  </span>
+                  <p>
+                    <span className="text-white font-semibold">{title} — </span>
+                    {desc}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleCheckDemo}
+              className="mt-6 w-full flex items-center justify-center h-12 rounded-xl font-archivo font-semibold text-sm text-black cursor-pointer"
+              style={{ background: "var(--clr-yellow)" }}
+            >
+              Try it with the demo →
+            </button>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }

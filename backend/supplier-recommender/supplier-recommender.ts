@@ -13,6 +13,17 @@ import type {
   RestockSuggestion,
   BulkDiscountAlert,
 } from "./types";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetSupplierRecommendations,
+  demoSearchSuppliers,
+  demoGetSupplierProfile,
+  demoGetRestockSuggestions,
+  demoGetBulkDiscountAlerts,
+  demoGetSupplierDistricts,
+  demoGetSupplierCategories,
+  demoGetSupplierProductDetail,
+} from "@/backend/demo/demo-suppliers";
 
 const RECOMMENDATION_LIMIT = 20;
 const DEFAULT_PAGE_SIZE = 20;
@@ -197,11 +208,12 @@ function toSupplierSummary(row: {
     matchScore: matchScore ?? 0,
   };
 }
-
 export async function getSupplierRecommendations(limit = 6): Promise<SupplierSummary[]> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetSupplierRecommendations(limit);
 
   const buyer = await prisma.user.findUnique({
     where: { id: userId },
@@ -266,6 +278,8 @@ export async function getSupplierRecommendations(limit = 6): Promise<SupplierSum
 export async function searchSuppliers(filters: SupplierSearchFilters): Promise<SupplierSearchResponse> {
   const session = await auth();
   const userId = session?.user?.id;
+
+  if (isDemoUserId(userId)) return demoSearchSuppliers(filters);
 
   const where: Prisma.UserWhereInput = {
     id: userId ? { not: userId } : undefined,
@@ -387,6 +401,9 @@ export async function searchSuppliers(filters: SupplierSearchFilters): Promise<S
 export async function getSupplierProfile(supplierId: string): Promise<SupplierDetail | null> {
   const session = await auth();
   const userId = session?.user?.id;
+  if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetSupplierProfile(supplierId);
 
   const [supplier, salesCount, purchasesCount] = await Promise.all([
     prisma.user.findFirst({
@@ -527,6 +544,8 @@ export async function getRestockSuggestions(productIds?: string[]): Promise<Rest
   const userId = session?.user?.id;
   if (!userId) return [];
 
+  if (isDemoUserId(userId)) return demoGetRestockSuggestions(productIds);
+
   const buyer = await prisma.user.findUnique({
     where: { id: userId },
     select: { primaryCategory: true, district: true, pricingPreference: true, maxDeliveryTime: true },
@@ -622,6 +641,8 @@ export async function getBulkDiscountAlerts(): Promise<BulkDiscountAlert[]> {
   const userId = session?.user?.id;
   if (!userId) return [];
 
+  if (isDemoUserId(userId)) return demoGetBulkDiscountAlerts();
+
   const buyer = await prisma.user.findUnique({
     where: { id: userId },
     select: { primaryCategory: true },
@@ -665,6 +686,10 @@ export async function getBulkDiscountAlerts(): Promise<BulkDiscountAlert[]> {
 }
 
 export async function getSupplierDistricts(): Promise<string[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (isDemoUserId(userId)) return demoGetSupplierDistricts();
+
   const rows = await prisma.user.findMany({
     where: {
       OR: [{ role: "SUPPLIER" }, { role: "BOTH" }],
@@ -678,6 +703,10 @@ export async function getSupplierDistricts(): Promise<string[]> {
 }
 
 export async function getSupplierCategories(): Promise<{ value: string; count: number }[]> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (isDemoUserId(userId)) return demoGetSupplierCategories();
+
   const rows = await prisma.$queryRaw<
     Array<{ value: string; count: number }>
   >`
@@ -718,6 +747,9 @@ export interface PublicProductDetail {
 }
 
 export async function getSupplierProductDetail(productId: string): Promise<PublicProductDetail | null> {
+  const demo = demoGetSupplierProductDetail(productId);
+  if (demo) return demo;
+
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
   const [product, salesAgg] = await Promise.all([

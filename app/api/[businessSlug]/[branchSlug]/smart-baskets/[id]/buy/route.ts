@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyStoreApiKey, jsonOk, jsonError, logApiHit } from "@/backend/store/api-auth";
+import { DEMO_USER_ID } from "@/lib/demo-constants";
+import { demoGetSmartBasketDetail } from "@/backend/demo/demo-smart-basket";
+import { demoCreateSale } from "@/backend/demo/demo-sales";
 
 function generateInvoiceNumber(): string {
   const now = new Date();
@@ -50,6 +53,59 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ bus
     unitPrice: i.product.sellingPrice,
     totalPrice: i.product.sellingPrice * i.quantity,
   }));
+
+  if (store.ownerId === DEMO_USER_ID) {
+    const demoBasket = demoGetSmartBasketDetail(id);
+    if (!demoBasket) return jsonError("Smart basket not found", 404);
+    if (demoBasket.items.length === 0) return jsonError("Smart basket is empty");
+    const totalAmount = demoBasket.items.reduce((s, i) => s + i.sellingPrice * i.quantity, 0);
+    const discount = Math.min(Math.max(0, body.discount || 0), totalAmount);
+    const afterDiscount = totalAmount - discount;
+    const paidAmount = Math.min(Math.max(0, body.paidAmount || 0), afterDiscount);
+
+    const sale = demoCreateSale({
+      buyerType: "EXTERNAL",
+      items: demoBasket.items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        unitPrice: i.sellingPrice,
+      })),
+      customerName: body.customerName,
+      customerPhone: body.customerPhone,
+      discount,
+      paidAmount,
+      deliveryAddress: body.deliveryAddress,
+      notes: body.notes
+        ? `[${store.name}] ${body.notes} (Smart Basket: ${demoBasket.title})`
+        : `[${store.name}] Smart Basket: ${demoBasket.title}`,
+    });
+    if (!sale) return jsonError("Smart basket is empty");
+
+    await logApiHit(store.id, `/smart-baskets/${id}/buy`, "POST", 200, req.headers.get("x-forwarded-for"));
+
+    return jsonOk({
+      invoice: {
+        invoiceNumber: sale.invoiceNumber,
+        customerName: sale.customerName,
+        customerPhone: sale.customerPhone,
+        totalAmount: sale.totalAmount,
+        discount: sale.discount,
+        finalAmount: sale.finalAmount,
+        paymentStatus: sale.paymentStatus,
+        paidAmount: sale.paidAmount,
+        dueAmount: sale.dueAmount,
+        createdAt: sale.createdAt,
+        smartBasket: demoBasket.title,
+        items: sale.items.map((i) => ({
+          productId: i.productId,
+          productName: i.productName,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          totalPrice: i.totalPrice,
+        })),
+      },
+    }, 201);
+  }
 
   const totalAmount = saleItems.reduce((s, i) => s + i.totalPrice, 0);
   const finalAmount = basket.customTotal !== null && basket.customTotal > 0

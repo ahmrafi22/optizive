@@ -1,10 +1,17 @@
 "use server";
 
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import { generateText } from "ai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
+import { callAi } from "./ai-call";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoCreateChat,
+  demoListChats,
+  demoGetChat,
+  demoDeleteChat,
+  demoUpdateChatTitle,
+  demoSendMessage,
+} from "@/backend/demo/demo-chatbot";
 
 export type MessageRole = "user" | "assistant";
 
@@ -29,12 +36,12 @@ export interface ChatWithMessages {
   messages: ChatMessage[];
 }
 
-const SYSTEM_PROMPT = `You are OptiBot, an expert sales & inventory optimization assistant for Optizive — an AI-powered inventory and supply chain management platform for SMBs in Bangladesh.
+export const SYSTEM_PROMPT = `You are OptiBot, an expert sales & inventory optimization assistant for Optizive — an AI-powered inventory and supply chain management platform for SMBs in Bangladesh.
 
 ## YOUR ROLE
 You help store owners, suppliers, and distributors optimize their sales, inventory, pricing, and supply chain decisions. Be practical, data-driven, and actionable. Use Bengali-market context (BDT currency, local suppliers, seasonal demand like Pohela Boishakh, Eid, winter harvest).
 
-## CORE CAPABILITIESObject literal may only specify known properties, and 'maxTokens' does not exist in type 'CallSettings & (Prompt & { model: LanguageModel; tools?: ToolSet | undefined; toolChoice?: ToolChoice<NoInfer<ToolSet>> | undefined; ... 19 more ...; _internal?: { ...; } | undefined; })'.
+## CORE CAPABILITIES
 
 ### 1. INVENTORY OPTIMIZATION
 - Identify slow-moving stock and suggest markdowns, bundles, or clearance strategies
@@ -83,6 +90,8 @@ export async function createChat(): Promise<string> {
   const userId = session?.user?.id;
   if (!userId) throw new Error("Not authenticated");
 
+  if (isDemoUserId(userId)) return demoCreateChat();
+
   const chat = await prisma.chat.create({
     data: {
       ownerId: userId,
@@ -97,6 +106,8 @@ export async function listChats(): Promise<ChatListItem[]> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoListChats();
 
   const chats = await prisma.chat.findMany({
     where: { ownerId: userId },
@@ -118,6 +129,8 @@ export async function getChat(chatId: string): Promise<ChatWithMessages | null> 
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetChat(chatId);
 
   const chat = await prisma.chat.findFirst({
     where: { id: chatId, ownerId: userId },
@@ -145,6 +158,8 @@ export async function deleteChat(chatId: string): Promise<void> {
   const userId = session?.user?.id;
   if (!userId) throw new Error("Not authenticated");
 
+  if (isDemoUserId(userId)) return demoDeleteChat(chatId);
+
   await prisma.chat.deleteMany({
     where: { id: chatId, ownerId: userId },
   });
@@ -155,92 +170,12 @@ export async function updateChatTitle(chatId: string, title: string): Promise<vo
   const userId = session?.user?.id;
   if (!userId) throw new Error("Not authenticated");
 
+  if (isDemoUserId(userId)) return demoUpdateChatTitle(chatId, title);
+
   await prisma.chat.updateMany({
     where: { id: chatId, ownerId: userId },
     data: { title },
   });
-}
-
-async function callOpenRouter(history: { role: string; content: string }[]) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("OpenRouter API key not configured");
-
-  const model = process.env.OPENROUTER_MODEL || "openrouter/free";
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": "https://optizive.app",
-      "X-Title": "Optizive AI Chatbot",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.7,
-      max_tokens: 2048,
-      messages: history,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("[Chatbot AI] OpenRouter Error", response.status, errorText);
-    throw new Error(`AI request failed: ${response.status}`);
-  }
-
-  const data = (await response.json()) as any;
-  return data?.choices?.[0]?.message?.content ?? "";
-}
-
-async function callOpenCodeCompatible(history: { role: string; content: string }[]) {
-  const apiKey = process.env.OPENCODE_KEY;
-  if (!apiKey) throw new Error("OPENCODE_KEY not configured");
-
-  const model = process.env.OPENCODE_MODEL || "nemotron-3-super-free";
-
-  const client = createOpenAICompatible({
-    name: "opencode",
-    apiKey,
-    baseURL: "https://opencode.ai/zen/v1",
-  });
-
-  const { text } = await generateText({
-    model: client.chatModel(model),
-    messages: history as any,
-    temperature: 0.7,
-    maxOutputTokens: 2048,
-  });
-
-  return text;
-}
-
-async function callGemini(history: { role: string; content: string }[]) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
-
-  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: modelName });
-
-  const systemMsg = history.find((m) => m.role === "system");
-  const chatHistory = history
-    .filter((m) => m.role !== "system")
-    .map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    }));
-
-  const lastMsg = chatHistory.pop();
-
-  const chat = model.startChat({
-    history: chatHistory,
-    systemInstruction: systemMsg?.content ? { role: "system", parts: [{ text: systemMsg.content }] } : undefined,
-  });
-
-  const result = await chat.sendMessage(lastMsg!.parts[0].text);
-  return result.response.text();
 }
 
 export async function sendMessage(
@@ -250,6 +185,8 @@ export async function sendMessage(
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) throw new Error("Not authenticated");
+
+  if (isDemoUserId(userId)) return demoSendMessage(chatId, content);
 
   const chat = await prisma.chat.findFirst({
     where: { id: chatId, ownerId: userId },
@@ -268,16 +205,7 @@ export async function sendMessage(
     { role: "user", content },
   ];
 
-  const aiUse = process.env.AI_USE;
-  let replyContent: string;
-
-  if (aiUse === "2") {
-    replyContent = await callOpenCodeCompatible(history);
-  } else if (aiUse === "3") {
-    replyContent = await callGemini(history);
-  } else {
-    replyContent = await callOpenRouter(history);
-  }
+  const replyContent = await callAi(history);
 
   const savedAssistantMessage = await prisma.chatMessage.create({
     data: { chatId, role: "assistant", content: replyContent },

@@ -1,0 +1,362 @@
+[
+  {
+    "id": "demo-r-01",
+    "createdAt": "T-49d",
+    "raterId": "demo-user",
+    "rateeId": "demo-buyer-1",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-02",
+    "createdAt": "T-34d",
+    "raterId": "demo-user",
+    "rateeId": "demo-buyer-2",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-03",
+    "createdAt": "T-42d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-1",
+    "score": 4,
+    "comment": "Very reliable supply, always on time."
+  },
+  {
+    "id": "demo-r-04",
+    "createdAt": "T-13d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-2",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-05",
+    "createdAt": "T-47d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-3",
+    "score": 5,
+    "comment": "Best pricing in the area for bulk orders."
+  },
+  {
+    "id": "demo-r-06",
+    "createdAt": "T-29d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-4",
+    "score": 4,
+    "comment": null
+  },
+  {
+    "id": "demo-r-07",
+    "createdAt": "T-10d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-5",
+    "score": 5,
+    "comment": "Very reliable supply, always on time."
+  },
+  {
+    "id": "demo-r-08",
+    "createdAt": "T-83d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-6",
+    "score": 5,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-09",
+    "createdAt": "T-11d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-7",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-10",
+    "createdAt": "T-38d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-8",
+    "score": 5,
+    "comment": "Best pricing in the area for bulk orders."
+  },
+  {
+    "id": "demo-r-11",
+    "createdAt": "T-32d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-9",
+    "score": 4,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-12",
+    "createdAt": "T-68d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-10",
+    "score": 4,
+    "comment": "Sample was good, bulk order matched it."
+  },
+  {
+    "id": "demo-r-13",
+    "createdAt": "T-72d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-11",
+    "score": 4,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-14",
+    "createdAt": "T-86d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-12",
+    "score": 4,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-15",
+    "createdAt": "T-20d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-13",
+    "score": 4,
+    "comment": "Best pricing in the area for bulk orders."
+  },
+  {
+    "id": "demo-r-16",
+    "createdAt": "T-72d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-1",
+    "score": 3,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-17",
+    "createdAt": "T-87d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-1",
+    "score": 5,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-18",
+    "createdAt": "T-72d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-2",
+    "score": 3,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-19",
+    "createdAt": "T-12d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-2",
+    "score": 3,
+    "comment": null
+  },
+  {
+    "id": "demo-r-20",
+    "createdAt": "T-10d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-3",
+    "score": 4,
+    "comment": null
+  },
+  {
+    "id": "demo-r-21",
+    "createdAt": "T-52d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-3",
+    "score": 3,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-22",
+    "createdAt": "T-84d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-3",
+    "score": 5,
+    "comment": "Sample was good, bulk order matched it."
+  },
+  {
+    "id": "demo-r-23",
+    "createdAt": "T-45d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-3",
+    "score": 3,
+    "comment": null
+  },
+  {
+    "id": "demo-r-24",
+    "createdAt": "T-31d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-4",
+    "score": 4,
+    "comment": null
+  },
+  {
+    "id": "demo-r-25",
+    "createdAt": "T-72d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-4",
+    "score": 3,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-26",
+    "createdAt": "T-47d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-4",
+    "score": 5,
+    "comment": "Sample was good, bulk order matched it."
+  },
+  {
+    "id": "demo-r-27",
+    "createdAt": "T-39d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-4",
+    "score": 4,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-28",
+    "createdAt": "T-79d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-5",
+    "score": 5,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-29",
+    "createdAt": "T-17d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-5",
+    "score": 5,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-30",
+    "createdAt": "T-30d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-6",
+    "score": 4,
+    "comment": "Sample was good, bulk order matched it."
+  },
+  {
+    "id": "demo-r-31",
+    "createdAt": "T-49d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-6",
+    "score": 4,
+    "comment": "Very reliable supply, always on time."
+  },
+  {
+    "id": "demo-r-32",
+    "createdAt": "T-45d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-6",
+    "score": 4,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-33",
+    "createdAt": "T-47d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-7",
+    "score": 5,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-34",
+    "createdAt": "T-75d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-7",
+    "score": 5,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-35",
+    "createdAt": "T-47d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-7",
+    "score": 3,
+    "comment": "Best pricing in the area for bulk orders."
+  },
+  {
+    "id": "demo-r-36",
+    "createdAt": "T-22d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-8",
+    "score": 5,
+    "comment": "Quality dropped once but they fixed it fast."
+  },
+  {
+    "id": "demo-r-37",
+    "createdAt": "T-12d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-supplier-8",
+    "score": 3,
+    "comment": "Sample was good, bulk order matched it."
+  },
+  {
+    "id": "demo-r-38",
+    "createdAt": "T-59d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-8",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-39",
+    "createdAt": "T-50d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-8",
+    "score": 4,
+    "comment": null
+  },
+  {
+    "id": "demo-r-40",
+    "createdAt": "T-40d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-9",
+    "score": 5,
+    "comment": "Good communication, delivery as promised."
+  },
+  {
+    "id": "demo-r-41",
+    "createdAt": "T-61d",
+    "raterId": "demo-user",
+    "rateeId": "demo-supplier-9",
+    "score": 5,
+    "comment": null
+  },
+  {
+    "id": "demo-r-42",
+    "createdAt": "T-59d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-supplier-9",
+    "score": 4,
+    "comment": "Consistent quality over 6 months of orders."
+  },
+  {
+    "id": "demo-r-43",
+    "createdAt": "T-52d",
+    "raterId": "demo-buyer-1",
+    "rateeId": "demo-user",
+    "score": 5,
+    "comment": "Great store, always fresh stock."
+  },
+  {
+    "id": "demo-r-44",
+    "createdAt": "T-35d",
+    "raterId": "demo-buyer-2",
+    "rateeId": "demo-user",
+    "score": 4,
+    "comment": "Good bulk pricing on staples."
+  },
+  {
+    "id": "demo-r-45",
+    "createdAt": "T-28d",
+    "raterId": "demo-supplier-6",
+    "rateeId": "demo-user",
+    "score": 5,
+    "comment": "Reliable repeat buyer."
+  }
+]

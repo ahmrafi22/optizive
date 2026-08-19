@@ -1,0 +1,600 @@
+[
+  {
+    "id": "demo-post-1",
+    "createdAt": "T-2d-6h",
+    "updatedAt": "T-1d",
+    "authorId": "demo-buyer-1",
+    "title": "Need 500kg Miniket Rice before Eid",
+    "content": "We run a kitchen that serves 400+ meals a day. Looking for a verified supplier for **500kg Miniket rice** delivered to Mirpur before Eid. Must have BSTI cert and halal sourcing. Open to long-term contract if quality is consistent.",
+    "type": "PROCUREMENT",
+    "status": "OPEN",
+    "budget": 720000,
+    "needByDate": "T+14d",
+    "image": null,
+    "upvoteCount": 12,
+    "downvoteCount": 1,
+    "commentCount": 2,
+    "categories": [
+      "GROCERIES"
+    ],
+    "tags": [
+      "demo-tag-rice",
+      "demo-tag-eid"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-1",
+        "createdAt": "T-1d-10h",
+        "authorId": "demo-supplier-6",
+        "content": "We supply Nazirshail and Miniket from Dinajpur. Factory-direct pricing — 25kg bag at BDT 1,750. Can deliver 500kg in 3 days."
+      },
+      {
+        "id": "demo-post-c-2",
+        "createdAt": "T-1d-4h",
+        "authorId": "demo-user",
+        "content": "I carry Miniket 25kg at BDT 1,380 and can do next-day delivery to Mirpur. Happy to send a sample first."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-1",
+        "userId": "demo-user",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-2",
+        "userId": "demo-supplier-2",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-3",
+        "userId": "demo-supplier-4",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-4",
+        "userId": "demo-buyer-2",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": [
+      {
+        "id": "demo-post-f-1",
+        "createdAt": "T-1d-8h",
+        "supplierId": "demo-supplier-6",
+        "message": "Can supply 500kg Miniket from our Dinajpur mill at BDT 1,750/25kg bag. Delivery to Mirpur in 3-4 days via freight.",
+        "price": 35000,
+        "estimatedDelivery": "T+4d",
+        "status": "PENDING"
+      },
+      {
+        "id": "demo-post-f-2",
+        "createdAt": "T-1d-3h",
+        "supplierId": "demo-supplier-1",
+        "message": "We can arrange Miniket from our Khulna network at BDT 1,720/bag. 5 days lead time.",
+        "price": 34400,
+        "estimatedDelivery": "T+6d",
+        "status": "PENDING"
+      }
+    ]
+  },
+  {
+    "id": "demo-post-2",
+    "createdAt": "T-4d",
+    "updatedAt": "T-3d",
+    "authorId": "demo-user",
+    "title": "Looking for a regular poultry supplier",
+    "content": "My meat counter sells ~70kg broiler chicken per week. Current supplier is unreliable in the rainy season. Looking for a verified supplier with cold chain and fixed weekly delivery. Halal certified preferred.",
+    "type": "PROCUREMENT",
+    "status": "OPEN",
+    "budget": 60000,
+    "needByDate": "T+7d",
+    "image": null,
+    "upvoteCount": 8,
+    "downvoteCount": 0,
+    "commentCount": 2,
+    "categories": [
+      "MEAT_POULTRY"
+    ],
+    "tags": [
+      "demo-tag-poultry",
+      "demo-tag-wholesale"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-3",
+        "createdAt": "T-3d-6h",
+        "authorId": "demo-supplier-4",
+        "content": "We supply 500+ stores across Dhaka. Broiler at BDT 210/kg with cold-chain vans and halal cert. Weekly orders get priority slots."
+      },
+      {
+        "id": "demo-post-c-4",
+        "createdAt": "T-2d-2h",
+        "authorId": "demo-buyer-2",
+        "content": "+1, ACI has been solid for us for 6 months. Their frozen chicken also helps during load-shedding."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-5",
+        "userId": "demo-supplier-4",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-6",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-7",
+        "userId": "demo-supplier-5",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": [
+      {
+        "id": "demo-post-f-3",
+        "createdAt": "T-3d-5h",
+        "supplierId": "demo-supplier-4",
+        "message": "ACI Poultry & Meat — broiler chicken BDT 212/kg, weekly delivery Thursday, halal & BSTI certified, cold chain van.",
+        "price": 14840,
+        "estimatedDelivery": "T+5d",
+        "status": "PENDING"
+      },
+      {
+        "id": "demo-post-f-4",
+        "createdAt": "T-3d-1h",
+        "supplierId": "demo-supplier-3",
+        "message": "We can't do poultry but can bundle frozen fish for your counter at 10% off first order.",
+        "price": null,
+        "estimatedDelivery": "T+6d",
+        "status": "PENDING"
+      }
+    ]
+  },
+  {
+    "id": "demo-post-3",
+    "createdAt": "T-5d",
+    "updatedAt": "T-5d",
+    "authorId": "demo-buyer-2",
+    "title": "Bulk fresh fish supply wanted (weekly)",
+    "content": "Uttara grocery store needing 30-40kg fresh fish weekly (rui, katla, tilapia). Must arrive by 8 AM daily for the fish counter. Considering long-term contract.",
+    "type": "PROCUREMENT",
+    "status": "OPEN",
+    "budget": 45000,
+    "needByDate": "T+10d",
+    "image": null,
+    "upvoteCount": 6,
+    "downvoteCount": 0,
+    "commentCount": 1,
+    "categories": [
+      "FISHERY_SEAFOOD"
+    ],
+    "tags": [
+      "demo-tag-fish",
+      "demo-tag-wholesale"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-5",
+        "createdAt": "T-4d-8h",
+        "authorId": "demo-supplier-3",
+        "content": "Fresh Catch Fisheries — cold-chain delivery to Uttara by 7:30 AM. Rui BDT 410/kg, katla BDT 385/kg, tilapia BDT 255/kg."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-8",
+        "userId": "demo-supplier-3",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-9",
+        "userId": "demo-user",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": [
+      {
+        "id": "demo-post-f-5",
+        "createdAt": "T-4d-7h",
+        "supplierId": "demo-supplier-3",
+        "message": "Can supply 35kg/week from our Chattogram cold chain. 6 AM delivery slot available for Uttara.",
+        "price": 14500,
+        "estimatedDelivery": "T+3d",
+        "status": "PENDING"
+      }
+    ]
+  },
+  {
+    "id": "demo-post-4",
+    "createdAt": "T-6d",
+    "updatedAt": "T-6d",
+    "authorId": "demo-user",
+    "title": "Milk powder price check — who's paying what?",
+    "content": "We're getting Dano 1kg at BDT 985. Is anyone finding better distributor pricing in Dhaka? Also curious about local brands — any quality concerns?",
+    "type": "GENERAL",
+    "status": "OPEN",
+    "budget": null,
+    "needByDate": null,
+    "image": null,
+    "upvoteCount": 9,
+    "downvoteCount": 0,
+    "commentCount": 3,
+    "categories": [
+      "DAIRY",
+      "GROCERIES"
+    ],
+    "tags": [
+      "demo-tag-dairy"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-6",
+        "createdAt": "T-5d-9h",
+        "authorId": "demo-buyer-1",
+        "content": "We pay BDT 972 with monthly volume (>100 packs). Ask for the distributor slab, not the retail rate."
+      },
+      {
+        "id": "demo-post-c-7",
+        "createdAt": "T-5d-5h",
+        "authorId": "demo-supplier-5",
+        "content": "Local brands: Arong 1kg is BDT 940 for us. Quality is consistent. Happy to quote."
+      },
+      {
+        "id": "demo-post-c-8",
+        "createdAt": "T-4d-3h",
+        "authorId": "demo-supplier-2",
+        "content": "Bashundhara Food — we can do BDT 955 for 50+ packs with VAT invoice."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-10",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-11",
+        "userId": "demo-supplier-5",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-12",
+        "userId": "demo-supplier-2",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-13",
+        "userId": "demo-buyer-2",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": []
+  },
+  {
+    "id": "demo-post-5",
+    "createdAt": "T-8d",
+    "updatedAt": "T-7d",
+    "authorId": "demo-buyer-1",
+    "title": "How do you handle expiry losses on dairy?",
+    "content": "We lose ~3% of dairy stock to expiry every month. Do you discount early, bundle, or return to supplier? Would love to hear what works in Dhaka.",
+    "type": "GENERAL",
+    "status": "OPEN",
+    "budget": null,
+    "needByDate": null,
+    "image": null,
+    "upvoteCount": 15,
+    "downvoteCount": 1,
+    "commentCount": 3,
+    "categories": [
+      "DAIRY"
+    ],
+    "tags": [
+      "demo-tag-dairy"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-9",
+        "createdAt": "T-7d-7h",
+        "authorId": "demo-user",
+        "content": "We run the expiry tracker weekly. 35% off at 5 days left clears most of it. Bundling with biscuits works well too."
+      },
+      {
+        "id": "demo-post-c-10",
+        "createdAt": "T-6d-4h",
+        "authorId": "demo-supplier-5",
+        "content": "Our dairy is supplier-managed — we swap near-expiry stock on the next delivery. Ask your distributor for that."
+      },
+      {
+        "id": "demo-post-c-11",
+        "createdAt": "T-5d-2h",
+        "authorId": "demo-buyer-2",
+        "content": "We use the clearance suggestions from OptiBot. It cut our dairy loss from 3% to ~1%."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-14",
+        "userId": "demo-user",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-15",
+        "userId": "demo-supplier-5",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-16",
+        "userId": "demo-buyer-2",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-17",
+        "userId": "demo-supplier-4",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-18",
+        "userId": "demo-supplier-6",
+        "type": "DOWNVOTE"
+      }
+    ],
+    "fulfillments": []
+  },
+  {
+    "id": "demo-post-6",
+    "createdAt": "T-9d",
+    "updatedAt": "T-9d",
+    "authorId": "demo-user",
+    "title": "Eid season demand forecasting tips",
+    "content": "Sharing what worked for us last Eid: semai sales spike 5x in the last 10 days, milk powder 3x, dates 4x. Stock up 2 weeks before, not 1. What are others seeing?",
+    "type": "GENERAL",
+    "status": "OPEN",
+    "budget": null,
+    "needByDate": null,
+    "image": null,
+    "upvoteCount": 11,
+    "downvoteCount": 0,
+    "commentCount": 2,
+    "categories": [
+      "GROCERIES",
+      "FMCG"
+    ],
+    "tags": [
+      "demo-tag-eid"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-12",
+        "createdAt": "T-8d-6h",
+        "authorId": "demo-buyer-2",
+        "content": "Same pattern here — plus cooking oil goes up 2.5x. Booking freight early is the real pain point."
+      },
+      {
+        "id": "demo-post-c-13",
+        "createdAt": "T-7d-3h",
+        "authorId": "demo-supplier-6",
+        "content": "We pre-allocate rice stock for Eid orders in the last 3 weeks. Reserve early."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-19",
+        "userId": "demo-buyer-2",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-20",
+        "userId": "demo-supplier-6",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-21",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": []
+  },
+  {
+    "id": "demo-post-7",
+    "createdAt": "T-11d",
+    "updatedAt": "T-10d",
+    "authorId": "demo-supplier-2",
+    "title": "Surplus packaging boxes — selling below cost",
+    "content": "300+ double-wall cartons (50x40x30cm) surplus after a campaign. Selling at BDT 25/pc (market ~40). Pickup from Tejgaon. First come first served.",
+    "type": "GENERAL",
+    "status": "OPEN",
+    "budget": null,
+    "needByDate": null,
+    "image": null,
+    "upvoteCount": 5,
+    "downvoteCount": 0,
+    "commentCount": 1,
+    "categories": [
+      "PACKAGING"
+    ],
+    "tags": [
+      "demo-tag-bulk"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-14",
+        "createdAt": "T-10d-2h",
+        "authorId": "demo-user",
+        "content": "Interested — taking 100. Can I collect tomorrow?"
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-22",
+        "userId": "demo-user",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-23",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": []
+  },
+  {
+    "id": "demo-post-8",
+    "createdAt": "T-13d",
+    "updatedAt": "T-11d",
+    "authorId": "demo-buyer-1",
+    "title": "Need egg supply — 50 trays weekly",
+    "content": "Restaurant in Mirpur needs 50 trays (1500 eggs) weekly. Reliable hatchery or trader? Pricing around BDT 360-380/tray.",
+    "type": "PROCUREMENT",
+    "status": "FILLED",
+    "budget": 19500,
+    "needByDate": "T+5d",
+    "image": null,
+    "upvoteCount": 7,
+    "downvoteCount": 0,
+    "commentCount": 2,
+    "categories": [
+      "GROCERIES",
+      "MEAT_POULTRY"
+    ],
+    "tags": [
+      "demo-tag-wholesale",
+      "demo-tag-poultry"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-15",
+        "createdAt": "T-12d-4h",
+        "authorId": "demo-supplier-4",
+        "content": "We supply 100+ restaurants. Eggs at BDT 375/tray with weekly contract."
+      },
+      {
+        "id": "demo-post-c-16",
+        "createdAt": "T-11d-1h",
+        "authorId": "demo-user",
+        "content": "I can do 50 trays/week at BDT 395 — small margin but happy to help out a fellow Mirpur business."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-24",
+        "userId": "demo-supplier-4",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-25",
+        "userId": "demo-user",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": [
+      {
+        "id": "demo-post-f-6",
+        "createdAt": "T-12d-3h",
+        "supplierId": "demo-supplier-4",
+        "message": "50 trays/week at BDT 375/tray, delivered every Saturday. Contract pricing available.",
+        "price": 18750,
+        "estimatedDelivery": "T+4d",
+        "status": "ACCEPTED"
+      }
+    ]
+  },
+  {
+    "id": "demo-post-9",
+    "createdAt": "T-14d",
+    "updatedAt": "T-14d",
+    "authorId": "demo-supplier-5",
+    "title": "Generator battery suppliers in Rajshahi?",
+    "content": "Our cold storage needs 2 new batteries for the backup generator. Any verified battery distributors in Rajshahi or nearby? Capacity 200Ah.",
+    "type": "GENERAL",
+    "status": "OPEN",
+    "budget": null,
+    "needByDate": null,
+    "image": null,
+    "upvoteCount": 4,
+    "downvoteCount": 0,
+    "commentCount": 1,
+    "categories": [
+      "ELECTRONICS"
+    ],
+    "tags": [],
+    "comments": [
+      {
+        "id": "demo-post-c-17",
+        "createdAt": "T-13d-5h",
+        "authorId": "demo-supplier-10",
+        "content": "Rahim Electronics — we ship 200Ah batteries nationwide with warranty. BDT 28,500/pc installed."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-26",
+        "userId": "demo-supplier-10",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-27",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": []
+  },
+  {
+    "id": "demo-post-10",
+    "createdAt": "T-2d-9h",
+    "updatedAt": "T-2d",
+    "authorId": "demo-user",
+    "title": "Co-purchase: sharing a container of dates",
+    "content": "Importing 1 container of premium Khejur dates (2,000kg) before Ramadan. Taking partners at cost + 8% — min 200kg each. BSTI lab-tested. Pickup from Chittagong port or Dhaka delivery.",
+    "type": "PROCUREMENT",
+    "status": "OPEN",
+    "budget": 600000,
+    "needByDate": "T+30d",
+    "image": null,
+    "upvoteCount": 10,
+    "downvoteCount": 0,
+    "commentCount": 2,
+    "categories": [
+      "GROCERIES"
+    ],
+    "tags": [
+      "demo-tag-bulk",
+      "demo-tag-eid"
+    ],
+    "comments": [
+      {
+        "id": "demo-post-c-18",
+        "createdAt": "T-1d-6h",
+        "authorId": "demo-buyer-1",
+        "content": "In for 300kg. Send the lab report."
+      },
+      {
+        "id": "demo-post-c-19",
+        "createdAt": "T-1d-2h",
+        "authorId": "demo-buyer-2",
+        "content": "Interested — 200kg if the duty math checks out."
+      }
+    ],
+    "votes": [
+      {
+        "id": "demo-post-v-28",
+        "userId": "demo-buyer-1",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-29",
+        "userId": "demo-buyer-2",
+        "type": "UPVOTE"
+      },
+      {
+        "id": "demo-post-v-30",
+        "userId": "demo-supplier-12",
+        "type": "UPVOTE"
+      }
+    ],
+    "fulfillments": []
+  }
+]

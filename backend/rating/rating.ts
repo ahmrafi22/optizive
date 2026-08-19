@@ -8,6 +8,14 @@ import type {
   NegotiationPreference, BuyingPriority, ServiceArea,
   DeliveryMethod, SupplierTag,
 } from "@/prisma/generated/prisma/client";
+import { isDemoUserId, demoUserById } from "@/backend/demo/demo-store";
+import {
+  demoGetPublicProfile,
+  demoGetUserRatings,
+  demoSubmitRating,
+  demoHasRatedUser,
+  demoGetMyRating,
+} from "@/backend/demo/demo-suppliers";
 
 export interface PublicProfile {
   id: string;
@@ -68,6 +76,9 @@ export interface RatingDetail {
 }
 
 export async function getPublicProfile(userId: string): Promise<PublicProfile | null> {
+  const demoProfile = demoGetPublicProfile(userId);
+  if (demoProfile) return demoProfile;
+
   const [user, ratings, salesCount, purchasesCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId } }),
     prisma.rating.findMany({
@@ -97,6 +108,9 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
 }
 
 export async function getUserRatings(userId: string): Promise<RatingDetail[]> {
+  const demoRatings = demoGetUserRatings(userId);
+  if (demoRatings.length > 0 || demoUserById(userId)) return demoRatings;
+
   const ratings = await prisma.rating.findMany({
     where: { rateeId: userId },
     orderBy: { createdAt: "desc" },
@@ -130,6 +144,8 @@ export async function submitRating(input: {
   const session = await auth();
   const raterId = session?.user?.id;
   if (!raterId) return { ok: false, message: "Unauthorized" };
+
+  if (isDemoUserId(raterId)) return demoSubmitRating(input);
 
   if (raterId === input.rateeId) return { ok: false, message: "Cannot rate yourself" };
 
@@ -176,6 +192,8 @@ export async function hasRatedUser(rateeId: string): Promise<boolean> {
   const raterId = session?.user?.id;
   if (!raterId) return false;
 
+  if (isDemoUserId(raterId)) return demoHasRatedUser(rateeId);
+
   const rating = await prisma.rating.findUnique({
     where: { raterId_rateeId: { raterId, rateeId } },
     select: { id: true },
@@ -188,6 +206,8 @@ export async function getMyRating(rateeId: string): Promise<{ score: number; com
   const session = await auth();
   const raterId = session?.user?.id;
   if (!raterId) return null;
+
+  if (isDemoUserId(raterId)) return demoGetMyRating(rateeId);
 
   const rating = await prisma.rating.findUnique({
     where: { raterId_rateeId: { raterId, rateeId } },

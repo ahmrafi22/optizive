@@ -4,6 +4,12 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@/prisma/generated/prisma/client";
 import { getExpiryStatus } from "@/backend/expiry-utils";
 import type { ExpiryStatus } from "@/backend/expiry-utils";
+import { demoProductById } from "@/backend/demo/demo-store";
+import {
+  demoGetPublicProductById,
+  demoGetPublicProductSales,
+  demoUpdatePublicProduct,
+} from "@/backend/demo/demo-inventory";
 
 export type PublicProduct = {
   id: string;
@@ -52,6 +58,8 @@ function getStockStatus(product: {
 }
 
 export async function getPublicProductById(productId: string): Promise<PublicProduct | null> {
+  if (demoProductById(productId)) return demoGetPublicProductById(productId);
+
   const product = await prisma.product.findUnique({
     where: { id: productId },
     include: {
@@ -106,6 +114,8 @@ export async function getPublicProductById(productId: string): Promise<PublicPro
 }
 
 export async function getPublicProductSales(productId: string, days: number = 7): Promise<PublicSalesData[]> {
+  if (demoProductById(productId)) return demoGetPublicProductSales(productId, days);
+
   const product = await prisma.product.findUnique({
     where: { id: productId },
     select: { id: true, ownerId: true },
@@ -168,6 +178,8 @@ export async function updatePublicProduct(
     category?: string | null;
   }
 ): Promise<PublicProduct | null> {
+  if (demoProductById(productId)) return demoUpdatePublicProduct(productId, data);
+
   const existing = await prisma.product.findUnique({
     where: { id: productId },
     select: { id: true },

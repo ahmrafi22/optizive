@@ -6,6 +6,13 @@ import { Prisma } from "@/prisma/generated/prisma/client";
 import { getExpiryStatus } from "@/backend/expiry-utils";
 import type { ExpiryStatus } from "@/backend/expiry-utils";
 import type { Category, StockUnit } from "@/prisma/generated/prisma/client";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetExpiryDashboardStats,
+  demoGetExpiringProducts,
+  demoPredictAtRiskProducts,
+  demoGetClearanceSuggestions,
+} from "@/backend/demo/demo-inventory";
 
 export interface ExpiryProduct {
   id: string;
@@ -64,6 +71,8 @@ export async function getExpiryDashboardStats(): Promise<ExpiryDashboardStats | 
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetExpiryDashboardStats();
+
   const now = new Date();
   const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
   const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -114,6 +123,8 @@ export async function getExpiringProducts(): Promise<ExpiryProduct[]> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetExpiringProducts();
 
   const now = new Date();
   const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -174,6 +185,8 @@ export async function predictAtRiskProducts(): Promise<ExpiryProduct[]> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoPredictAtRiskProducts();
 
   const now = new Date();
   const ninetyDaysFromNow = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
@@ -239,6 +252,8 @@ export async function getClearanceSuggestions(): Promise<ClearanceSuggestion[]> 
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetClearanceSuggestions();
 
   const atRiskProducts = await predictAtRiskProducts();
   if (atRiskProducts.length === 0) return [];

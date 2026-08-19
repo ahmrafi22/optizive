@@ -1,12 +1,53 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { resolveStore, jsonOk, jsonError, logApiHit } from "@/backend/store/api-auth";
+import { DEMO_USER_ID } from "@/lib/demo-constants";
+import { getDemoStore } from "@/backend/demo/demo-store";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ businessSlug: string; branchSlug: string }> }) {
   const { businessSlug, branchSlug } = await params;
   const resolved = await resolveStore(businessSlug, branchSlug);
   if (!resolved) return jsonError("Business or branch not found", 404);
   if (!resolved.isActive) return jsonError("Branch is not active", 403);
+
+  if (resolved.ownerId === DEMO_USER_ID) {
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
+
+    let products = getDemoStore().products.filter((p) => p.ownerId === DEMO_USER_ID && p.isActive);
+    if (category) products = products.filter((p) => p.category === category);
+    if (search) {
+      const q = search.toLowerCase();
+      products = products.filter((p) => p.name.toLowerCase().includes(q));
+    }
+    const total = products.length;
+    const pageProducts = products.slice((page - 1) * limit, (page - 1) * limit + limit);
+
+    await logApiHit(resolved.storeId, "/products", "GET", 200, req.headers.get("x-forwarded-for"));
+
+    return jsonOk({
+      products: pageProducts.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        price: p.sellingPrice,
+        stock: p.quantity,
+        unit: p.unit,
+        image: p.imageLink,
+        category: p.category,
+        sku: p.sku,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  }
 
   const { searchParams } = new URL(req.url);
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));

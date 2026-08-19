@@ -3,6 +3,13 @@
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { uploadImage, deleteImageByUrl } from "@/lib/cloudinary";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetProfile,
+  demoUpdateProfile,
+  demoUploadProfileImage,
+  demoDeleteProfileImage,
+} from "@/backend/demo/demo-suppliers";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 import type {
   UserRole,
@@ -137,6 +144,8 @@ export async function getProfile(): Promise<SerializedUser | null> {
   const session = await auth();
   if (!session?.user?.id) return null;
 
+  if (isDemoUserId(session.user.id)) return demoGetProfile();
+
   const [dbUser, salesCount, purchasesCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.user.id } }),
     prisma.sale.count({ where: { ownerId: session.user.id } }),
@@ -159,6 +168,8 @@ export async function updateProfile(payload: ProfileUpdatePayload) {
   if (!session?.user?.id) {
     return { ok: false, message: "Unauthorized" };
   }
+
+  if (isDemoUserId(session.user.id)) return demoUpdateProfile(payload);
 
   const name = toNullableString(payload.name);
   if (!name) {
@@ -216,6 +227,8 @@ export async function uploadProfileImage(base64Image: string) {
     return { ok: false, message: "Unauthorized" };
   }
 
+  if (isDemoUserId(session.user.id)) return demoUploadProfileImage();
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -251,6 +264,8 @@ export async function deleteProfileImage() {
   if (!session?.user?.id) {
     return { ok: false, message: "Unauthorized" };
   }
+
+  if (isDemoUserId(session.user.id)) return demoDeleteProfileImage();
 
   try {
     const user = await prisma.user.findUnique({

@@ -1,11 +1,56 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyStoreApiKey, jsonOk, jsonError, logApiHit } from "@/backend/store/api-auth";
+import { DEMO_USER_ID } from "@/lib/demo-constants";
+import { getDemoStore } from "@/backend/demo/demo-store";
+import { demoUpdateSalePayment, demoUpdateSaleOrderStatus } from "@/backend/demo/demo-sales";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ businessSlug: string; branchSlug: string; invoiceNumber: string }> }) {
   const { businessSlug, branchSlug, invoiceNumber } = await params;
   const { store, error } = await verifyStoreApiKey(businessSlug, branchSlug, req.headers.get("x-api-key"));
   if (!store) return jsonError(error!, 401);
+
+  if (store.ownerId === DEMO_USER_ID) {
+    const demoStore = getDemoStore();
+    const sale = demoStore.sales.find(
+      (s) => s.invoiceNumber === invoiceNumber && s.ownerId === DEMO_USER_ID,
+    );
+    if (!sale) return jsonError("Invoice not found", 404);
+
+    const demoItems = demoStore.saleItems
+      .filter((it) => it.saleId === sale.id)
+      .map((it) => {
+        const p = demoStore.products.find((x) => x.id === it.productId);
+        return {
+          productId: it.productId,
+          productName: p?.name ?? "Unknown product",
+          productImage: p?.imageLink ?? null,
+          quantity: it.quantity,
+          unitPrice: it.unitPrice,
+          totalPrice: it.totalPrice,
+        };
+      });
+
+    await logApiHit(store.id, `/sales/${invoiceNumber}`, "GET", 200, req.headers.get("x-forwarded-for"));
+
+    return jsonOk({
+      invoice: {
+        invoiceNumber: sale.invoiceNumber,
+        customerName: sale.customerName,
+        customerPhone: sale.customerPhone,
+        totalAmount: sale.totalAmount,
+        discount: sale.discount,
+        finalAmount: sale.finalAmount,
+        paymentStatus: sale.paymentStatus,
+        paidAmount: sale.paidAmount,
+        dueAmount: sale.dueAmount,
+        orderStatus: sale.orderStatus,
+        deliveryAddress: sale.deliveryAddress,
+        createdAt: sale.createdAt.toISOString(),
+        items: demoItems,
+      },
+    });
+  }
 
   const sale = await prisma.sale.findFirst({
     where: { invoiceNumber, ownerId: store.ownerId },
@@ -56,6 +101,52 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ bu
     body = await req.json();
   } catch {
     return jsonError("Invalid JSON body");
+  }
+
+  if (store.ownerId === DEMO_USER_ID) {
+    const demoStore = getDemoStore();
+    const sale = demoStore.sales.find(
+      (s) => s.invoiceNumber === invoiceNumber && s.ownerId === DEMO_USER_ID,
+    );
+    if (!sale) return jsonError("Invoice not found", 404);
+
+    if (body.paidAmount !== undefined) {
+      const paid = Math.min(Math.max(0, body.paidAmount), sale.finalAmount);
+      demoUpdateSalePayment(sale.id, {
+        paidAmount: paid,
+        paymentStatus: body.paymentStatus || undefined,
+      });
+    }
+
+    if (body.orderStatus) {
+      const validStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED"];
+      if (!validStatuses.includes(body.orderStatus)) {
+        return jsonError(`Invalid orderStatus. Must be one of: ${validStatuses.join(", ")}`);
+      }
+      demoUpdateSaleOrderStatus(sale.id, body.orderStatus);
+    }
+
+    if (body.deliveryAddress !== undefined) {
+      sale.deliveryAddress = body.deliveryAddress;
+      sale.updatedAt = new Date();
+    }
+
+    if (body.paidAmount === undefined && !body.orderStatus && body.deliveryAddress === undefined) {
+      return jsonError("No valid fields to update");
+    }
+
+    await logApiHit(store.id, `/sales/${invoiceNumber}`, "PATCH", 200, req.headers.get("x-forwarded-for"));
+
+    return jsonOk({
+      invoice: {
+        invoiceNumber: sale.invoiceNumber,
+        paymentStatus: sale.paymentStatus,
+        paidAmount: sale.paidAmount,
+        dueAmount: sale.dueAmount,
+        orderStatus: sale.orderStatus,
+        deliveryAddress: sale.deliveryAddress,
+      },
+    });
   }
 
   const sale = await prisma.sale.findFirst({

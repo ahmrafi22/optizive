@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { resolveStore, jsonOk, jsonError, logApiHit } from "@/backend/store/api-auth";
+import { DEMO_USER_ID } from "@/lib/demo-constants";
+import { getDemoStore } from "@/backend/demo/demo-store";
 
 interface PriceItem {
   productId: string;
@@ -22,6 +24,47 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ bus
 
   if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
     return jsonError("items must be a non-empty array");
+  }
+
+  if (resolved.ownerId === DEMO_USER_ID) {
+    const store = getDemoStore();
+    const errors: { productId: string; error: string }[] = [];
+    const lineItems: { productId: string; productName: string; quantity: number; unitPrice: number; totalPrice: number; unit: string }[] = [];
+
+    for (const item of body.items) {
+      const product = store.products.find((p) => p.id === item.productId && p.ownerId === DEMO_USER_ID && p.isActive);
+      if (!product) {
+        errors.push({ productId: item.productId, error: "Product not found or inactive" });
+        continue;
+      }
+      if (item.quantity <= 0) {
+        errors.push({ productId: item.productId, error: "Quantity must be positive" });
+        continue;
+      }
+      lineItems.push({
+        productId: product.id,
+        productName: product.name,
+        quantity: item.quantity,
+        unitPrice: product.sellingPrice,
+        totalPrice: product.sellingPrice * item.quantity,
+        unit: product.unit,
+      });
+    }
+
+    const subtotal = lineItems.reduce((s, i) => s + i.totalPrice, 0);
+    const discount = Math.min(Math.max(0, body.discount || 0), subtotal);
+    const total = subtotal - discount;
+
+    await logApiHit(resolved.storeId, "/check-price", "POST", 200, req.headers.get("x-forwarded-for"));
+
+    return jsonOk({
+      items: lineItems,
+      subtotal,
+      discount,
+      total,
+      currency: "BDT",
+      errors: errors.length > 0 ? errors : undefined,
+    });
   }
 
   const productIds = body.items.map((i) => i.productId);

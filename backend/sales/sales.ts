@@ -3,6 +3,20 @@
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { PaymentStatus, BuyerType, OrderStatus, Prisma } from "@/prisma/generated/prisma/client";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoListSales,
+  demoGetSale,
+  demoCreateSale,
+  demoUpdateSalePayment,
+  demoUpdateSaleOrderStatus,
+  demoDeleteSale,
+  demoGetSalesStats,
+  demoSearchPlatformUsers,
+  demoGetOwnerProducts,
+  demoGetSalesChartData,
+  demoGetSalesChartDataByRange,
+} from "@/backend/demo/demo-sales";
 
 export interface SalesListItem {
   id: string;
@@ -105,6 +119,8 @@ export async function listSales(query: SalesQuery = {}): Promise<SalesListRespon
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoListSales(query);
+
   const page = query.page || 1;
   const limit = query.limit || 20;
   const skip = (page - 1) * limit;
@@ -192,6 +208,8 @@ export async function getSale(id: string): Promise<SaleDetail | null> {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetSale(id);
+
   const sale = await prisma.sale.findFirst({
     where: { id, ownerId: userId },
     include: {
@@ -244,6 +262,8 @@ export async function createSale(input: CreateSaleInput): Promise<SaleDetail | n
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoCreateSale(input);
 
   const totalAmount = input.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   const discount = input.discount || 0;
@@ -338,6 +358,8 @@ export async function updateSalePayment(
   const userId = session?.user?.id;
   if (!userId) return false;
 
+  if (isDemoUserId(userId)) return demoUpdateSalePayment(saleId, data);
+
   const sale = await prisma.sale.findFirst({ where: { id: saleId, ownerId: userId } });
   if (!sale) return false;
 
@@ -361,6 +383,8 @@ export async function updateSaleOrderStatus(
   const userId = session?.user?.id;
   if (!userId) return false;
 
+  if (isDemoUserId(userId)) return demoUpdateSaleOrderStatus(saleId, orderStatus);
+
   const sale = await prisma.sale.findFirst({ where: { id: saleId, ownerId: userId } });
   if (!sale) return false;
 
@@ -373,6 +397,8 @@ export async function deleteSale(saleId: string): Promise<boolean> {
   const userId = session?.user?.id;
   if (!userId) return false;
 
+  if (isDemoUserId(userId)) return demoDeleteSale(saleId);
+
   const sale = await prisma.sale.findFirst({ where: { id: saleId, ownerId: userId } });
   if (!sale) return false;
 
@@ -384,6 +410,8 @@ export async function getSalesStats(): Promise<SaleStats | null> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetSalesStats();
 
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -453,6 +481,8 @@ export async function searchPlatformUsers(query: string) {
   const userId = session?.user?.id;
   if (!userId) return [];
 
+  if (isDemoUserId(userId)) return demoSearchPlatformUsers(query);
+
   if (query.length < 2) return [];
 
   const users = await prisma.user.findMany({
@@ -485,6 +515,8 @@ export async function getOwnerProducts() {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetOwnerProducts();
 
   const products = await prisma.product.findMany({
     where: { ownerId: userId, isActive: true },
@@ -526,6 +558,8 @@ export async function getSalesChartData(): Promise<SalesChartData | null> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetSalesChartData();
 
   const now = new Date();
 
@@ -656,6 +690,8 @@ export async function getSalesChartDataByRange(range: ChartRange): Promise<Month
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetSalesChartDataByRange(range);
 
   const now = new Date();
   let startDate: Date;

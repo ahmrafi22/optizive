@@ -6,6 +6,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import type { Category, StockUnit, BuyingPriority } from "@/prisma/generated/prisma/client";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoListRecentProducts,
+  demoSearchProducts,
+  demoGetProductById,
+  demoListSmartBaskets,
+  demoListPublicSmartBaskets,
+  demoGetSmartBasket,
+  demoGetSmartBasketDetail,
+  demoCreateSmartBasket,
+  demoGetSmartBasketRuleRecommendations,
+  demoGetSmartBasketAiRecommendations,
+  demoGetSmartBasketRecommendations,
+} from "@/backend/demo/demo-smart-basket";
 
 const MAX_SEED_ITEMS = 3;
 const DEFAULT_PRODUCT_LIMIT = 10;
@@ -639,6 +653,8 @@ export async function listRecentProducts(limit: number = DEFAULT_PRODUCT_LIMIT):
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoListRecentProducts(limit);
+
   const items = await prisma.product.findMany({
     where: { ownerId: userId, isActive: true },
     orderBy: { updatedAt: "desc" },
@@ -657,6 +673,8 @@ export async function searchProducts(
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoSearchProducts(search, category, limit, offset);
 
   const trimmed = search.trim();
   const where: any = {
@@ -687,6 +705,8 @@ export async function getProductById(productId: string): Promise<SmartBasketProd
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetProductById(productId);
+
   const product = await prisma.product.findFirst({
     where: { id: productId, ownerId: userId, isActive: true },
   });
@@ -699,6 +719,8 @@ export async function listSmartBaskets(): Promise<SmartBasketListItem[] | null> 
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoListSmartBaskets();
 
   const baskets = await prisma.smartBasket.findMany({
     where: { ownerId: userId },
@@ -735,6 +757,8 @@ export async function listPublicSmartBaskets(): Promise<PublicSmartBasketListIte
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoListPublicSmartBaskets();
 
   const baskets = await prisma.smartBasket.findMany({
     where: { isPublic: true, ownerId: { not: userId } },
@@ -775,6 +799,8 @@ export async function getSmartBasket(basketId: string): Promise<SmartBasketListI
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetSmartBasket(basketId);
+
   const basket = await prisma.smartBasket.findFirst({
     where: { id: basketId, ownerId: userId },
     include: {
@@ -810,6 +836,8 @@ export async function getSmartBasketDetail(basketId: string): Promise<SmartBaske
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetSmartBasketDetail(basketId);
 
   const basket = await prisma.smartBasket.findFirst({
     where: {
@@ -860,6 +888,8 @@ export async function createSmartBasket(payload: CreateSmartBasketPayload) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { ok: false, message: "Unauthorized" };
+
+  if (isDemoUserId(userId)) return demoCreateSmartBasket(payload);
 
   const title = payload.title?.trim();
   if (!title) return { ok: false, message: "Basket title is required" };
@@ -1132,6 +1162,9 @@ async function getScoredCandidates(productIds: string[]) {
 }
 
 export async function getSmartBasketRuleRecommendations(productIds: string[]): Promise<SmartBasketSuggestionItem[]> {
+  const session = await auth();
+  if (isDemoUserId(session?.user?.id)) return demoGetSmartBasketRuleRecommendations(productIds);
+
   const result = await getScoredCandidates(productIds);
   if (!result) return [];
   const { scored } = result;
@@ -1141,6 +1174,9 @@ export async function getSmartBasketRuleRecommendations(productIds: string[]): P
 }
 
 export async function getSmartBasketAiRecommendations(productIds: string[]): Promise<SmartBasketSuggestionItem[]> {
+  const session = await auth();
+  if (isDemoUserId(session?.user?.id)) return demoGetSmartBasketAiRecommendations(productIds);
+
   const result = await getScoredCandidates(productIds);
   if (!result) return [];
   const { scored, selectedSummaries } = result;
@@ -1151,6 +1187,9 @@ export async function getSmartBasketAiRecommendations(productIds: string[]): Pro
 }
 
 export async function getSmartBasketRecommendations(productIds: string[]): Promise<SmartBasketSuggestionsResponse | null> {
+  const session = await auth();
+  if (isDemoUserId(session?.user?.id)) return demoGetSmartBasketRecommendations(productIds);
+
   const result = await getScoredCandidates(productIds);
   if (!result) return { rule: [], ai: [] };
   const { scored, selectedSummaries } = result;

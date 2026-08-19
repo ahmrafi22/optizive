@@ -1,0 +1,150 @@
+[
+  {
+    "id": "demo-pr-1",
+    "createdAt": "T-3d-5h",
+    "updatedAt": "T-3d",
+    "buyerId": "demo-user",
+    "supplierId": "demo-supplier-1",
+    "status": "PENDING",
+    "notes": "Need seeds before the Boro season ends. Please confirm availability.",
+    "saleId": null,
+    "items": [
+      {
+        "id": "demo-pri-1-1",
+        "productId": "demo-supplier-1-p-64",
+        "productName": "Hybrid Aman Paddy Seeds (1kg)",
+        "quantity": 50,
+        "unitPrice": 148,
+        "totalPrice": 7400
+      },
+      {
+        "id": "demo-pri-1-2",
+        "productId": "demo-supplier-1-p-65",
+        "productName": "DAP Fertilizer (50kg bag)",
+        "quantity": 20,
+        "unitPrice": 1820,
+        "totalPrice": 36400
+      }
+    ]
+  },
+  {
+    "id": "demo-pr-2",
+    "createdAt": "T-10d",
+    "updatedAt": "T-8d",
+    "buyerId": "demo-user",
+    "supplierId": "demo-supplier-4",
+    "status": "APPROVED",
+    "notes": "Monthly chicken supply for the meat counter.",
+    "saleId": "demo-sale-from-pr-2",
+    "items": [
+      {
+        "id": "demo-pri-2-1",
+        "productId": "demo-supplier-4-p-83",
+        "productName": "Frozen Chicken Whole (1.2kg)",
+        "quantity": 60,
+        "unitPrice": 228,
+        "totalPrice": 13680
+      },
+      {
+        "id": "demo-pri-2-2",
+        "productId": "demo-supplier-4-p-84",
+        "productName": "Chicken Sausages (400g)",
+        "quantity": 30,
+        "unitPrice": 210,
+        "totalPrice": 6300
+      }
+    ]
+  },
+  {
+    "id": "demo-pr-3",
+    "createdAt": "T-15d",
+    "updatedAt": "T-14d",
+    "buyerId": "demo-user",
+    "supplierId": "demo-supplier-3",
+    "status": "REJECTED",
+    "notes": null,
+    "saleId": null,
+    "items": [
+      {
+        "id": "demo-pri-3-1",
+        "productId": "demo-supplier-3-p-78",
+        "productName": "Prawn (Golda 1kg)",
+        "quantity": 10,
+        "unitPrice": 1320,
+        "totalPrice": 13200
+      }
+    ]
+  },
+  {
+    "id": "demo-pr-4",
+    "createdAt": "T-2d-8h",
+    "updatedAt": "T-2d",
+    "buyerId": "demo-buyer-1",
+    "supplierId": "demo-user",
+    "status": "PENDING",
+    "notes": "Weekly groceries for our kitchen — need delivery Friday morning.",
+    "saleId": null,
+    "items": [
+      {
+        "id": "demo-pri-4-1",
+        "productId": "demo-p-01",
+        "productName": "Miniket Rice (25kg bag)",
+        "quantity": 8,
+        "unitPrice": 1380,
+        "totalPrice": 11040
+      },
+      {
+        "id": "demo-pri-4-2",
+        "productId": "demo-p-08",
+        "productName": "Soybean Oil (5L tin)",
+        "quantity": 4,
+        "unitPrice": 1180,
+        "totalPrice": 4720
+      },
+      {
+        "id": "demo-pri-4-3",
+        "productId": "demo-p-05",
+        "productName": "Sugar (1kg)",
+        "quantity": 20,
+        "unitPrice": 138,
+        "totalPrice": 2760
+      }
+    ]
+  },
+  {
+    "id": "demo-pr-5",
+    "createdAt": "T-1d-3h",
+    "updatedAt": "T-1d",
+    "buyerId": "demo-buyer-2",
+    "supplierId": "demo-user",
+    "status": "PENDING",
+    "notes": "Restocking for the weekend rush.",
+    "saleId": null,
+    "items": [
+      {
+        "id": "demo-pri-5-1",
+        "productId": "demo-p-51",
+        "productName": "Broiler Chicken (1kg)",
+        "quantity": 40,
+        "unitPrice": 212,
+        "totalPrice": 8480
+      },
+      {
+        "id": "demo-pri-5-2",
+        "productId": "demo-p-10",
+        "productName": "Chicken Eggs (30pc tray)",
+        "quantity": 15,
+        "unitPrice": 395,
+        "totalPrice": 5925
+      },
+      {
+        "id": "demo-pri-5-3",
+        "productId": "demo-p-48",
+        "productName": "Fuji Apple (1kg)",
+        "quantity": 10,
+        "unitPrice": 322,
+        "totalPrice": 3220
+      }
+    ]
+  }
+]

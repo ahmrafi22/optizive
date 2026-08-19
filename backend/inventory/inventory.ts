@@ -4,6 +4,16 @@ import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { Category, StockUnit, Prisma } from "@/prisma/generated/prisma/client";
 import { uploadImage, deleteImageByUrl } from "@/lib/cloudinary";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetInventoryStats,
+  demoListInventoryProducts,
+  demoGetProductById,
+  demoGetProductSalesHistory,
+  demoGetProductMonthlyComparison,
+  demoCreateProduct,
+  demoUpdateProduct,
+} from "@/backend/demo/demo-inventory";
 
 export type InventoryStockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "INACTIVE";
 
@@ -228,6 +238,8 @@ export async function getInventoryStats(): Promise<InventoryStats | null> {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetInventoryStats();
+
   const now = new Date();
   const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -271,6 +283,8 @@ export async function listInventoryProducts(query: InventoryQuery): Promise<Inve
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoListInventoryProducts(query);
 
   const search = query.search?.trim() ?? "";
   const category = query.category ?? "ALL";
@@ -422,6 +436,8 @@ export async function getProductById(productId: string): Promise<InventoryProduc
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetProductById(productId);
+
   const product = await prisma.product.findUnique({
     where: { id: productId, ownerId: userId },
   });
@@ -477,6 +493,8 @@ export async function getProductSalesHistory(
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetProductSalesHistory(productId, days);
 
   // Verify product ownership
   const product = await prisma.product.findUnique({
@@ -543,6 +561,8 @@ export async function getProductMonthlyComparison(
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoGetProductMonthlyComparison(productId, months);
 
   // Verify product ownership
   const product = await prisma.product.findUnique({
@@ -659,6 +679,8 @@ export async function createProduct(
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoCreateProduct(data);
+
   let imageLink: string | null = null;
 
   if (data.imageBase64) {
@@ -732,6 +754,8 @@ export async function updateProduct(
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoUpdateProduct(productId, data);
 
   const existing = await prisma.product.findUnique({
     where: { id: productId, ownerId: userId },

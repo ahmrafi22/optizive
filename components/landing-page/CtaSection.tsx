@@ -2,12 +2,34 @@
 
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { FaGithub } from "react-icons/fa6";
+import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo-constants";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
 export function CtaSection() {
   const router = useRouter();
+  const [isDemoNavigating, setIsDemoNavigating] = useState(false);
+
+  const handleCheckDemo = async () => {
+    setIsDemoNavigating(true);
+    try {
+      const result = await signIn("credentials", {
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
+        redirect: false,
+      });
+      if (result?.ok) {
+        router.push("/dashboard");
+        return;
+      }
+      router.push("/login");
+    } catch {
+      router.push("/login");
+    }
+  };
 
   return (
     <section id="about" className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
@@ -74,6 +96,14 @@ export function CtaSection() {
                   style={{ background: "radial-gradient(circle at 50% 120%, rgba(255,255,255,0.5), transparent 70%)" }}
                 />
                 <span className="relative z-10">Create Free Account</span>
+              </button>
+
+              <button
+                onClick={handleCheckDemo}
+                disabled={isDemoNavigating}
+                className="active:scale-[0.97] transition-transform duration-150 h-12 md:h-14 px-6 md:px-8 rounded-full font-semibold text-base md:text-lg flex items-center justify-center gap-2 border border-white/15 bg-white/[0.03] text-zinc-100 hover:border-primary/40 hover:bg-white/[0.06] hover:text-white flex-1 sm:flex-none disabled:opacity-60 disabled:cursor-wait cursor-pointer"
+              >
+                {isDemoNavigating ? "Logging in…" : "Check Demo"}
               </button>
 
               <a

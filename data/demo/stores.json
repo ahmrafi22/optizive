@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo-store-1",
+    "createdAt": "T-120d",
+    "updatedAt": "T-2d",
+    "ownerId": "demo-user",
+    "name": "Dhaka Metro Mart",
+    "slug": "main-branch",
+    "apiKey": "sk_demo_6f8a2c1e9d4b7a3f0e5c8d2b1a6f4e0d9c3b7a5f",
+    "isActive": true,
+    "termsAccepted": true
+  },
+  {
+    "id": "demo-store-2",
+    "createdAt": "T-40d",
+    "updatedAt": "T-8d",
+    "ownerId": "demo-user",
+    "name": "Gulshan Branch",
+    "slug": "gulshan-branch",
+    "apiKey": "sk_demo_2f7e1a3b9c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f",
+    "isActive": false,
+    "termsAccepted": false
+  }
+]

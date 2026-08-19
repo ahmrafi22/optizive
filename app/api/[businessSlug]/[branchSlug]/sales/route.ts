@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyStoreApiKey, jsonOk, jsonError, logApiHit } from "@/backend/store/api-auth";
+import { DEMO_USER_ID } from "@/lib/demo-constants";
+import { getDemoStore } from "@/backend/demo/demo-store";
+import { demoCreateSale, demoListSales } from "@/backend/demo/demo-sales";
 
 function generateInvoiceNumber(): string {
   const now = new Date();
@@ -38,6 +41,52 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ bus
 
   if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
     return jsonError("items must be a non-empty array");
+  }
+
+  if (store.ownerId === DEMO_USER_ID) {
+    const demoStore = getDemoStore();
+    const demoProductMap = new Map(demoStore.products.map((p) => [p.id, p]));
+    for (const item of body.items) {
+      const product = demoProductMap.get(item.productId);
+      if (!product || !product.isActive) return jsonError(`Product ${item.productId} not found or inactive`);
+    }
+    const sale = await demoCreateSale({
+      buyerType: "EXTERNAL",
+      items: body.items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        unitPrice: demoProductMap.get(i.productId)!.sellingPrice,
+      })),
+      customerName: body.customerName,
+      customerPhone: body.customerPhone,
+      discount: body.discount,
+      paidAmount: body.paidAmount,
+      deliveryAddress: body.deliveryAddress,
+      notes: body.notes ? `[${store.name}] ${body.notes}` : `[${store.name}]`,
+    });
+    if (!sale) return jsonError("One or more products not found or inactive");
+    await logApiHit(store.id, "/sales", "POST", 200, req.headers.get("x-forwarded-for"));
+    return jsonOk({
+      invoice: {
+        invoiceNumber: sale.invoiceNumber,
+        customerName: sale.customerName,
+        customerPhone: sale.customerPhone,
+        totalAmount: sale.totalAmount,
+        discount: sale.discount,
+        finalAmount: sale.finalAmount,
+        paymentStatus: sale.paymentStatus,
+        paidAmount: sale.paidAmount,
+        dueAmount: sale.dueAmount,
+        createdAt: sale.createdAt,
+        items: sale.items.map((i) => ({
+          productId: i.productId,
+          productName: i.productName,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          totalPrice: i.totalPrice,
+        })),
+      },
+    }, 201);
   }
 
   const productIds = body.items.map((i) => i.productId);
@@ -134,6 +183,30 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ busi
   const { searchParams } = new URL(req.url);
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
   const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10")));
+
+  if (store.ownerId === DEMO_USER_ID) {
+    const status = searchParams.get("paymentStatus");
+    const sales = demoListSales({
+      page,
+      limit,
+      paymentStatus: (status || undefined) as any,
+      buyerType: "EXTERNAL",
+    });
+    const items = sales?.sales ?? [];
+    const total = sales?.total ?? 0;
+    await logApiHit(store.id, "/sales", "GET", 200, req.headers.get("x-forwarded-for"));
+    return jsonOk({
+      sales: items.map((s) => ({
+        invoiceNumber: s.invoiceNumber,
+        customerName: s.customerName,
+        total: s.finalAmount,
+        paymentStatus: s.paymentStatus,
+        itemCount: s.itemCount,
+        createdAt: s.createdAt,
+      })),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
+  }
 
   const where: any = { ownerId: store.ownerId };
   const status = searchParams.get("paymentStatus");

@@ -3,6 +3,23 @@
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import { Prisma, Category, PostType, PostStatus, VoteType, FulfillmentStatus } from "@/prisma/generated/prisma/client";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetPosts,
+  demoGetPostById,
+  demoCreatePost,
+  demoUpdatePostStatus,
+  demoDeletePost,
+  demoVote,
+  demoGetComments,
+  demoCreateComment,
+  demoDeleteComment,
+  demoGetFulfillments,
+  demoCreateFulfillment,
+  demoUpdateFulfillmentStatus,
+  demoGetTags,
+  demoGetCategoryOptions,
+} from "@/backend/demo/demo-community";
 
 export type CommunityPostStatus = "OPEN" | "FILLED" | "CLOSED";
 export type CommunityPostType = "PROCUREMENT" | "GENERAL";
@@ -143,6 +160,8 @@ function buildPostInclude(userId: string) {
 export async function getPosts(query: PostQuery): Promise<{ posts: PostListItem[]; total: number }> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoGetPosts(query);
+
   const where: Prisma.PostWhereInput = {};
 
   if (query.search) {
@@ -190,6 +209,8 @@ export async function getPosts(query: PostQuery): Promise<{ posts: PostListItem[
 export async function getPostById(postId: string): Promise<PostDetail | null> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoGetPostById(postId);
+
   const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
@@ -227,6 +248,8 @@ export async function getPostById(postId: string): Promise<PostDetail | null> {
 
 export async function createPost(payload: CreatePostPayload): Promise<PostListItem> {
   const userId = await getCurrentUserId();
+
+  if (isDemoUserId(userId)) return demoCreatePost(payload);
 
   const tagRecords = payload.tagNames?.length
     ? await Promise.all(
@@ -268,6 +291,8 @@ export async function createPost(payload: CreatePostPayload): Promise<PostListIt
 export async function updatePostStatus(postId: string, status: CommunityPostStatus): Promise<void> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoUpdatePostStatus(postId, status);
+
   const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
   if (!post) throw new Error("Post not found");
   if (post.authorId !== userId) throw new Error("Not authorized");
@@ -281,6 +306,8 @@ export async function updatePostStatus(postId: string, status: CommunityPostStat
 export async function deletePost(postId: string): Promise<void> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoDeletePost(postId);
+
   const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
   if (!post) throw new Error("Post not found");
   if (post.authorId !== userId) throw new Error("Not authorized");
@@ -290,6 +317,8 @@ export async function deletePost(postId: string): Promise<void> {
 
 export async function vote(postId: string, type: VoteType | null): Promise<{ upvoteCount: number; downvoteCount: number; userVote: VoteType | null }> {
   const userId = await getCurrentUserId();
+
+  if (isDemoUserId(userId)) return demoVote(postId, type);
 
   const post = await prisma.post.findUnique({ where: { id: postId }, select: { id: true } });
   if (!post) throw new Error("Post not found");
@@ -373,6 +402,8 @@ export async function getComments(postId: string): Promise<CommentItem[]> {
 export async function createComment(postId: string, content: string): Promise<CommentItem> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoCreateComment(postId, content);
+
   const post = await prisma.post.findUnique({ where: { id: postId }, select: { id: true } });
   if (!post) throw new Error("Post not found");
 
@@ -404,6 +435,8 @@ export async function createComment(postId: string, content: string): Promise<Co
 export async function deleteComment(commentId: string): Promise<void> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoDeleteComment(commentId);
+
   const comment = await prisma.comment.findUnique({
     where: { id: commentId },
     select: { authorId: true, postId: true },
@@ -421,6 +454,8 @@ export async function deleteComment(commentId: string): Promise<void> {
 
 export async function getFulfillments(postId: string): Promise<FulfillmentItem[]> {
   const userId = await getCurrentUserId();
+
+  if (isDemoUserId(userId)) return demoGetFulfillments(postId);
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -465,6 +500,8 @@ export async function getFulfillments(postId: string): Promise<FulfillmentItem[]
 export async function createFulfillment(postId: string, payload: CreateFulfillmentPayload): Promise<FulfillmentItem> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoCreateFulfillment(postId, payload);
+
   const post = await prisma.post.findUnique({
     where: { id: postId },
     select: { id: true, type: true, authorId: true },
@@ -504,6 +541,8 @@ export async function createFulfillment(postId: string, payload: CreateFulfillme
 export async function updateFulfillmentStatus(fulfillmentId: string, status: FulfillmentStatus): Promise<void> {
   const userId = await getCurrentUserId();
 
+  if (isDemoUserId(userId)) return demoUpdateFulfillmentStatus(fulfillmentId, status);
+
   const fulfillment = await prisma.fulfillment.findUnique({
     where: { id: fulfillmentId },
     include: { post: { select: { authorId: true } } },
@@ -518,7 +557,8 @@ export async function updateFulfillmentStatus(fulfillmentId: string, status: Ful
 }
 
 export async function getTags(): Promise<{ id: string; name: string; slug: string }[]> {
-  await getCurrentUserId();
+  const userId = await getCurrentUserId();
+  if (isDemoUserId(userId)) return demoGetTags();
 
   const tags = await prisma.tag.findMany({
     orderBy: { name: "asc" },
@@ -528,7 +568,8 @@ export async function getTags(): Promise<{ id: string; name: string; slug: strin
 }
 
 export async function getCategoryOptions(): Promise<{ value: Category; label: string }[]> {
-  await getCurrentUserId();
+  const userId = await getCurrentUserId();
+  if (isDemoUserId(userId)) return demoGetCategoryOptions() as { value: Category; label: string }[];
 
   return Object.values(Category).map((value) => ({
     value: value as Category,

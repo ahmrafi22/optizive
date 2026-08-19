@@ -3,6 +3,17 @@
 import { auth } from "@/backend/auth/auth";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoGetUserStores,
+  demoEnsureMainStore,
+  demoCreateStore,
+  demoUpdateBusinessSlug,
+  demoAcceptTerms,
+  demoToggleStoreStatus,
+  demoRegenerateApiKey,
+  demoDeleteStore,
+} from "@/backend/demo/demo-suppliers";
 
 function generateApiKey(): string {
   return `sk_${crypto.randomBytes(24).toString("hex")}`;
@@ -48,6 +59,8 @@ export async function getUserStores(): Promise<StoreStats | null> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoGetUserStores();
 
   const [stores, user] = await Promise.all([
     prisma.store.findMany({
@@ -114,6 +127,8 @@ export async function ensureMainStore(): Promise<StoreStats | null> {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoEnsureMainStore();
+
   const [user, storeCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId }, select: { businessSlug: true, businessName: true, name: true } }),
     prisma.store.count({ where: { ownerId: userId } }),
@@ -143,6 +158,8 @@ export async function createStore(name: string): Promise<{ success: boolean; err
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
+
+  if (isDemoUserId(userId)) return demoCreateStore(name);
 
   if (!name || name.trim().length < 2) {
     return { success: false, error: "Branch name must be at least 2 characters" };
@@ -191,6 +208,8 @@ export async function updateBusinessSlug(newSlug: string): Promise<{ success: bo
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
 
+  if (isDemoUserId(userId)) return demoUpdateBusinessSlug(newSlug);
+
   const slug = slugify(newSlug);
   if (!slug || slug.length < 2) return { success: false, error: "Slug must be at least 2 characters" };
 
@@ -208,6 +227,8 @@ export async function acceptTerms(storeId: string): Promise<{ success: boolean; 
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
 
+  if (isDemoUserId(userId)) return demoAcceptTerms(storeId);
+
   const store = await prisma.store.findFirst({ where: { id: storeId, ownerId: userId } });
   if (!store) return { success: false, error: "Store not found" };
 
@@ -224,6 +245,8 @@ export async function toggleStoreStatus(storeId: string, isActive: boolean): Pro
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
 
+  if (isDemoUserId(userId)) return demoToggleStoreStatus(storeId, isActive);
+
   const store = await prisma.store.findFirst({ where: { id: storeId, ownerId: userId } });
   if (!store) return { success: false, error: "Store not found" };
 
@@ -239,6 +262,8 @@ export async function regenerateApiKey(storeId: string): Promise<{ success: bool
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
+
+  if (isDemoUserId(userId)) return demoRegenerateApiKey(storeId);
 
   const store = await prisma.store.findFirst({ where: { id: storeId, ownerId: userId } });
   if (!store) return { success: false, error: "Store not found" };
@@ -258,6 +283,8 @@ export async function deleteStore(storeId: string): Promise<{ success: boolean; 
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { success: false, error: "Not authenticated" };
+
+  if (isDemoUserId(userId)) return demoDeleteStore(storeId);
 
   const store = await prisma.store.findFirst({ where: { id: storeId, ownerId: userId } });
   if (!store) return { success: false, error: "Store not found" };

@@ -6,13 +6,26 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { UserRole } from "@/prisma/generated/prisma/enums";
+import { DEMO_EMAIL, DEMO_PASSWORD, DEMO_USER_ID } from "@/lib/demo-constants";
+
+const DEMO_NAME = "Rafi Ahmed";
+const DEMO_USERNAME = "rafi.ahmed";
+const DEMO_IMAGE = "https://picsum.photos/seed/rafi-ahmed/200/200";
+
+function isDemoCredentials(email: string, password: string): boolean {
+  return email === DEMO_EMAIL && password === DEMO_PASSWORD;
+}
 
 const authConfig = {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     Credentials({
       name: "Credentials",
       credentials: {
@@ -25,6 +38,19 @@ const authConfig = {
 
         if (!email || !password) {
           throw new CredentialsSignin("Please provide both email and password.");
+        }
+
+        if (isDemoCredentials(email, password)) {
+          return {
+            id: DEMO_USER_ID,
+            name: DEMO_NAME,
+            email: DEMO_EMAIL,
+            image: DEMO_IMAGE,
+            role: "BOTH",
+            username: DEMO_USERNAME,
+            onboarded: true,
+            banned: false,
+          };
         }
 
         const user = await prisma.user.findFirst({
@@ -98,7 +124,7 @@ const authConfig = {
         token.username = user.username;
         token.onboarded = user.onboarded;
         token.image = user.image ?? token.image;
-      } else if (token.email) {
+      } else if (token.email && token.email !== DEMO_EMAIL) {
         const dbUser = await prisma.user.findFirst({
           where: { email: token.email },
         });

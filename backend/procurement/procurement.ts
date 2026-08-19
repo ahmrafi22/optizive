@@ -7,6 +7,16 @@ import {
   BuyerType,
   OrderStatus,
 } from "@/prisma/generated/prisma/client";
+import { isDemoUserId } from "@/backend/demo/demo-store";
+import {
+  demoCreateProcurementRequest,
+  demoListSentRequests,
+  demoListReceivedRequests,
+  demoGetProcurementRequestDetail,
+  demoAcceptProcurementRequest,
+  demoRejectProcurementRequest,
+  demoGetProcurementCounts,
+} from "@/backend/demo/demo-sales";
 
 export interface ProcurementRequestItemData {
   id: string;
@@ -60,6 +70,8 @@ export async function createProcurementRequest(input: {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoCreateProcurementRequest(input);
+
   const supplier = await prisma.user.findFirst({
     where: { id: input.supplierId, isActive: true },
   });
@@ -110,6 +122,8 @@ export async function listSentRequests(limit?: number): Promise<ProcurementReque
   const userId = session?.user?.id;
   if (!userId) return [];
 
+  if (isDemoUserId(userId)) return demoListSentRequests(limit);
+
   const requests = await prisma.procurementRequest.findMany({
     where: { buyerId: userId },
     orderBy: { createdAt: "desc" },
@@ -140,6 +154,8 @@ export async function listReceivedRequests(limit?: number): Promise<ProcurementR
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return [];
+
+  if (isDemoUserId(userId)) return demoListReceivedRequests(limit);
 
   const requests = await prisma.procurementRequest.findMany({
     where: { supplierId: userId },
@@ -172,6 +188,8 @@ export async function getProcurementRequestDetail(id: string): Promise<Procureme
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoGetProcurementRequestDetail(id);
+
   const request = await prisma.procurementRequest.findFirst({
     where: {
       id,
@@ -194,6 +212,8 @@ export async function acceptProcurementRequest(id: string): Promise<ProcurementR
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
+
+  if (isDemoUserId(userId)) return demoAcceptProcurementRequest(id);
 
   const request = await prisma.procurementRequest.findFirst({
     where: { id, supplierId: userId, status: "PENDING" },
@@ -329,6 +349,8 @@ export async function rejectProcurementRequest(id: string): Promise<ProcurementR
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  if (isDemoUserId(userId)) return demoRejectProcurementRequest(id);
+
   const request = await prisma.procurementRequest.findFirst({
     where: { id, supplierId: userId, status: "PENDING" },
     include: { items: true },
@@ -353,6 +375,8 @@ export async function getProcurementCounts(): Promise<{ sentPending: number; rec
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { sentPending: 0, receivedPending: 0 };
+
+  if (isDemoUserId(userId)) return demoGetProcurementCounts();
 
   const [sentPending, receivedPending] = await Promise.all([
     prisma.procurementRequest.count({ where: { buyerId: userId, status: "PENDING" } }),

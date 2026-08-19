@@ -1,0 +1,68 @@
+[
+  {
+    "id": "demo-chat-1",
+    "createdAt": "T-12d",
+    "updatedAt": "T-4h",
+    "ownerId": "demo-user",
+    "title": "Expiry clearance strategy",
+    "messages": [
+      {
+        "id": "demo-cm-1-1",
+        "createdAt": "T-12d",
+        "role": "user",
+        "content": "I have 65 units of yogurt expiring in 5 days and 40 units of butter expiring in 3 weeks. How should I clear them without losing too much margin?"
+      },
+      {
+        "id": "demo-cm-1-2",
+        "createdAt": "T-12d",
+        "role": "assistant",
+        "content": "Here's a clearance plan for your dairy stock:\n\n| Item | Expiry | Suggested | New Price | Margin |\n|------|--------|-----------|-----------|--------|\n| Yogurt 500g | 5 days | 35% off | BDT 48 | ~8% |\n| Butter 200g | 21 days | 15% off now, 25% later | BDT 161 | ~14% |\n\n**Actions:**\n1. **Yogurt** — bundle with glucose biscuits as a \"quick breakfast combo\" at BDT 100 total. Expect to clear in 3 days.\n2. **Butter** — keep at 15% off this week; the expiring-soon window gives you 2 weeks of runway.\n3. Put both items at the counter endcap — impulse sales rise ~20% there.\n\nAfter clearance, cut next dairy order by 25% to avoid the same situation."
+      },
+      {
+        "id": "demo-cm-1-3",
+        "createdAt": "T-1d",
+        "role": "user",
+        "content": "The yogurt bundle worked — cleared 48 units yesterday. Should I also discount the cheese slices expiring in 25 days?"
+      },
+      {
+        "id": "demo-cm-1-4",
+        "createdAt": "T-4h",
+        "role": "assistant",
+        "content": "Great result! For cheese slices (25 days runway, 35 units):\n\n- **This week:** no discount needed — normal shelf price.\n- **At 14 days left:** apply 15% off.\n- **At 7 days left:** jump to 30% off.\n\nYour daily sell rate is ~2.1 units/day, so 35 units will clear in ~17 days — well inside the window. Keep an eye on the expiry tracker; I'll flag it if the rate slows."
+      }
+    ]
+  },
+  {
+    "id": "demo-chat-2",
+    "createdAt": "T-6d",
+    "updatedAt": "T-2d",
+    "ownerId": "demo-user",
+    "title": "Rice supplier comparison",
+    "messages": [
+      {
+        "id": "demo-cm-2-1",
+        "createdAt": "T-6d",
+        "role": "user",
+        "content": "I need a reliable supplier for Miniket rice. Who has the best match for a Dhaka grocery store?"
+      },
+      {
+        "id": "demo-cm-2-2",
+        "createdAt": "T-6d",
+        "role": "assistant",
+        "content": "Based on your profile (GROCERIES, Dhaka, VALUE pricing, next-day delivery), here are the top rice suppliers:\n\n1. **Bengal Rice & Grains** (Dinajpur) — 96% match. Factory-direct, bulk discounts, BDT 1,750/25kg Nazirshail. 4.4★.\n2. **Karim Agro Traders** (Khulna) — 91% match. Rice seeds + staples, LOW_PRICE tag.\n3. **Padma Oil & Ghee Traders** (Barishal) — 85% match for staple groceries.\n\nTheir delivery is 2-3 days to Dhaka. For your ~420kg Miniket stock, I'd suggest a 25kg trial order first to validate quality consistency before committing to bulk."
+      },
+      {
+        "id": "demo-cm-2-3",
+        "createdAt": "T-2d",
+        "role": "user",
+        "content": "How much should I order if I sell ~4 bags/week and lead time is 3 days?"
+      },
+      {
+        "id": "demo-cm-2-4",
+        "createdAt": "T-2d",
+        "role": "assistant",
+        "content": "Your numbers:\n- Weekly usage: **4 × 25kg bags**\n- Lead time: **3 days** (~0.43 weeks)\n- Safety stock: **1 week** of usage recommended\n\n**Order quantity = (weekly usage × lead time weeks) + safety stock − current stock**\n= (4 × 0.43) + 4 − current\n\nWith 420kg (≈16.8 bags) in stock you're covered for ~4 weeks, so you can wait until stock hits **~6 bags** before reordering **5 bags**. I'd set minStock to 150kg on that product to get the alert earlier."
+      }
+    ]
+  }
+]

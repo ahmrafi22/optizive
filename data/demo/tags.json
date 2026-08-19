@@ -1,0 +1,37 @@
+[
+  {
+    "id": "demo-tag-rice",
+    "name": "Rice",
+    "slug": "rice"
+  },
+  {
+    "id": "demo-tag-eid",
+    "name": "Eid Stock",
+    "slug": "eid-stock"
+  },
+  {
+    "id": "demo-tag-poultry",
+    "name": "Poultry",
+    "slug": "poultry"
+  },
+  {
+    "id": "demo-tag-fish",
+    "name": "Fresh Fish",
+    "slug": "fresh-fish"
+  },
+  {
+    "id": "demo-tag-dairy",
+    "name": "Dairy",
+    "slug": "dairy"
+  },
+  {
+    "id": "demo-tag-wholesale",
+    "name": "Wholesale",
+    "slug": "wholesale"
+  },
+  {
+    "id": "demo-tag-bulk",
+    "name": "Bulk Deal",
+    "slug": "bulk-deal"
+  }
+]
